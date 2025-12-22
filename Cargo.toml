@@ -1,0 +1,14 @@
+[package]
+name = "ffmpeg_scripts_rust"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "trim-clip"
+path = "src/bin/trim-clip.rs"
+
+[dependencies]
+clap = { version = "4.0", features = ["derive"] }
