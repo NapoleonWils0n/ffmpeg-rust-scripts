@@ -42,6 +42,12 @@ struct Args {
 fn main() {
     let args = Args::parse();
 
+    // Check if input file exists before doing anything else
+    if !Path::new(&args.infile).exists() {
+        eprintln!("! Error: Input file '{}' does not exist.", args.infile);
+        std::process::exit(1);
+    }
+
     let info = get_media_info(&args.infile);
     let aac_codec = if has_encoder("libfdk_aac") { "libfdk_aac" } else { "aac" };
 
