@@ -1,5 +1,6 @@
 use clap::Parser;
 use std::process::Command;
+use std::path::Path; 
 // Use the package name from your Cargo.toml
 use ffmpeg_scripts_rust::{get_media_info, parse_to_seconds, format_seconds, has_encoder}; 
 
