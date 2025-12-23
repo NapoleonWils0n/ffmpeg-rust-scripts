@@ -84,3 +84,11 @@ pub fn has_encoder(encoder_name: &str) -> bool {
         Err(_) => false,
     }
 }
+
+/// [LIB-07] Subtracts the start time from the end time to calculate duration in seconds.
+// used by: trim-clip-to
+pub fn calculate_duration(start: &str, end: &str) -> f64 {
+    let start_sec = parse_to_seconds(start);
+    let end_sec = parse_to_seconds(end);
+    end_sec - start_sec
+}
