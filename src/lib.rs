@@ -1,3 +1,9 @@
+//==============================================================================
+// lib.rs
+// Description: Shared library containing common FFmpeg logic and helper functions
+// Version: 0.1.0
+//==============================================================================
+
 use std::process::Command; // Needed for has_encoder
 /// [LIB-01] Path used to check if the file exists before it is processed by FFmpeg
 // used by: trim-clip

@@ -1,7 +1,13 @@
+//==============================================================================
+// trim-clip
+// Description: Trim video or audio clips with millisecond accuracy
+// References: [LIB-01] through [LIB-06]
+//==============================================================================
+
 use clap::Parser;
 use std::process::Command;
+// [LIB-01] Path import used for file existence check
 use std::path::Path; 
-// Use the package name from your Cargo.toml
 use ffmpeg_scripts_rust::{get_media_info, parse_to_seconds, format_seconds, has_encoder}; 
 
 #[derive(Parser, Debug)]
@@ -43,21 +49,24 @@ struct Args {
 fn main() {
     let args = Args::parse();
 
-    // Check if input file exists before doing anything else
+    // Check if input file exists [LIB-01]
     if !Path::new(&args.infile).exists() {
         eprintln!("! Error: Input file '{}' does not exist.", args.infile);
         std::process::exit(1);
     }
 
+    // Get file name and extension [LIB-03]
     let info = get_media_info(&args.infile);
+
+    // Check available AAC encoders [LIB-06]
     let aac_codec = if has_encoder("libfdk_aac") { "libfdk_aac" } else { "aac" };
 
-    // Calculate end timestamp
+    // Parse timestamps and calculate end time [LIB-04, LIB-05]
     let start_sec = parse_to_seconds(&args.start);
     let dur_sec = parse_to_seconds(&args.duration);
     let calculated_end = format_seconds(start_sec + dur_sec);
 
-    // 1. Logic to match your shell script: default all video to .mp4
+    // Decision logic for file extensions
     let out_ext = match info.extension.as_str() {
         "mp4" | "mov" | "mkv" | "m4v" => "mp4",
         "webm" => "webm",
@@ -68,12 +77,12 @@ fn main() {
         _ => &info.extension,
     };
 
-    // 2. Format filename exactly like the shell script: [start-end].ext
+    // Format final filename string [Uses LIB-02 / MediaInfo fields]
     let out = args.outfile.clone().unwrap_or_else(|| {
         format!("{}-[{}-{}].{}", info.stem, args.start, calculated_end, out_ext)
     });
 
-    // 3. Match extension to trigger the right FFmpeg command
+    // Match extension to trigger the right FFmpeg command
     match out_ext {
         "mp4" => run_ffmpeg_video(&args, &out, aac_codec),
         "webm" => run_ffmpeg_webm(&args, &out),
@@ -85,6 +94,8 @@ fn main() {
     }
 }
 
+/// FFmpeg command for MP4 video
+/// Encoders: Video = libx264, Audio = libfdk_aac or aac
 fn run_ffmpeg_video(args: &Args, out: &str, aac: &str) {
     Command::new("ffmpeg")
         .args([
@@ -96,6 +107,8 @@ fn run_ffmpeg_video(args: &Args, out: &str, aac: &str) {
         .status().expect("Failed to execute FFmpeg");
 }
 
+/// FFmpeg command for WebM video
+/// Encoders: Video = vp9, Audio = libopus
 fn run_ffmpeg_webm(args: &Args, out: &str) {
     Command::new("ffmpeg")
         .args([
@@ -106,6 +119,8 @@ fn run_ffmpeg_webm(args: &Args, out: &str) {
         .status().expect("Failed to execute FFmpeg");
 }
 
+/// FFmpeg command for Audio-only files
+/// Encoders: M4A = aac, MP3 = libmp3lame, WAV = pcm_s16le, OGG = libopus
 fn run_ffmpeg_audio(args: &Args, out: &str, codec: &str, format: &str) {
     Command::new("ffmpeg")
         .args([
