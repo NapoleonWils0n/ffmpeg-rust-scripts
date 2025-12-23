@@ -9,12 +9,14 @@ use std::process::Command; // Needed for [LIB-06]
 // used by: 
 // - trim-clip
 // - trim-clip-to
+// - extract-frame
 use std::path::Path;
 
 /// [LIB-02] Represents basic metadata about a media file.
 // used by: 
 // - trim-clip
 // - trim-clip-to
+// - extract-frame
 pub struct MediaInfo {
     pub stem: String,
     pub extension: String,
@@ -24,6 +26,7 @@ pub struct MediaInfo {
 // used by: 
 // - trim-clip
 // - trim-clip-to
+// - extract-frame
 pub fn get_media_info(path_str: &str) -> MediaInfo {
     let path = Path::new(path_str);
     MediaInfo {
