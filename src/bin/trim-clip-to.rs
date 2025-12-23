@@ -15,7 +15,7 @@ use ffmpeg_scripts_rust::{get_media_info, has_encoder};
     author, 
     version, 
     about = "trim video or audio clips by specifying start and end timestamps\nhttps://trac.ffmpeg.org/wiki/Seeking",
-    after_help = "Example:\n  trim-clip-to -s 00:00:10 -i input.mp4 -t 00:00:20 -o output.mp4\n\nNotes:\n  If -o is not provided, defaults to: input-name-[start–end].(mp4|webm|aac|mp3|wav|ogg)",
+    after_help = "Example:\n  trim-clip-to -s 00:00:30 -i input -t 00:01:00 -o output\n\n  This will create a 30 second clip starting at 30 seconds and ending at 60 seconds.\n\nNotes:\n  If -o is not provided, defaults to: input-name-[start–end].(mp4|webm|aac|mp3|wav|ogg)",
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
 struct Args {
