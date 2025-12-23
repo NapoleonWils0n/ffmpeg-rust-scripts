@@ -1,8 +1,8 @@
-//==============================================================================
+//================================================================================
 // lib.rs
 // Description: Shared library containing common FFmpeg logic and helper functions
 // Version: 0.1.0
-//==============================================================================
+//================================================================================
 
 use std::process::Command; // Needed for [LIB-06]
 /// [LIB-01] Path used to check if the file exists before it is processed by FFmpeg
