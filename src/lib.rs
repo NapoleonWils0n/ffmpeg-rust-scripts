@@ -1,11 +1,17 @@
 use std::process::Command; // Needed for has_encoder
+/// Path used to check if the file exists before it is processed by FFmpeg
+// used by: trim-clip
 use std::path::Path;
 
+/// Represents basic metadata about a media file.
+// used by: trim-clip
 pub struct MediaInfo {
     pub stem: String,
     pub extension: String,
 }
 
+/// Extracts the file stem (filename without extension) and the lowercase extension.
+// used by: trim-clip
 pub fn get_media_info(path_str: &str) -> MediaInfo {
     let path = Path::new(path_str);
     MediaInfo {
@@ -22,6 +28,8 @@ pub fn get_media_info(path_str: &str) -> MediaInfo {
     }
 }
 
+/// Converts sexagesimal timestamps (HH:MM:SS.mmm or MM:SS) or plain second strings into total seconds.
+// used by: trim-clip
 pub fn parse_to_seconds(timestamp: &str) -> f64 {
     let parts: Vec<&str> = timestamp.split(':').collect();
     match parts.len() {
@@ -40,6 +48,8 @@ pub fn parse_to_seconds(timestamp: &str) -> f64 {
     }
 }
 
+/// Formats a float of total seconds back into a sexagesimal string (HH:MM:SS or HH:MM:SS.mmm).
+// used by: trim-clip
 pub fn format_seconds(total_sec: f64) -> String {
     let h = (total_sec / 3600.0).floor() as u32;
     let m = ((total_sec % 3600.0) / 60.0).floor() as u32;
@@ -53,7 +63,8 @@ pub fn format_seconds(total_sec: f64) -> String {
     }
 }
 
-/// This was missing from your upload!
+/// Checks if a specific encoder is available in the current FFmpeg installation.
+// used by: trim-clip
 pub fn has_encoder(encoder_name: &str) -> bool {
     let output = Command::new("ffmpeg")
         .args(["-hide_banner", "-h", &format!("encoder={}", encoder_name)])
@@ -67,5 +78,3 @@ pub fn has_encoder(encoder_name: &str) -> bool {
         Err(_) => false,
     }
 }
-
-
