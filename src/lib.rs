@@ -10,6 +10,7 @@ use std::process::Command; // Needed for [LIB-06]
 // - trim-clip
 // - trim-clip-to
 // - extract-frame
+// - tile-thumbnails
 use std::path::Path;
 
 /// [LIB-02] Represents basic metadata about a media file.
@@ -27,6 +28,7 @@ pub struct MediaInfo {
 // - trim-clip
 // - trim-clip-to
 // - extract-frame
+// - tile-thumbnails
 pub fn get_media_info(path_str: &str) -> MediaInfo {
     let path = Path::new(path_str);
     MediaInfo {
@@ -47,6 +49,7 @@ pub fn get_media_info(path_str: &str) -> MediaInfo {
 // used by: 
 // - trim-clip
 // - sexagesimal-time
+// - tile-thumbnails
 pub fn parse_to_seconds(timestamp: &str) -> f64 {
     let parts: Vec<&str> = timestamp.split(':').collect();
     match parts.len() {
@@ -108,4 +111,24 @@ pub fn calculate_duration(start: &str, end: &str) -> f64 {
     let start_sec = parse_to_seconds(start);
     let end_sec = parse_to_seconds(end);
     end_sec - start_sec
+}
+
+/// [LIB-08] Uses ffprobe to get the total duration of a video file in seconds.
+// used by: 
+// - tile-thumbnails
+pub fn get_video_duration(path: &str) -> f64 {
+    let output = Command::new("ffprobe")
+        .args([
+            "-v", "error",
+            "-show_entries", "format=duration",
+            "-of", "default=noprint_wrappers=1:nokey=1",
+            path,
+        ])
+        .output()
+        .expect("Failed to execute ffprobe");
+    
+    String::from_utf8_lossy(&output.stdout)
+        .trim()
+        .parse::<f64>()
+        .unwrap_or(0.0)
 }
