@@ -8,7 +8,7 @@ use clap::Parser;
 use std::process::Command;
 // [LIB-01] Path import used for file existence check
 use std::path::Path; 
-use ffmpeg_scripts_rust::{get_media_info, parse_to_seconds, format_seconds, has_encoder, calculate_duration}; 
+use ffmpeg_scripts_rust::{get_media_info, has_encoder}; 
 
 #[derive(Parser, Debug)]
 #[command(
