@@ -1,7 +1,7 @@
 //==============================================================================
 // trim-clip-to
 // Description: Trim video or audio clips by specifying start and end timestamps
-// References: [LIB-01] through [LIB-07]
+// References: [LIB-01], [LIB-02], [LIB-03], [LIB-06]
 //==============================================================================
 
 use clap::Parser;

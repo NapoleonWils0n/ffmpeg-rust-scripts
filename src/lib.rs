@@ -4,20 +4,26 @@
 // Version: 0.1.0
 //==============================================================================
 
-use std::process::Command; // Needed for has_encoder
+use std::process::Command; // Needed for [LIB-06]
 /// [LIB-01] Path used to check if the file exists before it is processed by FFmpeg
-// used by: trim-clip
+// used by: 
+// - trim-clip
+// - trim-clip-to
 use std::path::Path;
 
 /// [LIB-02] Represents basic metadata about a media file.
-// used by: trim-clip
+// used by: 
+// - trim-clip
+// - trim-clip-to
 pub struct MediaInfo {
     pub stem: String,
     pub extension: String,
 }
 
 /// [LIB-03] Extracts the file stem (filename without extension) and the lowercase extension.
-// used by: trim-clip
+// used by: 
+// - trim-clip
+// - trim-clip-to
 pub fn get_media_info(path_str: &str) -> MediaInfo {
     let path = Path::new(path_str);
     MediaInfo {
@@ -35,7 +41,8 @@ pub fn get_media_info(path_str: &str) -> MediaInfo {
 }
 
 /// [LIB-04] Converts sexagesimal timestamps (HH:MM:SS.mmm or MM:SS) or plain second strings into total seconds.
-// used by: trim-clip
+// used by: 
+// - trim-clip
 pub fn parse_to_seconds(timestamp: &str) -> f64 {
     let parts: Vec<&str> = timestamp.split(':').collect();
     match parts.len() {
@@ -55,7 +62,8 @@ pub fn parse_to_seconds(timestamp: &str) -> f64 {
 }
 
 /// [LIB-05] Formats a float of total seconds back into a sexagesimal string (HH:MM:SS or HH:MM:SS.mmm).
-// used by: trim-clip
+// used by: 
+// - trim-clip
 pub fn format_seconds(total_sec: f64) -> String {
     let h = (total_sec / 3600.0).floor() as u32;
     let m = ((total_sec % 3600.0) / 60.0).floor() as u32;
@@ -70,7 +78,9 @@ pub fn format_seconds(total_sec: f64) -> String {
 }
 
 /// [LIB-06] Checks if a specific encoder is available in the current FFmpeg installation.
-// used by: trim-clip
+// used by: 
+// - trim-clip
+// - trim-clip-to
 pub fn has_encoder(encoder_name: &str) -> bool {
     let output = Command::new("ffmpeg")
         .args(["-hide_banner", "-h", &format!("encoder={}", encoder_name)])
@@ -86,7 +96,8 @@ pub fn has_encoder(encoder_name: &str) -> bool {
 }
 
 /// [LIB-07] Subtracts the start time from the end time to calculate duration in seconds.
-// used by: trim-clip-to
+// used by: 
+// - trim-clip-to
 pub fn calculate_duration(start: &str, end: &str) -> f64 {
     let start_sec = parse_to_seconds(start);
     let end_sec = parse_to_seconds(end);
