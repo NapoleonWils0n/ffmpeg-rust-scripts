@@ -79,54 +79,57 @@ fn main() {
 
     // Format final filename string [Uses LIB-02 / MediaInfo fields]
     let out = args.outfile.clone().unwrap_or_else(|| {
-        format!("{}-[{}-{}].{}", info.stem, args.start, calculated_end, out_ext)
+        format!("{}-trimmed-[{}-{}].{}", info.stem, args.start, calculated_end, out_ext)
     });
+
+    // Use ./ prefix to ensure FFmpeg doesn't treat colons in the filename as a protocol
+    let ffmpeg_output_path = format!("./{}", out);
 
     // Match extension to trigger the right FFmpeg command
     match out_ext {
-        "mp4" => run_ffmpeg_video(&args, &out, aac_codec),
-        "webm" => run_ffmpeg_webm(&args, &out),
-        "m4a" => run_ffmpeg_audio(&args, &out, aac_codec, "mp4"),
-        "mp3" => run_ffmpeg_audio(&args, &out, "libmp3lame", "mp3"),
-        "wav" => run_ffmpeg_audio(&args, &out, "pcm_s16le", "wav"),
-        "ogg" => run_ffmpeg_audio(&args, &out, "libopus", "ogg"),
+        "mp4" => run_ffmpeg_video(&args, &ffmpeg_output_path, aac_codec),
+        "webm" => run_ffmpeg_webm(&args, &ffmpeg_output_path),
+        "m4a" => run_ffmpeg_audio(&args, &ffmpeg_output_path, aac_codec, "mp4"),
+        "mp3" => run_ffmpeg_audio(&args, &ffmpeg_output_path, "libmp3lame", "mp3"),
+        "wav" => run_ffmpeg_audio(&args, &ffmpeg_output_path, "pcm_s16le", "wav"),
+        "ogg" => run_ffmpeg_audio(&args, &ffmpeg_output_path, "libopus", "ogg"),
         _ => eprintln!("! {} is not a recognized media file", args.infile),
     }
 }
 
 /// FFmpeg command for MP4 video
 /// Encoders: Video = libx264, Audio = libfdk_aac or aac
-fn run_ffmpeg_video(args: &Args, out: &str, aac: &str) {
+fn run_ffmpeg_video(args: &Args, out_path: &str, aac: &str) {
     Command::new("ffmpeg")
         .args([
             "-hide_banner", "-stats", "-v", "panic",
             "-ss", &args.start, "-i", &args.infile, "-t", &args.duration,
             "-c:a", aac, "-c:v", "libx264", "-profile:v", "high",
-            "-pix_fmt", "yuv420p", "-movflags", "+faststart", "-f", "mp4", out
+            "-pix_fmt", "yuv420p", "-movflags", "+faststart", "-f", "mp4", out_path
         ])
         .status().expect("Failed to execute FFmpeg");
 }
 
 /// FFmpeg command for WebM video
 /// Encoders: Video = vp9, Audio = libopus
-fn run_ffmpeg_webm(args: &Args, out: &str) {
+fn run_ffmpeg_webm(args: &Args, out_path: &str) {
     Command::new("ffmpeg")
         .args([
             "-hide_banner", "-stats", "-v", "panic",
             "-ss", &args.start, "-i", &args.infile, "-t", &args.duration,
-            "-c:a", "libopus", "-c:v", "vp9", "-f", "webm", out
+            "-c:a", "libopus", "-c:v", "vp9", "-f", "webm", out_path
         ])
         .status().expect("Failed to execute FFmpeg");
 }
 
 /// FFmpeg command for Audio-only files
 /// Encoders: M4A = aac, MP3 = libmp3lame, WAV = pcm_s16le, OGG = libopus
-fn run_ffmpeg_audio(args: &Args, out: &str, codec: &str, format: &str) {
+fn run_ffmpeg_audio(args: &Args, out_path: &str, codec: &str, format: &str) {
     Command::new("ffmpeg")
         .args([
             "-hide_banner", "-stats", "-v", "panic",
             "-ss", &args.start, "-i", &args.infile, "-t", &args.duration,
-            "-c:a", codec, "-f", format, out
+            "-c:a", codec, "-f", format, out_path
         ])
         .status().expect("Failed to execute FFmpeg");
 }
