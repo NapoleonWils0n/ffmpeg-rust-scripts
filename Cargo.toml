@@ -12,4 +12,3 @@ path = "src/bin/trim-clip.rs"
 
 [dependencies]
 clap = { version = "4.0", features = ["derive"] }
-chrono = "0.4"
