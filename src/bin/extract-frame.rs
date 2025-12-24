@@ -14,7 +14,7 @@ use ffmpeg_scripts_rust::get_media_info;
     author,
     version,
     about = "extract a single frame from a video",
-    after_help = "Example:\n  extract-frame -s 00:00:15 -i input.mp4 -x 1280 -f jpg\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/\n\nNotes:\n  If width/height is omitted, original size is used.\n  If -o is not provided, defaults to: input-[timestamp].ext",
+    after_help = "Example:\n  extract-frame -s 00:00:15 -i input.mp4 -x 1280 -f jpg\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/\n\nNotes:\n  If width/height is omitted, original size is used.\n  If -o is not provided, defaults to: input-frame-[timestamp].ext",
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
 struct Args {
@@ -65,7 +65,7 @@ fn main() {
     
     // Updated naming convention: input-[00:00:05].jpg
     let out = args.outfile.clone().unwrap_or_else(|| {
-        format!("{}-[{}].{}", info.stem, args.start, ext)
+        format!("{}-frame-[{}].{}", info.stem, args.start, ext)
     });
 
     // Fix for FFmpeg protocol handling of colons in filenames

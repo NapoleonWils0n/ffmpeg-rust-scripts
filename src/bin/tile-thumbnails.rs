@@ -78,7 +78,7 @@ fn main() {
     // Generate output filename with time range: input-[start-end].ext
     let ext = args.format.to_lowercase();
     let out = args.outfile.clone().unwrap_or_else(|| {
-        format!("{}-[{}–{}].{}", info.stem, args.seek, end_time_str, ext)
+        format!("{}-contact-[{}–{}].{}", info.stem, args.seek, end_time_str, ext)
     });
     
     let remaining_duration = duration - seek_seconds;
