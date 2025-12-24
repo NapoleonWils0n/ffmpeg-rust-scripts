@@ -7,8 +7,24 @@ edition = "2024"
 path = "src/lib.rs"
 
 [[bin]]
+name = "contact-sheet"
+path = "src/bin/contact-sheet.rs"
+
+[[bin]]
+name = "extract-frame"
+path = "src/bin/extract-frame.rs"
+
+[[bin]]
 name = "trim-clip"
 path = "src/bin/trim-clip.rs"
+
+[[bin]]
+name = "trim-clip-to"
+path = "src/bin/trim-clip-to.rs"
+
+[[bin]]
+name = "sexagesimal-time"
+path = "src/bin/sexagesimal-time.rs"
 
 [dependencies]
 clap = { version = "4.0", features = ["derive"] }
