@@ -13,7 +13,7 @@ use ffmpeg_scripts_rust::{get_media_info, parse_to_seconds, get_video_duration, 
 #[command(
     author, version,
     about = "create an image with thumbnails from a video",
-    after_help = "Example:\n  contact-sheet -i input.mp4 -s 00:00:00.000 -w 160 -t 4x3 -j jpg\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/\n\nNotes:\n  -x on enables timestamps. -j sets image format (png/jpg).",
+    after_help = "Example:\n  contact-sheet -i input.mp4 -s 00:00:00.000 -w 160 -t 4x3 -j jpg\n\nDependencies:\n  ffmpeg, ffprobe: https://www.ffmpeg.org/\n\nNotes:\n  -x on enables timestamps. -j sets image format (png/jpg).",
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
 struct Args {
