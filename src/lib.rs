@@ -72,6 +72,7 @@ pub fn parse_to_seconds(timestamp: &str) -> f64 {
 // used by: 
 // - trim-clip
 // - sexagesimal-time
+// - tile-thumbnails
 pub fn format_seconds(total_sec: f64) -> String {
     let h = (total_sec / 3600.0).floor() as u32;
     let m = ((total_sec % 3600.0) / 60.0).floor() as u32;

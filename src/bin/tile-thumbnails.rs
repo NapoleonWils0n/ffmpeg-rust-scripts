@@ -1,14 +1,13 @@
 //==============================================================================
 // tile-thumbnails
 // Description: Create tiled thumbnails covering the video duration
-// References: [LIB-01], [LIB-03], [LIB-04], [LIB-08]
+// References: [LIB-01], [LIB-03], [LIB-04], [LIB-05], [LIB-08]
 //==============================================================================
 
 use clap::Parser;
 use std::process::Command;
 use std::path::Path;
-use chrono::Local;
-use ffmpeg_scripts_rust::{get_media_info, parse_to_seconds, get_video_duration}; 
+use ffmpeg_scripts_rust::{get_media_info, parse_to_seconds, get_video_duration, format_seconds}; 
 
 #[derive(Parser, Debug)]
 #[command(
@@ -72,16 +71,16 @@ fn main() {
     }
 
     let info = get_media_info(&args.infile);
-    
-    // Normalize format and generate unique filename
-    let ext = args.format.to_lowercase();
-    let now = Local::now().format("%Y-%m-%d-%H-%M-%S");
-    let out = args.outfile.clone().unwrap_or_else(|| {
-        format!("{}-tile-{}.{}", info.stem, now, ext)
-    });
-    
     let seek_seconds = parse_to_seconds(&args.seek);
     let duration = get_video_duration(&args.infile);
+    let end_time_str = format_seconds(duration);
+    
+    // Generate output filename with time range: input-[start-end].ext
+    let ext = args.format.to_lowercase();
+    let out = args.outfile.clone().unwrap_or_else(|| {
+        format!("{}-[{}–{}].{}", info.stem, args.seek, end_time_str, ext)
+    });
+    
     let remaining_duration = duration - seek_seconds;
 
     let parts: Vec<&str> = args.layout.split('x').collect();
@@ -96,9 +95,6 @@ fn main() {
     let mut vf = format!("fps={},scale={}:-2", fps_val, w_val);
     
     if args.timestamps.to_lowercase() == "on" {
-        // x=(w-tw)/2 centers the text horizontally
-        // y=h-th-10 places the text at the bottom with a 10px margin
-        // fontsize=h/10 ensures text size scales with thumbnail height
         vf.push_str(&format!(
             ",drawtext=text='%{{pts\\:hms}}':x=(w-tw)/2:y=h-th-10:fontsize=h/10:fontcolor={}:box=1:boxcolor={}@0.5",
             args.fontcolor, args.boxcolor
@@ -110,7 +106,7 @@ fn main() {
         args.layout, args.padding, args.margin, args.color
     ));
 
-    // Execute FFmpeg with high quality for jpg outputs
+    // Execute FFmpeg
     let status = Command::new("ffmpeg")
         .args([
             "-hide_banner", "-v", "error", "-stats",
