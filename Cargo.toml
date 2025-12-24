@@ -26,5 +26,10 @@ path = "src/bin/trim-clip-to.rs"
 name = "sexagesimal-time"
 path = "src/bin/sexagesimal-time.rs"
 
+[[bin]]
+name = "waveform"
+path = "src/bin/waveform.rs"
+
+
 [dependencies]
 clap = { version = "4.0", features = ["derive"] }
