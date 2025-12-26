@@ -1,10 +1,12 @@
 //==============================================================================
 // scopes
 // Description: Display video with professional scopes stacked below
+// References: [LIB-01] std::path::Path for file system validation
 //==============================================================================
 
 use clap::Parser;
 use std::process::Command;
+// [LIB-01] Import Path for reliable cross-platform file existence checks
 use std::path::Path;
 
 #[derive(Parser, Debug)]
@@ -45,6 +47,7 @@ struct Args {
 fn main() {
     let args = Args::parse();
 
+    // Use [LIB-01] to verify the input file exists before launching ffplay
     let path = Path::new(&args.infile);
     if !path.exists() {
         eprintln!("Error: Input file '{}' not found.", args.infile);
@@ -58,12 +61,12 @@ fn main() {
     };
 
     let filter = if args.histogram {
-        // Restored your original working histogram logic
+        // [FIX]: Restored original histogram logic
         "split=2[v1][v2];[v2]histogram=display_mode=parade[hist];[hist]scale=640:256,setsar=1[scope];[v1][scope]vstack"
     } else if args.overlay {
-        // Robust RGB Overlay:
-        // 1. Forced horizontal (d=0) and numeric graticule (g=1).
-        // 2. Manual plane extraction and lutrgb tinting to fix green/sideways/bw issues.
+        // [FIX]: Robust RGB Overlay using manual plane extraction.
+        // This avoids orientation and color parsing errors by building the 
+        // overlay trace from individual R, G, and B planes
         "split=2[v1][v2];\
          [v2]format=rgb24,extractplanes=r+g+b[r][g][b];\
          [r]waveform=d=0:g=1[rw];\
@@ -77,14 +80,13 @@ fn main() {
          [rgb_scope]scale=640:256,setsar=1[scope];\
          [v1][scope]vstack"
     } else if args.parade {
-  // FIXED RGB PARADE:
-        // 1. m=1: Numeric value for parade mode.
-        // 2. d=0: Force horizontal orientation.
-        // 3. g=1: Numeric graticule preset.
-        // 4. c=7: Bitmask to enable Red(1) + Green(2) + Blue(4) = 7.
+        // [FIX]: RGB Parade using numeric constants (m=1, c=7) for compatibility.
+        // d=0 ensures horizontal orientation
         "split=2[v1][v2];[v2]format=rgb24,waveform=m=1:d=0:g=1:c=7[p];[p]scale=640:256,setsar=1[scope];[v1][scope]vstack"
     } else if args.both {
-    // STACKED VIEW: Video on top, Parade in middle, Overlay at bottom
+        // [FIX]: Vertically stacked view of both Parade and Overlay.
+        // Reuses the stable c=7 parade logic and the manual extraction overlay logic
+        // for maximum reliability
         "split=2[v1][v2];[v2]split=2[v_p][v_o];\
          [v_p]format=rgb24,waveform=m=1:d=0:g=1:c=7,scale=640:256,setsar=1[p];\
          [v_o]format=rgb24,extractplanes=r+g+b[r][g][b];\
@@ -94,16 +96,14 @@ fn main() {
          [ov]scale=640:256,setsar=1[o];\
          [v1][p]vstack[top];[top][o]vstack"
     } else if args.waveform {
-        // FIXED LUMA WAVEFORM:
-        // 1. format=gray: Converts the video to grayscale to ensure a true luma (brightness) trace.
-        // 2. waveform: standard waveform filter.
-        // 3. d=0: force horizontal.
-        // 4. g=1: numeric graticules.
+        // [FIX]: Luma Waveform using format=gray to ensure a white brightness trace.
+        // d=0 and g=1 ensure proper orientation and graticules
         "split=2[v1][v2];[v2]format=gray,waveform=d=0:g=1[w];[w]scale=640:256,setsar=1[scope];[v1][scope]vstack"
     } else if args.vectorscope {
         // Restored your original working vectorscope logic
         "split=2[v1][v2];[v2]vectorscope=m=color:i=1.0[vsc];[vsc]scale=640:256,setsar=1[scope];[v1][scope]vstack"
     } else {
+        // Default to Histogram if no specific scope is selected
         "split=2[v1][v2];[v2]histogram=display_mode=parade[hist];[hist]scale=640:256,setsar=1[scope];[v1][scope]vstack"
     };
 
@@ -111,7 +111,7 @@ fn main() {
         .envs(std::env::vars())
         .args([
             "-hide_banner",
-            "-v", "fatal",
+            "-v", "fatal", // [FIX]: Use fatal log level to suppress Opus header errors
             "-window_title", &format!("Scopes: {}", args.infile),
             "-i", &input_path,
             "-vf", filter,
