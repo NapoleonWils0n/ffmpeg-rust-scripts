@@ -84,7 +84,15 @@ fn main() {
         // 4. c=7: Bitmask to enable Red(1) + Green(2) + Blue(4) = 7.
         "split=2[v1][v2];[v2]format=rgb24,waveform=m=1:d=0:g=1:c=7[p];[p]scale=640:256,setsar=1[scope];[v1][scope]vstack"
     } else if args.both {
-        "split=2[v1][v2];[v2]waveform=m=parade,waveform=m=overlay,format=rgba,colorchannelmixer=aa=0.5[scope];[v1][scope]overlay"
+    // STACKED VIEW: Video on top, Parade in middle, Overlay at bottom
+        "split=2[v1][v2];[v2]split=2[v_p][v_o];\
+         [v_p]format=rgb24,waveform=m=1:d=0:g=1:c=7,scale=640:256,setsar=1[p];\
+         [v_o]format=rgb24,extractplanes=r+g+b[r][g][b];\
+         [r]waveform=d=0:g=1[rw];[g]waveform=d=0:g=0[gw];[b]waveform=d=0:g=0[bw];\
+         [rw]lutrgb=g=0:b=0[rc];[gw]lutrgb=r=0:b=0[gc];[bw]lutrgb=r=0:g=0[bc];\
+         [rc][gc]blend=all_mode=addition[rg];[rg][bc]blend=all_mode=addition[ov];\
+         [ov]scale=640:256,setsar=1[o];\
+         [v1][p]vstack[top];[top][o]vstack"
     } else if args.waveform {
         "split=2[v1][v2];[v2]format=rgb24,waveform=d=0:g=1[w];[w]scale=640:256,setsar=1[scope];[v1][scope]vstack"
     } else if args.vectorscope {
@@ -98,7 +106,7 @@ fn main() {
         .envs(std::env::vars())
         .args([
             "-hide_banner",
-            "-v", "error",
+            "-v", "fatal",
             "-window_title", &format!("Scopes: {}", args.infile),
             "-i", &input_path,
             "-vf", filter,
