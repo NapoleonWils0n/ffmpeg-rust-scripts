@@ -30,6 +30,9 @@ path = "src/bin/sexagesimal-time.rs"
 name = "waveform"
 path = "src/bin/waveform.rs"
 
+[[bin]]
+name = "vid2gif"
+path = "src/bin/vid2gif.rs"
 
 [dependencies]
 clap = { version = "4.0", features = ["derive"] }

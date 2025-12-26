@@ -12,6 +12,7 @@ use std::process::Command; // Needed for [LIB-06]
 // - extract-frame
 // - contact-sheet
 // - waveform
+// - vid2gif
 use std::path::Path;
 
 /// [LIB-02] Represents basic metadata about a media file.
@@ -31,6 +32,7 @@ pub struct MediaInfo {
 // - extract-frame
 // - contact-sheet
 // - waveform
+// - vid2gif
 pub fn get_media_info(path_str: &str) -> MediaInfo {
     let path = Path::new(path_str);
     MediaInfo {
