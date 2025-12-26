@@ -42,5 +42,9 @@ path = "src/bin/webp.rs"
 name = "ebu-meter"
 path = "src/bin/ebu-meter.rs"
 
+[[bin]]
+name = "scopes"
+path = "src/bin/scopes.rs"
+
 [dependencies]
 clap = { version = "4.0", features = ["derive"] }

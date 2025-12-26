@@ -15,6 +15,7 @@ use std::process::Command; // Needed for [LIB-06]
 // - vid2gif
 // - webp
 // - ebu-meter
+// - scopes
 use std::path::Path;
 
 /// [LIB-02] Represents basic metadata about a media file.
