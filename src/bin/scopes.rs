@@ -94,7 +94,12 @@ fn main() {
          [ov]scale=640:256,setsar=1[o];\
          [v1][p]vstack[top];[top][o]vstack"
     } else if args.waveform {
-        "split=2[v1][v2];[v2]format=rgb24,waveform=d=0:g=1[w];[w]scale=640:256,setsar=1[scope];[v1][scope]vstack"
+        // FIXED LUMA WAVEFORM:
+        // 1. format=gray: Converts the video to grayscale to ensure a true luma (brightness) trace.
+        // 2. waveform: standard waveform filter.
+        // 3. d=0: force horizontal.
+        // 4. g=1: numeric graticules.
+        "split=2[v1][v2];[v2]format=gray,waveform=d=0:g=1[w];[w]scale=640:256,setsar=1[scope];[v1][scope]vstack"
     } else if args.vectorscope {
         // Restored your original working vectorscope logic
         "split=2[v1][v2];[v2]vectorscope=m=color:i=1.0[vsc];[vsc]scale=640:256,setsar=1[scope];[v1][scope]vstack"
