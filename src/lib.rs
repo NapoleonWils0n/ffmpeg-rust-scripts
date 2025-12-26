@@ -13,6 +13,7 @@ use std::process::Command; // Needed for [LIB-06]
 // - contact-sheet
 // - waveform
 // - vid2gif
+// - webp
 use std::path::Path;
 
 /// [LIB-02] Represents basic metadata about a media file.
@@ -33,6 +34,7 @@ pub struct MediaInfo {
 // - contact-sheet
 // - waveform
 // - vid2gif
+// - webp
 pub fn get_media_info(path_str: &str) -> MediaInfo {
     let path = Path::new(path_str);
     MediaInfo {

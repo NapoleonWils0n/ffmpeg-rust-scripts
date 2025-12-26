@@ -1,6 +1,6 @@
 //==============================================================================
-// vid2gif
-// Description: Convert video to high-quality GIF using a custom color palette
+// webp
+// Description: Convert video to an animated WebP file
 // References: [LIB-01], [LIB-03]
 //==============================================================================
 
@@ -15,8 +15,8 @@ use ffmpeg_scripts_rust::get_media_info;
 #[command(
     author,
     version,
-    about = "convert video to high quality gif",
-    after_help = "Example:\n  vid2gif -i input.mp4 -w 480 -f 15 -o animation.gif\n\nDependencies:\n  ffmpeg, ffprobe: https://www.ffmpeg.org/",
+    about = "convert video to an animated webp",
+    after_help = "Example:\n  webp -i input.mp4 -w 480 -f 15 -o animation.webp\n\nDependencies:\n  ffmpeg, ffprobe: https://www.ffmpeg.org/",
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
 struct Args {
@@ -55,18 +55,14 @@ fn main() {
 
     let info = get_media_info(&args.infile);
     let out = args.outfile.clone().unwrap_or_else(|| {
-        format!("{}.gif", info.stem)
+        format!("{}.webp", info.stem)
     });
 
-    // FFmpeg filter chain:
-    // 1. Scale and set FPS
-    // 2. Split stream: one for palettegen, one for paletteuse
-    // 3. Generate palette from the first stream
-    // 4. Use palette on the second stream
-    let filter = format!(
-        "fps={},scale={}:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse",
-        args.fps, args.width
-    );
+    // Fix for FFmpeg protocol handling
+    let out_path = format!("./{}", out);
+
+    // Filter: set fps, scale width while keeping aspect ratio (-1)
+    let filter = format!("fps={},scale={}:-1:flags=lanczos", args.fps, args.width);
 
     let status = Command::new("ffmpeg")
         .args([
@@ -75,8 +71,10 @@ fn main() {
             "-stats",
             "-i", &args.infile,
             "-vf", &filter,
-            "-y", // Overwrite output without asking
-            &out,
+            // loop 0 = infinite loop
+            "-loop", "0",
+            "-y",
+            &out_path,
         ])
         .status()
         .expect("Failed to execute FFmpeg");
