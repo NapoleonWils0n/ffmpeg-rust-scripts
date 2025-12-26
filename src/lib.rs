@@ -14,6 +14,7 @@ use std::process::Command; // Needed for [LIB-06]
 // - waveform
 // - vid2gif
 // - webp
+// - ebu-meter
 use std::path::Path;
 
 /// [LIB-02] Represents basic metadata about a media file.
