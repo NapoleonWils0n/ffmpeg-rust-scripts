@@ -7,6 +7,7 @@
 use std::process::Command; // Needed for [LIB-06]
 /// [LIB-01] Path used to check if the file exists before it is processed by FFmpeg
 // used by: 
+// - chapter-csv
 // - chapter-extract
 // - contact-sheet
 // - ebu-meter
@@ -57,6 +58,7 @@ pub fn get_media_info(path_str: &str) -> MediaInfo {
 
 /// [LIB-04] Converts sexagesimal timestamps (HH:MM:SS.mmm or MM:SS) or plain second strings into total seconds.
 // used by: 
+// - chapter-csv
 // - contact-sheet
 // - sexagesimal-time
 // - trim-clip

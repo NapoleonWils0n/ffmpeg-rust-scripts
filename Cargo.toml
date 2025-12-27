@@ -11,6 +11,10 @@ name = "chapter-extract"
 path = "src/bin/chapter-extract.rs"
 
 [[bin]]
+name = "chapter-csv"
+path = "src/bin/chapter-csv.rs"
+
+[[bin]]
 name = "contact-sheet"
 path = "src/bin/contact-sheet.rs"
 
