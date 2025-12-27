@@ -15,6 +15,14 @@ name = "extract-frame"
 path = "src/bin/extract-frame.rs"
 
 [[bin]]
+name = "scopes"
+path = "src/bin/scopes.rs"
+
+[[bin]]
+name = "sexagesimal-time"
+path = "src/bin/sexagesimal-time.rs"
+
+[[bin]]
 name = "trim-clip"
 path = "src/bin/trim-clip.rs"
 
@@ -23,28 +31,24 @@ name = "trim-clip-to"
 path = "src/bin/trim-clip-to.rs"
 
 [[bin]]
-name = "sexagesimal-time"
-path = "src/bin/sexagesimal-time.rs"
+name = "trim-remote-clip"
+path = "src/bin/trim-remote-clip.rs"
 
 [[bin]]
 name = "waveform"
 path = "src/bin/waveform.rs"
 
 [[bin]]
-name = "vid2gif"
-path = "src/bin/vid2gif.rs"
-
-[[bin]]
 name = "webp"
 path = "src/bin/webp.rs"
 
 [[bin]]
-name = "ebu-meter"
-path = "src/bin/ebu-meter.rs"
+name = "vid2gif"
+path = "src/bin/vid2gif.rs"
 
 [[bin]]
-name = "scopes"
-path = "src/bin/scopes.rs"
+name = "ebu-meter"
+path = "src/bin/ebu-meter.rs"
 
 [dependencies]
 clap = { version = "4.0", features = ["derive"] }
