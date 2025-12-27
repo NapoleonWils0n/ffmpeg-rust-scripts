@@ -21,6 +21,8 @@ use ffmpeg_scripts_rust::{format_seconds_ms, get_media_info};
                   Dependencies:\n  \
                   ffmpeg, ffprobe: https://www.ffmpeg.org/",
 )]
+// [FIX]: Disable automatic flags to prevent the "Argument names must be unique" panic
+#[clap(disable_version_flag = true, disable_help_flag = true)]
 struct Args {
     /// Input video or audio file
     #[arg(short = 'i', required = true)]
@@ -29,6 +31,14 @@ struct Args {
     /// Output CSV file (optional, defaults to input_name.csv)
     #[arg(short = 'o')]
     outfile: Option<String>,
+
+    /// Print help
+    #[arg(short = 'h', long = "help", action = clap::ArgAction::Help)]
+    help: Option<bool>,
+
+    /// Print version
+    #[arg(short = 'v', long = "version", action = clap::ArgAction::Version)]
+    version: Option<bool>,
 }
 
 fn main() {
@@ -48,7 +58,6 @@ fn main() {
     });
 
     // 3. Run ffprobe to get chapters in CSV format
-    // ffprobe columns: chapter,id,timebase,start,start_time,end,end_time,tag:title
     let output = Command::new("ffprobe")
         .args([
             "-v", "error",
@@ -69,17 +78,11 @@ fn main() {
 
     for line in stdout.lines() {
         let parts: Vec<&str> = line.split(',').collect();
-        
-        // ffprobe CSV format for chapters usually contains at least 8 fields.
-        // Field indices: 4 is start_time, 6 is end_time, 7+ is title tags.
         if parts.len() >= 8 {
             let start_raw: f64 = parts[4].parse().unwrap_or(0.0);
             let end_raw: f64 = parts[6].parse().unwrap_or(0.0);
-            
-            // Rejoin remaining parts in case the title itself contains commas
             let title = parts[7..].join(",").replace("\"", "");
 
-            // Format to sexagesimal with millisecond precision [LIB-09]
             let start = format_seconds_ms(start_raw);
             let end = format_seconds_ms(end_raw);
 
