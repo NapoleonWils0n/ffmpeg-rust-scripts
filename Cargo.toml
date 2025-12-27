@@ -7,6 +7,10 @@ edition = "2024"
 path = "src/lib.rs"
 
 [[bin]]
+name = "chapter-extract"
+path = "src/bin/chapter-extract.rs"
+
+[[bin]]
 name = "contact-sheet"
 path = "src/bin/contact-sheet.rs"
 

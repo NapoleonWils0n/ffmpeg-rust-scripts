@@ -7,6 +7,7 @@
 use std::process::Command; // Needed for [LIB-06]
 /// [LIB-01] Path used to check if the file exists before it is processed by FFmpeg
 // used by: 
+// - chapter-extract
 // - contact-sheet
 // - ebu-meter
 // - extract-frame
@@ -141,4 +142,16 @@ pub fn get_video_duration(path: &str) -> f64 {
         .trim()
         .parse::<f64>()
         .unwrap_or(0.0)
+}
+
+/// [LIB-09] Formats total seconds into HH:MM:SS.mmm (with mandatory milliseconds)
+// used by: 
+// - chapter-extract
+pub fn format_seconds_ms(total_sec: f64) -> String {
+    let h = (total_sec / 3600.0) as u32;
+    let m = ((total_sec % 3600.0) / 60.0) as u32;
+    let s = (total_sec % 60.0) as u32;
+    let ms = ((total_sec.fract()) * 1000.0).round() as u32;
+
+    format!("{:02}:{:02}:{:02}.{:03}", h, m, s, ms)
 }
