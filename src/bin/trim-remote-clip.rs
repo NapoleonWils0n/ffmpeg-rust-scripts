@@ -12,7 +12,12 @@ use std::process::Command;
     author,
     version,
     about = "Trim remote video clips with millisecond accuracy",
-    after_help = "Example:\n  trim-remote-clip -s 00:01:00 -e 00:01:30 -i 'https://www.youtube.com/watch?v=...' -o clip.mp4",
+    after_help = "Example:\n  \
+                  trim-remote-clip -s 00:01:00 -e 00:01:30 -i 'https://www.youtube.com/watch?v=...' -o clip.mp4\n\n  \
+                  This will create a 30 second clip starting at one minute and ending at one minute 30 seconds.\n\n\
+                  Dependencies:\n  \
+                  ffmpeg, ffplay: https://www.ffmpeg.org/\n\n  \
+                  yt-dlp: https://github.com/yt-dlp/yt-dlp",
 )]
 struct Args {
     /// Start time (HH:MM:SS.mmm)
