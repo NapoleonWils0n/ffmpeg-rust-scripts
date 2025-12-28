@@ -24,6 +24,7 @@ use std::process::Command; // Needed for [LIB-06]
 // - waveform
 // - webp
 // - vid2gif
+// - zoompan
 use std::path::Path;
 
 /// [LIB-02] Represents basic metadata about a media file.
@@ -50,6 +51,7 @@ pub struct MediaInfo {
 // - waveform
 // - webp
 // - vid2gif
+// - zoompan
 pub fn get_media_info(path_str: &str) -> MediaInfo {
     let path = Path::new(path_str);
     MediaInfo {
@@ -74,6 +76,7 @@ pub fn get_media_info(path_str: &str) -> MediaInfo {
 // - pan-scan
 // - sexagesimal-time
 // - trim-clip
+// - zoompan
 pub fn parse_to_seconds(timestamp: &str) -> f64 {
     let parts: Vec<&str> = timestamp.split(':').collect();
     match parts.len() {
@@ -163,6 +166,7 @@ pub fn get_video_duration(path: &str) -> f64 {
 // - chapter-extract
 // - img2video
 // - pan-scan
+// - zoompan
 pub fn format_seconds_ms(total_sec: f64) -> String {
     let h = (total_sec / 3600.0) as u32;
     let m = ((total_sec % 3600.0) / 60.0) as u32;
