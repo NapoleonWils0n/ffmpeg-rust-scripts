@@ -15,6 +15,7 @@ use std::process::Command; // Needed for [LIB-06]
 // - ebu-meter
 // - extract-frame
 // - img2video
+// - pan-scan
 // - scopes
 // - subtitle-add
 // - trim-clip
@@ -42,6 +43,7 @@ pub struct MediaInfo {
 // - contact-sheet
 // - extract-frame
 // - img2video
+// - pan-scan
 // - subtitle-add
 // - trim-clip
 // - trim-clip-to
@@ -69,6 +71,7 @@ pub fn get_media_info(path_str: &str) -> MediaInfo {
 // - chapter-csv
 // - contact-sheet
 // - img2video
+// - pan-scan
 // - sexagesimal-time
 // - trim-clip
 pub fn parse_to_seconds(timestamp: &str) -> f64 {
@@ -159,6 +162,7 @@ pub fn get_video_duration(path: &str) -> f64 {
 // used by: 
 // - chapter-extract
 // - img2video
+// - pan-scan
 pub fn format_seconds_ms(total_sec: f64) -> String {
     let h = (total_sec / 3600.0) as u32;
     let m = ((total_sec % 3600.0) / 60.0) as u32;
