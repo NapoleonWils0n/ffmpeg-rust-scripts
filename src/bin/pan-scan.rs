@@ -75,7 +75,6 @@ fn main() {
         format!("{}-pan-{}-[{}].mp4", info.stem, pos_full, timestamp)
     });
 
-    // Corrected filter strings: commas used to separate filters in the chain
     let filter = match args.position.as_str() {
         "l" => format!("scale=w=-2:h=3*{},crop=w=3*{}/1.05:h=3*{}/1.05:x=t*(in_w-out_w)/{}:y=(in_h-out_h)/2,scale=w={}:h={},setsar=1", ih, iw, ih, dur, iw, ih),
         "r" => format!("scale=w=-2:h=3*{},crop=w=3*{}/1.05:h=3*{}/1.05:x=(in_w-out_w)-t*(in_w-out_w)/{}:y=(in_h-out_h)/2,scale=w={}:h={},setsar=1", ih, iw, ih, dur, iw, ih),
@@ -90,7 +89,8 @@ fn main() {
     let status = Command::new("ffmpeg")
         .args([
             "-hide_banner",
-            "-loglevel", "error",
+            "-loglevel", "error", // Suppress errors and banner
+            "-stats",             // Enable real-time progress
             "-r", "30",
             "-loop", "1",
             "-i", &args.infile,
