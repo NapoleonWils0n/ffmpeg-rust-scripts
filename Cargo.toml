@@ -7,6 +7,10 @@ edition = "2024"
 path = "src/lib.rs"
 
 [[bin]]
+name = "audio-silence"
+path = "src/bin/audio-silence.rs"
+
+[[bin]]
 name = "chapter-add"
 path = "src/bin/chapter-add.rs"
 
