@@ -14,6 +14,7 @@ use std::process::Command; // Needed for [LIB-06]
 // - ebu-meter
 // - extract-frame
 // - scopes
+// - subtitle-add
 // - trim-clip
 // - trim-clip-to
 // - trim-remote-clip
@@ -37,6 +38,7 @@ pub struct MediaInfo {
 // - chapter-add
 // - contact-sheet
 // - extract-frame
+// - subtitle-add
 // - trim-clip
 // - trim-clip-to
 // - waveform

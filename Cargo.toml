@@ -35,6 +35,10 @@ name = "sexagesimal-time"
 path = "src/bin/sexagesimal-time.rs"
 
 [[bin]]
+name = "subtitle-add"
+path = "src/bin/subtitle-add.rs"
+
+[[bin]]
 name = "trim-clip"
 path = "src/bin/trim-clip.rs"
 
