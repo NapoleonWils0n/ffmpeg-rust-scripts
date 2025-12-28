@@ -31,6 +31,10 @@ name = "extract-frame"
 path = "src/bin/extract-frame.rs"
 
 [[bin]]
+name = "img2video"
+path = "src/bin/img2video.rs"
+
+[[bin]]
 name = "scopes"
 path = "src/bin/scopes.rs"
 
