@@ -14,6 +14,7 @@ use std::process::Command; // Needed for [LIB-06]
 // - contact-sheet
 // - ebu-meter
 // - extract-frame
+// - fade-clip
 // - img2video
 // - pan-scan
 // - scopes
@@ -43,6 +44,7 @@ pub struct MediaInfo {
 // - chapter-add
 // - contact-sheet
 // - extract-frame
+// - fade-clip
 // - img2video
 // - pan-scan
 // - subtitle-add
@@ -72,6 +74,7 @@ pub fn get_media_info(path_str: &str) -> MediaInfo {
 // used by: 
 // - chapter-csv
 // - contact-sheet
+// - fade-clip
 // - img2video
 // - pan-scan
 // - sexagesimal-time
@@ -164,6 +167,7 @@ pub fn get_video_duration(path: &str) -> f64 {
 /// [LIB-09] Formats total seconds into HH:MM:SS.mmm (with mandatory milliseconds)
 // used by: 
 // - chapter-extract
+// - fade-clip
 // - img2video
 // - pan-scan
 // - zoompan

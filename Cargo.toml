@@ -35,6 +35,10 @@ name = "extract-frame"
 path = "src/bin/extract-frame.rs"
 
 [[bin]]
+name = "fade-clip"
+path = "src/bin/fade-clip.rs"
+
+[[bin]]
 name = "img2video"
 path = "src/bin/img2video.rs"
 
