@@ -47,6 +47,10 @@ name = "overlay-clip"
 path = "src/bin/overlay-clip.rs"
 
 [[bin]]
+name = "overlay-pip"
+path = "src/bin/overlay-pip.rs"
+
+[[bin]]
 name = "pan-scan"
 path = "src/bin/pan-scan.rs"
 
