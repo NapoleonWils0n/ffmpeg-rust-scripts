@@ -16,6 +16,7 @@ use std::process::Command; // Needed for [LIB-06]
 // - extract-frame
 // - fade-clip
 // - img2video
+// - overlay-clip
 // - pan-scan
 // - scopes
 // - subtitle-add
@@ -48,6 +49,7 @@ pub struct MediaInfo {
 // - fade-clip
 // - img2video
 // - pan-scan
+// - overlay-clip
 // - subtitle-add
 // - trim-clip
 // - trim-clip-to
@@ -78,6 +80,7 @@ pub fn get_media_info(path_str: &str) -> MediaInfo {
 // - contact-sheet
 // - fade-clip
 // - img2video
+// - overlay-clip
 // - pan-scan
 // - sexagesimal-time
 // - trim-clip
@@ -173,6 +176,7 @@ pub fn get_video_duration(path: &str) -> f64 {
 // - chapter-extract
 // - fade-clip
 // - img2video
+// - overlay-clip
 // - pan-scan
 // - xfade
 // - zoompan

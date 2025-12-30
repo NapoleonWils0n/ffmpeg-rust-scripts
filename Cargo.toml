@@ -43,6 +43,10 @@ name = "img2video"
 path = "src/bin/img2video.rs"
 
 [[bin]]
+name = "overlay-clip"
+path = "src/bin/overlay-clip.rs"
+
+[[bin]]
 name = "pan-scan"
 path = "src/bin/pan-scan.rs"
 
