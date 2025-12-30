@@ -83,6 +83,10 @@ name = "vid2gif"
 path = "src/bin/vid2gif.rs"
 
 [[bin]]
+name = "xfade"
+path = "src/bin/xfade.rs"
+
+[[bin]]
 name = "zoompan"
 path = "src/bin/zoompan.rs"
 

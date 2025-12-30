@@ -25,6 +25,7 @@ use std::process::Command; // Needed for [LIB-06]
 // - waveform
 // - webp
 // - vid2gif
+// - xfade
 // - zoompan
 use std::path::Path;
 
@@ -53,6 +54,7 @@ pub struct MediaInfo {
 // - waveform
 // - webp
 // - vid2gif
+// - xfade
 // - zoompan
 pub fn get_media_info(path_str: &str) -> MediaInfo {
     let path = Path::new(path_str);
@@ -79,6 +81,7 @@ pub fn get_media_info(path_str: &str) -> MediaInfo {
 // - pan-scan
 // - sexagesimal-time
 // - trim-clip
+// - xfade
 // - zoompan
 pub fn parse_to_seconds(timestamp: &str) -> f64 {
     let parts: Vec<&str> = timestamp.split(':').collect();
@@ -147,6 +150,7 @@ pub fn calculate_duration(start: &str, end: &str) -> f64 {
 /// [LIB-08] Uses ffprobe to get the total duration of a video file in seconds.
 // used by: 
 // - contact-sheet
+// - xfade
 pub fn get_video_duration(path: &str) -> f64 {
     let output = Command::new("ffprobe")
         .args([
@@ -170,6 +174,7 @@ pub fn get_video_duration(path: &str) -> f64 {
 // - fade-clip
 // - img2video
 // - pan-scan
+// - xfade
 // - zoompan
 pub fn format_seconds_ms(total_sec: f64) -> String {
     let h = (total_sec / 3600.0) as u32;
