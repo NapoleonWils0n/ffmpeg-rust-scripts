@@ -11,7 +11,13 @@ use std::path::Path;
 use ffmpeg_scripts_rust::{get_media_info, format_seconds_ms, parse_to_seconds};
 
 #[derive(Parser, Debug)]
-#[command(author, version, about = "Pan scan over an image using scale/crop math")]
+#[command(
+    author, 
+    version, 
+    about = "Pan scan over an image using scale/crop math",
+    after_help = "Example:\n  pan-scan -i photo.jpg -d 00:00:10 -p l\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/",
+    override_usage = "pan-scan [OPTIONS] -i <INFILE> -d <DURATION> -p <POSITION>"
+)]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
 struct Args {
     /// Input image file
@@ -33,6 +39,10 @@ struct Args {
     /// Print help
     #[arg(short = 'h', long = "help", action = clap::ArgAction::Help)]
     help: Option<bool>,
+
+    /// Print version
+    #[arg(short = 'v', long = "version", action = clap::ArgAction::Version)]
+    version: Option<bool>,
 }
 
 fn get_image_dimensions(path: &str) -> (u32, u32) {
