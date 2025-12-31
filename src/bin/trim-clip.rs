@@ -12,11 +12,11 @@ use ffmpeg_scripts_rust::{get_media_info, parse_to_seconds, format_seconds, has_
 
 #[derive(Parser, Debug)]
 #[command(
-    author, 
-    version, 
-    // Use 'about' for the header and 'after_help' to match your shell script's layout
+    author,
+    version,
     about = "trim video or audio clips with millisecond accuracy\nhttps://trac.ffmpeg.org/wiki/Seeking",
     after_help = "Example:\n  trim-clip -s 00:00:30 -i input -t 00:00:30 -o output\n\n  This will create a 30 second clip starting at 30 seconds and ending at 60 seconds.\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/\n\nNotes:\n  If -o is not provided, defaults to: input-name-[start-end].(mp4|webm|aac|mp3|wav|ogg)",
+    override_usage = "trim-clip [OPTIONS] -s <START> -i <INFILE> -t <DURATION>"
 )]
 // This attribute tells clap to use -v for version and -h for help manually
 #[clap(disable_version_flag = true, disable_help_flag = true)]
@@ -38,11 +38,11 @@ struct Args {
     outfile: Option<String>,
 
     /// Print help
-    #[arg(short = 'h', action = clap::ArgAction::Help)]
+    #[arg(short = 'h', long = "help", action = clap::ArgAction::Help)]
     help: Option<bool>,
 
     /// Print version
-    #[arg(short = 'v', action = clap::ArgAction::Version)]
+    #[arg(short = 'v', long = "version", action = clap::ArgAction::Version)]
     version: Option<bool>,
 }
 
