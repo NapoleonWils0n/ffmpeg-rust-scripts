@@ -15,6 +15,7 @@ use ffmpeg_scripts_rust::{get_media_info, get_video_duration, format_seconds_ms,
     author, 
     version, 
     about = "Detect scene changes in a video",
+    after_help = "Example:\n  scene-detect -i input.mp4 -t 0.4 -f sec\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/",
     override_usage = "scene-detect -i <INPUT> [OPTIONS]"
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
@@ -31,7 +32,7 @@ struct Args {
     #[arg(short = 'e')]
     end: Option<String>,
 
-    /// Detection threshold (0.1 to 0.9) [default: 0.3]
+    /// Detection threshold (0.1 to 0.9)
     #[arg(short = 't', default_value = "0.3")]
     threshold: String,
 
@@ -43,13 +44,13 @@ struct Args {
     #[arg(short = 'o')]
     outfile: Option<String>,
 
-    /// Print version
-    #[arg(short = 'v', long = "version", action = clap::ArgAction::Version)]
-    version: Option<bool>,
-
     /// Print help
     #[arg(short = 'h', long = "help", action = clap::ArgAction::Help)]
     help: Option<bool>,
+
+    /// Print version
+    #[arg(short = 'v', long = "version", action = clap::ArgAction::Version)]
+    version: Option<bool>,
 }
 
 fn main() {
