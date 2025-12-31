@@ -15,6 +15,7 @@ use ffmpeg_scripts_rust::{parse_to_seconds, format_seconds_ms};
     author, 
     version, 
     about = "Create ffmpeg cutlist from scene detection timestamps",
+    after_help = "Example:\n  scene-time -i timestamps.txt -o cutlist.txt\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/",
     override_usage = "scene-time -i <INPUT> [OPTIONS]"
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
@@ -27,13 +28,13 @@ struct Args {
     #[arg(short = 'o')]
     outfile: Option<String>,
 
-    /// Print version
-    #[arg(short = 'v', long = "version", action = clap::ArgAction::Version)]
-    version: Option<bool>,
-
     /// Print help
     #[arg(short = 'h', long = "help", action = clap::ArgAction::Help)]
     help: Option<bool>,
+
+    /// Print version
+    #[arg(short = 'v', long = "version", action = clap::ArgAction::Version)]
+    version: Option<bool>,
 }
 
 fn main() {
