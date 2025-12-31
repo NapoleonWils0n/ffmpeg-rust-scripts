@@ -14,7 +14,8 @@ use ffmpeg_scripts_rust::{get_media_info, parse_to_seconds, format_seconds_ms};
     author, 
     version, 
     about = "Overlay one video clip on top of another video clip",
-    override_usage = "overlay-clip -a <INPUT> -b <OVERLAY> -p <POSITION> [-o <OUTPUT>]"
+    after_help = "Example:\n  overlay-clip -a background.mp4 -b logo.mp4 -p 00:00:05\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/",
+    override_usage = "overlay-clip -a <INPUT> -b <OVERLAY> -p <POSITION> [OPTIONS]"
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
 struct Args {
@@ -34,13 +35,13 @@ struct Args {
     #[arg(short = 'o')]
     outfile: Option<String>,
 
-    /// Print version
-    #[arg(short = 'v', long = "version", action = clap::ArgAction::Version)]
-    version: Option<bool>,
-
     /// Print help
     #[arg(short = 'h', long = "help", action = clap::ArgAction::Help)]
     help: Option<bool>,
+
+    /// Print version
+    #[arg(short = 'v', long = "version", action = clap::ArgAction::Version)]
+    version: Option<bool>,
 }
 
 fn main() {
