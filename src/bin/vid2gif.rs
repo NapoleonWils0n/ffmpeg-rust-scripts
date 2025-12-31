@@ -37,11 +37,11 @@ struct Args {
     outfile: Option<String>,
 
     /// Print help
-    #[arg(short = 'h', action = clap::ArgAction::Help)]
+    #[arg(short = 'h', long = "help", action = clap::ArgAction::Help)]
     help: Option<bool>,
 
     /// Print version
-    #[arg(short = 'v', action = clap::ArgAction::Version)]
+    #[arg(short = 'v', long = "version", action = clap::ArgAction::Version)]
     version: Option<bool>,
 }
 
