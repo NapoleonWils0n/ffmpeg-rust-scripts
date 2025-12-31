@@ -10,7 +10,13 @@ use std::path::Path;
 use ffmpeg_scripts_rust::{get_media_info, format_seconds_ms, parse_to_seconds};
 
 #[derive(Parser, Debug)]
-#[command(author, version, about = "Ken Burns style zoom animation")]
+#[command(
+    author, 
+    version, 
+    about = "Ken Burns style zoom animation",
+    after_help = "Example:\n  zoompan -i image.jpg -d 10 -z in -p c\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/",
+    override_usage = "zoompan [OPTIONS] -i <INPUT> -d <DURATION>"
+)]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
 struct Args {
     /// Input image (png, jpg, jpeg)
@@ -36,6 +42,10 @@ struct Args {
     /// Print help
     #[arg(short = 'h', long = "help", action = clap::ArgAction::Help)]
     help: Option<bool>,
+
+    /// Print version
+    #[arg(short = 'v', long = "version", action = clap::ArgAction::Version)]
+    version: Option<bool>,
 }
 
 fn get_image_height(path: &str) -> u32 {
