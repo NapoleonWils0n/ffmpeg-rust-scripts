@@ -16,6 +16,7 @@ use ffmpeg_scripts_rust::{get_media_info, parse_to_seconds, format_seconds_ms};
     author, 
     version, 
     about = "Split a video into individual scenes based on a cutlist",
+    after_help = "Example:\n  scene-cut -i input.mp4 -c cutlist.txt\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/",
     override_usage = "scene-cut -i <INPUT> -c <CUTLIST> [OPTIONS]"
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
@@ -28,13 +29,13 @@ struct Args {
     #[arg(short = 'c', required = true)]
     cutlist: String,
 
-    /// Print version
-    #[arg(short = 'v', long = "version", action = clap::ArgAction::Version)]
-    version: Option<bool>,
-
     /// Print help
     #[arg(short = 'h', long = "help", action = clap::ArgAction::Help)]
     help: Option<bool>,
+
+    /// Print version
+    #[arg(short = 'v', long = "version", action = clap::ArgAction::Version)]
+    version: Option<bool>,
 }
 
 fn main() {
