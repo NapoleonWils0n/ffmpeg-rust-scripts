@@ -83,6 +83,10 @@ name = "trim-remote-clip"
 path = "src/bin/trim-remote-clip.rs"
 
 [[bin]]
+name = "scene-cut"
+path = "src/bin/scene-cut.rs"
+
+[[bin]]
 name = "scene-detect"
 path = "src/bin/scene-detect.rs"
 
