@@ -10,7 +10,13 @@ use std::path::Path;
 use ffmpeg_scripts_rust::{get_media_info, format_seconds_ms, parse_to_seconds};
 
 #[derive(Parser, Debug)]
-#[command(author, version, about = "Fade in a video and audio clip")]
+#[command(
+    author, 
+    version, 
+    about = "Fade in a video and audio clip",
+    after_help = "Example:\n  fade-clip -i input.mp4 -d 00:00:02\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/",
+    override_usage = "fade-clip [OPTIONS] -i <INFILE>"
+)]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
 struct Args {
     /// Input video file
@@ -25,13 +31,13 @@ struct Args {
     #[arg(short = 'o')]
     outfile: Option<String>,
 
-    /// Print version
-    #[arg(short = 'v', long = "version", action = clap::ArgAction::Version)]
-    version: Option<bool>,
-
     /// Print help
     #[arg(short = 'h', long = "help", action = clap::ArgAction::Help)]
     help: Option<bool>,
+
+    /// Print version
+    #[arg(short = 'v', long = "version", action = clap::ArgAction::Version)]
+    version: Option<bool>,
 }
 
 fn main() {
