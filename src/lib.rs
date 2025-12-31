@@ -24,6 +24,7 @@ use std::process::Command; // Needed for [LIB-06]
 // - subtitle-add
 // - trim-clip
 // - trim-clip-to
+// - trim-short
 // - trim-remote-clip
 // - waveform
 // - webp
@@ -57,6 +58,7 @@ pub struct MediaInfo {
 // - subtitle-add
 // - trim-clip
 // - trim-clip-to
+// - trim-short
 // - waveform
 // - webp
 // - vid2gif
@@ -89,6 +91,7 @@ pub fn get_media_info(path_str: &str) -> MediaInfo {
 // - pan-scan
 // - sexagesimal-time
 // - trim-clip
+// - trim-short
 // - xfade
 // - zoompan
 pub fn parse_to_seconds(timestamp: &str) -> f64 {
@@ -186,6 +189,7 @@ pub fn get_video_duration(path: &str) -> f64 {
 // - overlay-clip
 // - overlay-pip
 // - pan-scan
+// - trim-short
 // - xfade
 // - zoompan
 pub fn format_seconds_ms(total_sec: f64) -> String {
@@ -195,4 +199,11 @@ pub fn format_seconds_ms(total_sec: f64) -> String {
     let ms = ((total_sec.fract()) * 1000.0).round() as u32;
 
     format!("{:02}:{:02}:{:02}.{:03}", h, m, s, ms)
+}
+
+/// [LIB-11] Formats a time string for use in a filename by replacing colons with dashes.
+// used by: 
+// - trim-short
+pub fn format_time_for_filename(time_str: &str) -> String {
+    time_str.replace(':', "-")
 }

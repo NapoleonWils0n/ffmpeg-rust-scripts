@@ -83,6 +83,10 @@ name = "trim-remote-clip"
 path = "src/bin/trim-remote-clip.rs"
 
 [[bin]]
+name = "trim-short"
+path = "src/bin/trim-short.rs"
+
+[[bin]]
 name = "waveform"
 path = "src/bin/waveform.rs"
 
