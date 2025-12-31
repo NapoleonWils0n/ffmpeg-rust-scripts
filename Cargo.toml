@@ -91,6 +91,10 @@ name = "scene-detect"
 path = "src/bin/scene-detect.rs"
 
 [[bin]]
+name = "scene-images"
+path = "src/bin/scene-images.rs"
+
+[[bin]]
 name = "trim-short"
 path = "src/bin/trim-short.rs"
 
