@@ -23,6 +23,10 @@ name = "chapter-extract"
 path = "src/bin/chapter-extract.rs"
 
 [[bin]]
+name = "combine-clips"
+path = "src/bin/combine-clips.rs"
+
+[[bin]]
 name = "contact-sheet"
 path = "src/bin/contact-sheet.rs"
 

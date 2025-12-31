@@ -11,6 +11,7 @@ use std::process::Command; // Needed for [LIB-06]
 // - chapter-add
 // - chapter-csv
 // - chapter-extract
+// - combine-clips
 // - contact-sheet
 // - ebu-meter
 // - extract-frame
@@ -45,6 +46,7 @@ pub struct MediaInfo {
 // used by: 
 // - audio-silence
 // - chapter-add
+// - combine-clips
 // - contact-sheet
 // - extract-frame
 // - fade-clip
@@ -155,6 +157,7 @@ pub fn calculate_duration(start: &str, end: &str) -> f64 {
 
 /// [LIB-08] Uses ffprobe to get the total duration of a video file in seconds.
 // used by: 
+// - combine-clips
 // - contact-sheet
 // - xfade
 pub fn get_video_duration(path: &str) -> f64 {
@@ -177,6 +180,7 @@ pub fn get_video_duration(path: &str) -> f64 {
 /// [LIB-09] Formats total seconds into HH:MM:SS.mmm (with mandatory milliseconds)
 // used by: 
 // - chapter-extract
+// - combine-clips
 // - fade-clip
 // - img2video
 // - overlay-clip
