@@ -14,6 +14,7 @@ use ffmpeg_scripts_rust::{get_media_info, parse_to_seconds, format_seconds_ms};
     author, 
     version, 
     about = "Create a Picture-in-Picture (PiP) overlay",
+    after_help = "Example:\n  overlay-pip -a background.mp4 -b pip.mp4 -p 00:00:05 -x br -m 30 -k 4 -c white\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/",
     override_usage = "overlay-pip -a <INPUT> -b <PIP_VIDEO> -p <POSITION> [OPTIONS]"
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
@@ -58,13 +59,13 @@ struct Args {
     #[arg(short = 'o')]
     outfile: Option<String>,
 
-    /// Print version
-    #[arg(short = 'v', long = "version", action = clap::ArgAction::Version)]
-    version: Option<bool>,
-
     /// Print help
     #[arg(short = 'h', long = "help", action = clap::ArgAction::Help)]
     help: Option<bool>,
+
+    /// Print version
+    #[arg(short = 'v', long = "version", action = clap::ArgAction::Version)]
+    version: Option<bool>,
 }
 
 fn main() {
