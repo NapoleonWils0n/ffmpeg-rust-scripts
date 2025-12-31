@@ -6,48 +6,58 @@
 
 use clap::Parser;
 use std::process::Command;
-// [LIB-01] Import Path for reliable cross-platform file existence checks
 use std::path::Path;
 
 #[derive(Parser, Debug)]
 #[command(
-    author,
-    version,
-    about = "display video scopes",
-    after_help = "Example:\n  scopes -i input.mkv\n\nDependencies:\n  ffplay: https://www.ffmpeg.org/",
+    author, 
+    version, 
+    about = "Display video with professional scopes stacked below",
+    after_help = "Example:\n  scopes -w input.mp4\n\nDependencies:\n  ffplay: https://www.ffmpeg.org/",
+    override_usage = "scopes [OPTIONS] <INPUT>"
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
 struct Args {
-    /// histogram
+    /// Display Histogram
     #[arg(short = 'i', action = clap::ArgAction::SetTrue)]
     histogram: bool,
-    /// rgb overlay
+
+    /// Display RGB Overlay
     #[arg(short = 'o', action = clap::ArgAction::SetTrue)]
     overlay: bool,
-    /// rgb parade
+
+    /// Display RGB Parade
     #[arg(short = 'p', action = clap::ArgAction::SetTrue)]
     parade: bool,
-    /// rgb overlay and parade
+
+    /// Display RGB Overlay and Parade
     #[arg(short = 's', action = clap::ArgAction::SetTrue)]
     both: bool,
-    /// waveform
+
+    /// Display Waveform
     #[arg(short = 'w', action = clap::ArgAction::SetTrue)]
     waveform: bool,
-    /// vectorscope
+
+    /// Display Vectorscope
     #[arg(short = 'v', action = clap::ArgAction::SetTrue)]
     vectorscope: bool,
-    /// input file
-    #[arg(required = true)]
+
+    /// Input file
+    #[arg(required = true, value_name = "INPUT")]
     infile: String,
+
     /// Print help
-    #[arg(short = 'h', action = clap::ArgAction::Help)]
+    #[arg(short = 'h', long = "help", action = clap::ArgAction::Help)]
     help: Option<bool>,
+
+    /// Print version
+    #[arg(short = 'V', long = "version", action = clap::ArgAction::Version)]
+    version: Option<bool>,
 }
 
 fn main() {
     let args = Args::parse();
 
-    // Use [LIB-01] to verify the input file exists before launching ffplay
     let path = Path::new(&args.infile);
     if !path.exists() {
         eprintln!("Error: Input file '{}' not found.", args.infile);
@@ -60,58 +70,47 @@ fn main() {
         format!("./{}", args.infile)
     };
 
+    // [FIX]: scale2ref is used to force the scope [v2] to match the width of the video [v1].
+    // This solves the 'width 768 does not match 1920' error by ensuring the bottom 
+    // input to vstack is always scaled to the top input's width.
     let filter = if args.histogram {
-        // [FIX]: Restored original histogram logic
-        "split=2[v1][v2];[v2]histogram=display_mode=parade[hist];[hist]scale=640:256,setsar=1[scope];[v1][scope]vstack"
+        "split=2[v1][v2];[v2]histogram=display_mode=parade[h];[h][v1]scale2ref=iw:256[scope][main];[main][scope]vstack"
     } else if args.overlay {
-        // [FIX]: Robust RGB Overlay using manual plane extraction.
-        // This avoids orientation and color parsing errors by building the 
-        // overlay trace from individual R, G, and B planes
-        "split=2[v1][v2];\
-         [v2]format=rgb24,extractplanes=r+g+b[r][g][b];\
-         [r]waveform=d=0:g=1[rw];\
-         [g]waveform=d=0:g=0[gw];\
-         [b]waveform=d=0:g=0[bw];\
-         [rw]lutrgb=g=0:b=0[rc];\
-         [gw]lutrgb=r=0:b=0[gc];\
-         [bw]lutrgb=r=0:g=0[bc];\
-         [rc][gc]blend=all_mode=addition[rg];\
-         [rg][bc]blend=all_mode=addition[rgb_scope];\
-         [rgb_scope]scale=640:256,setsar=1[scope];\
-         [v1][scope]vstack"
-    } else if args.parade {
-        // [FIX]: RGB Parade using numeric constants (m=1, c=7) for compatibility.
-        // d=0 ensures horizontal orientation
-        "split=2[v1][v2];[v2]format=rgb24,waveform=m=1:d=0:g=1:c=7[p];[p]scale=640:256,setsar=1[scope];[v1][scope]vstack"
-    } else if args.both {
-        // [FIX]: Vertically stacked view of both Parade and Overlay.
-        // Reuses the stable c=7 parade logic and the manual extraction overlay logic
-        // for maximum reliability
-        "split=2[v1][v2];[v2]split=2[v_p][v_o];\
-         [v_p]format=rgb24,waveform=m=1:d=0:g=1:c=7,scale=640:256,setsar=1[p];\
-         [v_o]format=rgb24,extractplanes=r+g+b[r][g][b];\
+        "split=2[v1][v2];[v2]format=rgb24,extractplanes=r+g+b[r][g][b];\
          [r]waveform=d=0:g=1[rw];[g]waveform=d=0:g=0[gw];[b]waveform=d=0:g=0[bw];\
          [rw]lutrgb=g=0:b=0[rc];[gw]lutrgb=r=0:b=0[gc];[bw]lutrgb=r=0:g=0[bc];\
          [rc][gc]blend=all_mode=addition[rg];[rg][bc]blend=all_mode=addition[ov];\
-         [ov]scale=640:256,setsar=1[o];\
-         [v1][p]vstack[top];[top][o]vstack"
+         [ov][v1]scale2ref=iw:256[scope][main];[main][scope]vstack"
+    } else if args.parade {
+        "split=2[v1][v2];[v2]format=rgb24,waveform=m=1:d=0:g=1:c=7[p];\
+         [p][v1]scale2ref=iw:256[scope][main];[main][scope]vstack"
+    } else if args.both {
+        "split=2[v1][v2];[v2]split=2[v_p][v_o];\
+         [v_p]format=rgb24,waveform=m=1:d=0:g=1:c=7[p_raw];\
+         [v_o]format=rgb24,extractplanes=r+g+b[r][g][b];\
+         [r]waveform=d=0:g=1[rw];[g]waveform=d=0:g=0[gw];[b]waveform=d=0:g=0[bw];\
+         [rw]lutrgb=g=0:b=0[rc];[gw]lutrgb=r=0:b=0[gc];[bw]lutrgb=r=0:g=0[bc];\
+         [rc][gc]blend=all_mode=addition[rg];[rg][bc]blend=all_mode=addition[o_raw];\
+         [p_raw][v1]scale2ref=iw:256[p][v_ref1];\
+         [o_raw][v_ref1]scale2ref=iw:256[o][main];\
+         [main][p]vstack[top];[top][o]vstack"
     } else if args.waveform {
-        // [FIX]: Luma Waveform using format=gray to ensure a white brightness trace.
-        // d=0 and g=1 ensure proper orientation and graticules
-        "split=2[v1][v2];[v2]format=gray,waveform=d=0:g=1[w];[w]scale=640:256,setsar=1[scope];[v1][scope]vstack"
+        "split=2[v1][v2];[v2]format=gray,waveform=d=0:g=1[w];\
+         [w][v1]scale2ref=iw:256[scope][main];[main][scope]vstack"
     } else if args.vectorscope {
-        // Restored your original working vectorscope logic
-        "split=2[v1][v2];[v2]vectorscope=m=color:i=1.0[vsc];[vsc]scale=640:256,setsar=1[scope];[v1][scope]vstack"
+        "split=2[v1][v2];[v2]vectorscope=m=color:i=1.0[vsc];\
+         [vsc][v1]scale2ref=iw:256[scope][main];[main][scope]vstack"
     } else {
-        // Default to Histogram if no specific scope is selected
-        "split=2[v1][v2];[v2]histogram=display_mode=parade[hist];[hist]scale=640:256,setsar=1[scope];[v1][scope]vstack"
+        // Default to Histogram
+        "split=2[v1][v2];[v2]histogram=display_mode=parade[h];\
+         [h][v1]scale2ref=iw:256[scope][main];[main][scope]vstack"
     };
 
     let status = Command::new("ffplay")
-        .envs(std::env::vars())
+        .envs(std::env::vars()) // Inherit Wayland/SDL variables
         .args([
             "-hide_banner",
-            "-v", "fatal", // [FIX]: Use fatal log level to suppress Opus header errors
+            "-loglevel", "error",
             "-window_title", &format!("Scopes: {}", args.infile),
             "-i", &input_path,
             "-vf", filter,
