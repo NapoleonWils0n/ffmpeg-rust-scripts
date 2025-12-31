@@ -14,6 +14,7 @@ use ffmpeg_scripts_rust::{calculate_duration, format_seconds};
     version,
     about = "calculate duration from start and end timecodes",
     after_help = "Example:\n  sexagesimal-time -s 00:01:00 -e 00:01:45.500\n\n  Output:\n  00:00:45.500\n\nDependencies:\n  None (Pure Rust math)",
+    override_usage = "sexagesimal-time -s <START> -e <END>"
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
 struct Args {
@@ -26,11 +27,11 @@ struct Args {
     end: String,
 
     /// Print help
-    #[arg(short = 'h', action = clap::ArgAction::Help)]
+    #[arg(short = 'h', long = "help", action = clap::ArgAction::Help)]
     help: Option<bool>,
 
     /// Print version
-    #[arg(short = 'v', action = clap::ArgAction::Version)]
+    #[arg(short = 'v', long = "version", action = clap::ArgAction::Version)]
     version: Option<bool>,
 }
 
