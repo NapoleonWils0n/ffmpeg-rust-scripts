@@ -1,13 +1,14 @@
 //==============================================================================
 // trim-short
 // Description: Create vertical 9:16 clips for YouTube Shorts or TikTok
-// References: [LIB-01], [LIB-03], [LIB-04], [LIB-09]
+// References: [LIB-01], [LIB-03], [LIB-04], [LIB-09], [LIB-10]
 //==============================================================================
 
 use clap::Parser;
 use std::process::Command;
 use std::path::Path;
-use ffmpeg_scripts_rust::{get_media_info, parse_to_seconds, format_seconds_ms};
+use std::env;
+use ffmpeg_scripts_rust::{get_media_info, parse_to_seconds, format_seconds_ms, format_time_for_filename};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -59,27 +60,28 @@ fn main() {
     let start_sec = parse_to_seconds(&args.start);
     let end_sec = match &args.end {
         Some(t) => parse_to_seconds(t),
-        None => start_sec + 60.0, // Default to 60 seconds
+        None => start_sec + 60.0,
     };
     
-    // 2. CROP & SCALE LOGIC (9:16 Aspect Ratio)
+    // 2. CROP & SCALE LOGIC
     let x_percent: f64 = args.x_pos.parse().unwrap_or(50.0);
-    // Use an FFmpeg expression to safely calculate the X offset
     let x_offset = format!("(iw-ow)*({}/100)", x_percent);
-    
-    // Filter chain: Crop to 9:16, Scale to 1080x1920, and force Square Pixel Aspect Ratio
     let filter = format!("crop=ih*(9/16):ih:{}:0,scale=1080:1920,setsar=1/1", x_offset);
 
     // 3. NAMING LOGIC
     let info = get_media_info(&args.infile);
+    let start_ts_raw = format_seconds_ms(start_sec).split('.').next().unwrap_or("00:00:00").to_string();
+    let end_ts_raw = format_seconds_ms(end_sec).split('.').next().unwrap_or("00:00:00").to_string();
     
-    // Extract HH:MM:SS without milliseconds for the filename
-    let start_ts = format_seconds_ms(start_sec).split('.').next().unwrap_or("00:00:00").to_string();
-    let end_ts = format_seconds_ms(end_sec).split('.').next().unwrap_or("00:00:00").to_string();
+    let start_ts = format_time_for_filename(&start_ts_raw);
+    let end_ts = format_time_for_filename(&end_ts_raw);
     
-    // Append -x- value to filename if it's not the default 50
+    // Check if -x was explicitly passed in the arguments
+    let x_was_specified = env::args().any(|arg| arg == "-x");
+
+    // Logic: Append -x- value if it's NOT 50 OR if the user explicitly requested -x 50
     let mut name_suffix = format!("-short-[{}-{}]", start_ts, end_ts);
-    if args.x_pos != "50" {
+    if args.x_pos != "50" || x_was_specified {
         name_suffix = format!("-x-{}-short-[{}-{}]", args.x_pos, start_ts, end_ts);
     }
 
@@ -96,7 +98,7 @@ fn main() {
             "-i", &args.infile,
             "-vf", &filter,
             "-c:v", "libx264", "-crf", "18", "-preset", "veryfast",
-            "-pix_fmt", "yuv420p", // Standard mobile compatibility
+            "-pix_fmt", "yuv420p", 
             "-c:a", "aac", "-b:a", "192k",
             "-y", &final_output,
         ])

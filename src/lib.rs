@@ -20,6 +20,7 @@ use std::process::Command; // Needed for [LIB-06]
 // - overlay-clip
 // - overlay-pip
 // - pan-scan
+// - scene-detect
 // - scopes
 // - subtitle-add
 // - trim-clip
@@ -55,6 +56,7 @@ pub struct MediaInfo {
 // - pan-scan
 // - overlay-clip
 // - overlay-pip
+// - scene-detect
 // - subtitle-add
 // - trim-clip
 // - trim-clip-to
@@ -162,6 +164,7 @@ pub fn calculate_duration(start: &str, end: &str) -> f64 {
 // used by: 
 // - combine-clips
 // - contact-sheet
+// - scene-detect
 // - xfade
 pub fn get_video_duration(path: &str) -> f64 {
     let output = Command::new("ffprobe")
@@ -189,6 +192,7 @@ pub fn get_video_duration(path: &str) -> f64 {
 // - overlay-clip
 // - overlay-pip
 // - pan-scan
+// - scene-detect
 // - trim-short
 // - xfade
 // - zoompan
@@ -201,8 +205,9 @@ pub fn format_seconds_ms(total_sec: f64) -> String {
     format!("{:02}:{:02}:{:02}.{:03}", h, m, s, ms)
 }
 
-/// [LIB-11] Formats a time string for use in a filename by replacing colons with dashes.
+/// [LIB-10] Formats a time string for use in a filename by replacing colons with dashes.
 // used by: 
+// - scene-detect
 // - trim-short
 pub fn format_time_for_filename(time_str: &str) -> String {
     time_str.replace(':', "-")
