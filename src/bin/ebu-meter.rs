@@ -11,10 +11,11 @@ use std::path::Path;
 
 #[derive(Parser, Debug)]
 #[command(
-    author,
-    version,
+    author, 
+    version, 
     about = "display EBU R128 audio loudness meter",
     after_help = "Example:\n  ebu-meter -i input.mp4 -t -16\n\nDependencies:\n  ffplay: https://www.ffmpeg.org/",
+    override_usage = "ebu-meter [OPTIONS] -i <INFILE>"
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
 struct Args {
@@ -27,11 +28,11 @@ struct Args {
     target: String,
 
     /// Print help
-    #[arg(short = 'h', action = clap::ArgAction::Help)]
+    #[arg(short = 'h', long = "help", action = clap::ArgAction::Help)]
     help: Option<bool>,
 
     /// Print version
-    #[arg(short = 'v', action = clap::ArgAction::Version)]
+    #[arg(short = 'v', long = "version", action = clap::ArgAction::Version)]
     version: Option<bool>,
 }
 
