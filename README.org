@@ -71,6 +71,17 @@ Result: This will place your binaries in ./result/bin/ instead of target/release
 
 Advantage: This ensures the build is 100% reproducible and isolated from your local system state.
 
+Instead of a simple mv (which might fail if the source is the read-only Nix store), you should copy them. When you copy a binary out of the Nix store, it keeps its "rpath" (it still knows exactly where to find its library dependencies in /nix/store), so it will continue to work perfectly.
+
+Run this command to copy all 32 binaries at once:
+
+#+begin_src sh
+cp ./result/bin/* ~/bin/
+#+end_src
+
+A Note on Updates
+Keep in mind that if you change your Rust code and run nix build again, the binaries in ~/bin will not update automatically. You'll just need to run that cp command again to "deploy" your latest versions.
+
 **** cargo
 
 Binaries go to: target/release/
