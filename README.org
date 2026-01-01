@@ -102,6 +102,52 @@ Binaries go to: target/x86_64-unknown-linux-musl/release/
 cargo build --release --target x86_64-unknown-linux-musl
 #+end_src
 
+list the binaries
+
+#+begin_src sh
+ls -l target/x86_64-unknown-linux-musl/release/
+#+end_src
+
+How to verify they are truly "Static"
+One of the main reasons to use musl is to ensure the binary has no external dependencies. You can verify this by running the ldd command on one of the new binaries:
+
+#+begin_src sh
+ldd target/x86_64-unknown-linux-musl/release/scene-detect-auto
+#+end_src
+
+Expected Output: It should say statically linked or not a dynamic executable. This confirms that a user on Ubuntu, Debian, or Arch can just download that file and run it immediately (provided they have ffmpeg installed).
+
+copy the linux binaries
+
+fd command
+
+#+begin_src sh
+fd -t f -d 1 -E "*.*" . target/x86_64-unknown-linux-musl/release/ -x cp {} ~/Desktop/build/linux/
+#+end_src
+
+#+begin_example
+-t f: Look for files only.
+
+-d 1: Depth 1 (don't go into subfolders like deps or build).
+
+-E "*.*": Exclude any file with a dot in the name (skips .d, .rlib, etc.).
+
+.: The search pattern (matches everything not excluded).
+
+target/.../release/: The directory to search in.
+
+-x cp {} ...: Execute the copy command for every search result.
+#+end_example
+
+Why fd is better here:
+The ! -name "*.*" logic in standard find can sometimes be finicky depending on the shell, but fd's -E (exclude) flag is very robust. This will cleanly grab your 32 binaries and ignore all the compiler junk.
+
+Use this find command. It is the safest way to ensure you only get the executable binaries and nothing else
+
+#+begin_src sh
+find target/x86_64-unknown-linux-musl/release/ -maxdepth 1 -type f ! -name "*.*" -exec cp {} ~/Desktop/build/linux/ \;
+#+end_src
+
 *** unix
 
 install rust
@@ -129,21 +175,6 @@ Binaries go to: target/x86_64-pc-windows-gnu/release/
 #+begin_src sh
 cargo build --release --target x86_64-pc-windows-gnu
 #+end_src
-
-list the binaries
-
-#+begin_src sh
-ls -l target/x86_64-unknown-linux-musl/release/
-#+end_src
-
-How to verify they are truly "Static"
-One of the main reasons to use musl is to ensure the binary has no external dependencies. You can verify this by running the ldd command on one of the new binaries:
-
-#+begin_src sh
-ldd target/x86_64-unknown-linux-musl/release/scene-detect-auto
-#+end_src
-
-Expected Output: It should say statically linked or not a dynamic executable. This confirms that a user on Ubuntu, Debian, or Arch can just download that file and run it immediately (provided they have ffmpeg installed).
 
 *** mac
 
