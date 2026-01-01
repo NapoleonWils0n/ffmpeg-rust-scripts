@@ -504,19 +504,19 @@ Options:
   -f <FONTCOLOR>   [default: white]
   -b <BOXCOLOR>    [default: black]
   -x <TIMESTAMPS>  [default: off]
-  -j <FORMAT>      image format (png or jpg) [default: png]
+  -j <FORMAT>      image format (jpg or png) [default: jpg]
   -o <OUTFILE>
   -h, --help
   -v, --version
 
 Example:
-  contact-sheet -i input.mp4 -s 00:00:00.000 -w 160 -t 4x3 -j jpg
+  contact-sheet -i input.mp4 -s 00:00:00.000 -w 160 -t 4x3 -j png
 
 Dependencies:
   ffmpeg, ffprobe: https://www.ffmpeg.org/
 
 Notes:
-  -x on enables timestamps. -j sets image format (png/jpg).
+  -x on enables timestamps. -j sets image format (jpg/png).
 #+end_example
 
 *** contact-sheet batch process
@@ -1572,19 +1572,20 @@ waveform -h
 #+begin_example
 create a waveform image from a video or audio file
 
-Usage: waveform [OPTIONS] -i <INFILE>
+Usage: waveform [OPTIONS] -i <INPUT>
 
 Options:
-  -i <INFILE>    input file
+  -i <INPUT>     input file
   -c <COLOR>     waveform color [default: white]
-  -w <WIDTH>     width [default: 1280]
-  -e <HEIGHT>    height [default: 420]
-  -o <OUTFILE>   output file
+  -w <WIDTH>     output width [default: 1280]
+  -e <HEIGHT>    output height [default: 420]
+  -j <FORMAT>    image format jpg or png [default: jpg]
+  -o <OUTFILE>   output file optional
   -h, --help     Print help
   -v, --version  Print version
 
 Example:
-  waveform -i input.mp4 -c orange -o waveform.png
+  waveform -i input.mp4 -c orange -j jpg
 
 Colors: https://ffmpeg.org/ffmpeg-utils.html#Color
 
