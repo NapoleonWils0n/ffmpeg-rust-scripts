@@ -13,7 +13,7 @@ use ffmpeg_scripts_rust::{get_media_info, parse_to_seconds, get_video_duration, 
 #[command(
     author, version,
     about = "create an image with thumbnails from a video",
-    after_help = "Example:\n  contact-sheet -i input.mp4 -s 00:00:00.000 -w 160 -t 4x3 -j jpg\n\nDependencies:\n  ffmpeg, ffprobe: https://www.ffmpeg.org/\n\nNotes:\n  -x on enables timestamps. -j sets image format (png/jpg).",
+    after_help = "Example:\n  contact-sheet -i input.mp4 -s 00:00:00.000 -w 160 -t 4x3 -j png\n\nDependencies:\n  ffmpeg, ffprobe: https://www.ffmpeg.org/\n\nNotes:\n  -x on enables timestamps. -j sets image format (jpg/png).",
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
 struct Args {
@@ -47,8 +47,8 @@ struct Args {
     #[arg(short = 'x', default_value = "off")]
     timestamps: String,
 
-    /// image format (png or jpg)
-    #[arg(short = 'j', default_value = "png")]
+    /// image format (jpg or png)
+    #[arg(short = 'j', default_value = "jpg")]
     format: String,
 
     #[arg(short = 'o')]
@@ -96,7 +96,7 @@ fn main() {
     
     if args.timestamps.to_lowercase() == "on" {
         vf.push_str(&format!(
-            ",drawtext=text='%{{pts\\:hms}}':x=(w-tw)/2:y=h-th-10:fontsize=h/10:fontcolor={}:box=1:boxcolor={}@0.5",
+            ",drawtext=text='%{{pts\\:hms}}':x=(w-tw)/2:y=h-th-10:fontsize=h/10:fontcolor={}:box=1:boxcolor={}@1:boxborderw=4",
             args.fontcolor, args.boxcolor
         ));
     }
@@ -121,7 +121,7 @@ fn main() {
         .status()
         .expect("Failed to execute FFmpeg");
 
-    if status.success() {
-        println!("Tile thumbnails created: {}", out);
-    }
+    if !status.success() {
+            std::process::exit(1);
+        }
 }
