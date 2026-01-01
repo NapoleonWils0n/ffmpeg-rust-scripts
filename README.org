@@ -176,6 +176,12 @@ Binaries go to: target/x86_64-pc-windows-gnu/release/
 cargo build --release --target x86_64-pc-windows-gnu
 #+end_src
 
+To copy the Windows builds
+
+#+begin_src sh
+fd -t f -e exe . target/x86_64-pc-windows-gnu/release/ -x cp {} ~/Desktop/build/windows/
+#+end_src
+
 *** mac
 
 For a Mac user, the process is very similar to Linux and arguably easier than Windows.
