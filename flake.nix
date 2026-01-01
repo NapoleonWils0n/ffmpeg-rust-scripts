@@ -20,7 +20,7 @@
 
       rustToolchain = pkgs.rust-bin.stable.latest.default.override {
         extensions = [ "rust-src" "rust-analyzer" ];
-        targets = [ "x86_64-unknown-linux-musl" ]; 
+        targets = [ "x86_64-unknown-linux-musl" "x86_64-pc-windows-gnu" ]; 
       };
 
       naerskLib = (naersk.lib.${system}.override {
@@ -29,10 +29,17 @@
       });
     in {
       devShells.default = pkgs.mkShell {
-        buildInputs = [ rustToolchain ];
+        # ADD MINGW TO THE SHELL FOR LINKING
+        buildInputs = [ 
+          rustToolchain 
+          pkgs.pkgsCross.mingwW64.stdenv.cc 
+        ];
 
+
+        # Tell Cargo which linker to use for Windows
         shellHook = ''
           export RUST_SRC_PATH="${rustToolchain}/lib/rustlib/src/rust/library"
+          export CARGO_TARGET_X86_64_PC_WINDOWS_GNU_LINKER="x86_64-w64-mingw32-gcc"
         '';
       };
 

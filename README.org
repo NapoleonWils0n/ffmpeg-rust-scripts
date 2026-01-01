@@ -36,6 +36,56 @@ A collection of ffmpeg Rust scripts for basic editing tasks
 + [[#webp][webp]]
 + [[#xfade][xfade]]
 + [[#zoompan][zoompan]]
+** build
+*** nixos
+
+Binaries go to: target/release/
+
+#+begin_src sh
+cargo build --release
+#+end_src
+
+*** linux
+
+Binaries go to: target/x86_64-unknown-linux-musl/release/
+
+#+begin_src sh
+cargo build --release --target x86_64-unknown-linux-musl
+#+end_src
+
+*** unix
+
+install rust
+
+#+begin_src sh
+sudo pkg install rust
+#+end_src
+
+clone the repo
+
+use cargo to build the repo
+
+#+begin_src sh
+cargo build --release
+#+end_src
+
+*** windows
+
+Binaries go to: target/x86_64-pc-windows-gnu/release/
+
+#+begin_src sh
+cargo build --release --target x86_64-pc-windows-gnu
+#+end_src
+
+*** mac
+
+For a Mac user, the process is very similar to Linux and arguably easier than Windows.
+
+Setup: They just need the Xcode Command Line Tools (usually already installed if they do any dev work, or triggered by typing gcc or git in the terminal) and Rustup.
+
+Performance: Modern Apple Silicon (M1/M2/M3) chips compile Rust incredibly fast.
+
+Dependencies: Since you mentioned your users must provide their own ffmpeg, yt-dlp, etc., Mac users usually manage these easily via Homebrew (brew install ffmpeg yt-dlp).
 
 ** scripts install
 *** create a bin directory
