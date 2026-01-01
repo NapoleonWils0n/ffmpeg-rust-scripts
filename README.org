@@ -92,6 +92,10 @@ cargo build --release
 
 *** linux
 
+#+begin_src sh
+nix develop
+#+end_src
+
 Binaries go to: target/x86_64-unknown-linux-musl/release/
 
 #+begin_src sh
@@ -115,6 +119,10 @@ cargo build --release
 #+end_src
 
 *** windows
+
+#+begin_src sh
+nix develop
+#+end_src
 
 Binaries go to: target/x86_64-pc-windows-gnu/release/
 
