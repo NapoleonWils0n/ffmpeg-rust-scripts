@@ -40,6 +40,23 @@ A collection of ffmpeg Rust scripts for basic editing tasks
 *** nixos
 **** nix build
 
+#+begin_example
+.gitignore
+#+end_example
+
+#+begin_src sh
+git add .gitignore
+#+end_src
+
+#+begin_src sh
+git commit -m "update .gitignore to exclude build results"
+#+end_src
+
+#+begin_src sh
+/target
+/result*
+#+end_src
+
 Your note is correct for a standard cargo build. However, since you are using Nix, you have a second "pure" option:
 
 note you do not need to be inside the nix develop shell to run nix build
