@@ -130,6 +130,21 @@ Binaries go to: target/x86_64-pc-windows-gnu/release/
 cargo build --release --target x86_64-pc-windows-gnu
 #+end_src
 
+list the binaries
+
+#+begin_src sh
+ls -l target/x86_64-unknown-linux-musl/release/
+#+end_src
+
+How to verify they are truly "Static"
+One of the main reasons to use musl is to ensure the binary has no external dependencies. You can verify this by running the ldd command on one of the new binaries:
+
+#+begin_src sh
+ldd target/x86_64-unknown-linux-musl/release/scene-detect-auto
+#+end_src
+
+Expected Output: It should say statically linked or not a dynamic executable. This confirms that a user on Ubuntu, Debian, or Arch can just download that file and run it immediately (provided they have ffmpeg installed).
+
 *** mac
 
 For a Mac user, the process is very similar to Linux and arguably easier than Windows.
