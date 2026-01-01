@@ -91,6 +91,10 @@ name = "scene-cut"
 path = "src/bin/scene-cut.rs"
 
 [[bin]]
+name = "scene-cut-to"
+path = "src/bin/scene-cut-to.rs"
+
+[[bin]]
 name = "scene-detect"
 path = "src/bin/scene-detect.rs"
 

@@ -22,6 +22,7 @@ use std::process::Command; // Needed for [LIB-06]
 // - overlay-pip
 // - pan-scan
 // - scene-cut
+// - scene-cut-to
 // - scene-detect
 // - scene-images
 // - scopes
@@ -61,6 +62,7 @@ pub struct MediaInfo {
 // - overlay-clip
 // - overlay-pip
 // - scene-cut
+// - scene-cut-to
 // - scene-detect
 // - scene-images
 // - subtitle-add
@@ -145,6 +147,7 @@ pub fn format_seconds(total_sec: f64) -> String {
 // used by: 
 // - trim-clip
 // - trim-clip-to
+// - scene-cut-to
 pub fn has_encoder(encoder_name: &str) -> bool {
     let output = Command::new("ffmpeg")
         .args(["-hide_banner", "-h", &format!("encoder={}", encoder_name)])
