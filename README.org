@@ -394,10 +394,23 @@ clip-time -h
 #+end_src
 
 #+begin_example
-clip-time -i input -o output
+convert a list of timestamps into an ffmpeg cutlist
 
--i input
--o output
+Usage: clip-time [OPTIONS] -i <INPUT>
+
+Options:
+  -i <INPUT>     input file containing timestamps
+  -o <OUTFILE>   output file for cutlist
+  -h, --help     Print help
+  -v, --version  Print version
+
+Example:
+  clip-time -i timestamps.txt -o cutlist.txt
+
+Input format:
+  00:00:00
+  00:00:10
+  (Pairs represent start and end of a clip)
 #+end_example
 
 ** combine-clips
