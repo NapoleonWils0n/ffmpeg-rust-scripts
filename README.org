@@ -36,13 +36,27 @@ A collection of ffmpeg Rust scripts for basic editing tasks
 + [[#webp][webp]]
 + [[#xfade][xfade]]
 + [[#zoompan][zoompan]]
-** build
+
+** nixos build binaries
 *** nixos
-**** nix build
+**** create the build directory
+
+create the build directory to copy the binaries into
+
+#+begin_src sh
+mkdir -p ~/Desktop/build/{nixos,linux,windows}
+#+end_src
+
+**** gitignore
 
 #+begin_example
 .gitignore
 #+end_example
+
+#+begin_src sh
+/target
+/result*
+#+end_src
 
 #+begin_src sh
 git add .gitignore
@@ -52,16 +66,9 @@ git add .gitignore
 git commit -m "update .gitignore to exclude build results"
 #+end_src
 
-#+begin_src sh
-/target
-/result*
-#+end_src
-
-Your note is correct for a standard cargo build. However, since you are using Nix, you have a second "pure" option:
+**** nixos build
 
 note you do not need to be inside the nix develop shell to run nix build
-
-Command:
 
 #+begin_src sh
 nix build
@@ -82,15 +89,7 @@ cp ./result/bin/* ~/bin/
 A Note on Updates
 Keep in mind that if you change your Rust code and run nix build again, the binaries in ~/bin will not update automatically. You'll just need to run that cp command again to "deploy" your latest versions.
 
-**** cargo
-
-Binaries go to: target/release/
-
-#+begin_src sh
-cargo build --release
-#+end_src
-
-*** linux
+*** linux nixos build
 
 #+begin_src sh
 nix develop
@@ -148,23 +147,7 @@ Use this find command. It is the safest way to ensure you only get the executabl
 find target/x86_64-unknown-linux-musl/release/ -maxdepth 1 -type f ! -name "*.*" -exec cp {} ~/Desktop/build/linux/ \;
 #+end_src
 
-*** unix
-
-install rust
-
-#+begin_src sh
-sudo pkg install rust
-#+end_src
-
-clone the repo
-
-use cargo to build the repo
-
-#+begin_src sh
-cargo build --release
-#+end_src
-
-*** windows
+*** windows nixos build
 
 #+begin_src sh
 nix develop
@@ -182,15 +165,48 @@ To copy the Windows builds
 fd -t f -e exe --max-depth 1 . target/x86_64-pc-windows-gnu/release/ -x cp {} ~/Desktop/build/windows/
 #+end_src
 
-*** mac
+** linux install
+** windows install
+** mac install
+**** xcode install
 
-For a Mac user, the process is very similar to Linux and arguably easier than Windows.
+#+begin_src sh
+xcode-select —install 
+#+end_src
 
-Setup: They just need the Xcode Command Line Tools (usually already installed if they do any dev work, or triggered by typing gcc or git in the terminal) and Rustup.
+**** rust install
 
-Performance: Modern Apple Silicon (M1/M2/M3) chips compile Rust incredibly fast.
+#+begin_src sh
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+#+end_src
 
-Dependencies: Since you mentioned your users must provide their own ffmpeg, yt-dlp, etc., Mac users usually manage these easily via Homebrew (brew install ffmpeg yt-dlp).
+**** homebrew install
+
+#+begin_src sh
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+#+end_src
+
+brew install ffmpeg yt-dlp
+
+#+begin_src sh
+brew install ffmpeg yt-dlp
+#+end_src
+
+** unix install
+
+install rust
+
+#+begin_src sh
+sudo pkg install rust
+#+end_src
+
+clone the repo
+
+use cargo to build the repo
+
+#+begin_src sh
+cargo build --release
+#+end_src
 
 ** scripts install
 *** create a bin directory
@@ -290,7 +306,7 @@ the ffmpeg port, and build the lame package for mp3 support
 install the windows subsystem for linux and then install a linux distro like ubuntu,
 then follow the linux install instructions
 
-**** ffplay
+*** ffplay
 
 note you need to export SDL_VIDEODRIVER=wayland in your shell config
 
