@@ -167,6 +167,7 @@ fd -t f -e exe --max-depth 1 . target/x86_64-pc-windows-gnu/release/ -x cp {} ~/
 
 ** scripts install
 *** linux install
+**** ffmpeg install
 
 install ffmpeg on debian or ubuntu,
 for other linux distros see the documentation for your package manager
@@ -175,7 +176,152 @@ for other linux distros see the documentation for your package manager
 sudo apt install ffmpeg
 #+END_SRC
 
+**** ffplay 
+
+you need to export SDL_VIDEODRIVER=wayland in your shell config for ffplay
+
+***** zsh shell
+
+#+begin_example
+~/.zshenv
+#+end_example
+
++ wayland
+
+#+begin_src sh
+export SDL_VIDEODRIVER=wayland
+#+end_src
+
++ X11
+
+#+begin_src sh
+export SDL_VIDEODRIVER=x11
+#+end_src
+
+***** bash shell
+
+#+begin_example
+~/.bashrc
+#+end_example
+
++ wayland
+
+#+begin_src sh
+export SDL_VIDEODRIVER=wayland
+#+end_src
+
++ X11
+
+#+begin_src sh
+export SDL_VIDEODRIVER=x11
+#+end_src
+
+**** yt-dlp install
+
+yt-dlp needed for trim-remote-clip
+
+***** download yt-dlp
+
+#+begin_src sh
+curl 'https://github.com/yt-dlp/yt-dlp/releases/download/2025.12.08/yt-dlp' -o ~/bin/yt-dlp 
+#+end_src
+
+***** make yt-dlp executable
+
+#+begin_src sh
+chmod +x ~/bin/yt-dlp 
+#+end_src
+
+yt-dlp upgrade
+
+#+begin_src sh
+yt-dlp -U
+#+end_src
+
+***** install deno
+
+#+begin_src sh
+curl -fsSL https://deno.land/install.sh | sh 
+#+end_src
+
+upgrade deno
+
+#+begin_src sh
+deno upgrade
+#+end_src
+
+**** bin directory for scripts
+***** create bin directory
+
+create a bin directory in your home to add the scripts to
+
+#+BEGIN_SRC sh
+mkdir -p ~/bin
+#+END_SRC
+
+***** zsh shell
+
+if you are using zsh add the following code to your ~/.zshenv file
+
+for the rust scripts, yt-dlp and deno
+
+#+begin_src sh
+typeset -U PATH path
+path=("$HOME/bin" "${HOME}/.deno/bin" "$path[@]")
+export PATH
+#+end_src
+
++ source your ~/.zshenv if you are using the zsh shell
+
+#+BEGIN_SRC sh
+source ~/.zshenv
+#+END_SRC
+
+***** bash shell
+
+if you are using bash add the following code to your ~/.bashrc
+
+for the rust scripts, yt-dlp and deno
+
+#+BEGIN_SRC sh
+if [ -d "$HOME/bin" ]; then
+   PATH="$HOME/bin:$HOME/.deno/bin:$PATH"
+fi
+#+END_SRC
+
++ source your ~/.bashrc if you are using the bash shell
+
+#+BEGIN_SRC sh
+source ~/.bashrc
+#+END_SRC
+
+**** release download
+
+download the linux release
+
+***** untar the tar.gz file
+
+#+begin_src sh
+tar xzvf linux-ffmpeg-scripts-rust.tar.gz
+#+end_src
+
+***** move the scripts to the bin directory
+
+#+begin_src sh
+mv linux-ffmpeg-scripts-rust/* ~/bin/
+#+end_src
+
 *** windows install
+**** chocolatey
+
+[[https://chocolatey.org/]]
+
+**** ffplay
+
+#+begin_src sh
+export SDL_VIDEODRIVER=windows
+#+end_src
+
 *** mac install
 **** xcode install
 
@@ -191,6 +337,8 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 **** homebrew install
 
+[[https://brew.sh/]]
+
 #+begin_src sh
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 #+end_src
@@ -198,6 +346,53 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 #+begin_src sh
 brew install ffmpeg yt-dlp
 #+end_src
+
+**** ffplay
+
+#+begin_src sh
+export SDL_VIDEODRIVER=cocoa
+#+end_src
+
+**** bin directory for scripts
+***** create bin directory
+
+create a bin directory in your home to add the scripts to
+
+#+BEGIN_SRC sh
+mkdir -p ~/bin
+#+END_SRC
+
+***** zsh shell
+
+if you are using zsh add the following code to your ~/.zshenv file
+
+#+begin_src sh
+typeset -U PATH path
+path=("$HOME/bin" "$path[@]")
+export PATH
+#+end_src
+
++ source your ~/.zshenv if you are using the zsh shell
+
+#+BEGIN_SRC sh
+source ~/.zshenv
+#+END_SRC
+
+***** bash shell
+
+if you are using bash add the following code to your ~/.bashrc
+
+#+BEGIN_SRC sh
+if [ -d "$HOME/bin" ]; then
+   PATH="$HOME/bin:$PATH"
+fi
+#+END_SRC
+
++ source your ~/.bashrc if you are using the bash shell
+
+#+BEGIN_SRC sh
+source ~/.bashrc
+#+END_SRC
 
 *** freebsd install
 **** install rust
@@ -229,14 +424,17 @@ so you need to build ffmpeg with the sdl option enable from ports or with poudri
 if you want to use the libfdk_aac audio you should also enable that option when building
 the ffmpeg port, and build the lame package for mp3 support
 
-** scripts install
-*** create a bin directory
+**** yt-dlp install
+**** bin directory for scripts
+***** create bin directory
 
 create a bin directory in your home to add the scripts to
 
 #+BEGIN_SRC sh
 mkdir -p ~/bin
 #+END_SRC
+
+***** bash shell
 
 if you are using bash add the following code to your ~/.bashrc
 
@@ -246,6 +444,14 @@ if [ -d "$HOME/bin" ]; then
 fi
 #+END_SRC
 
++ source your ~/.bashrc if you are using the bash shell
+
+#+BEGIN_SRC sh
+source ~/.bashrc
+#+END_SRC
+
+***** zsh shell
+
 if you are using zsh add the following code to your ~/.zshenv file
 
 #+begin_src sh
@@ -254,54 +460,11 @@ path=("$HOME/bin" "$path[@]")
 export PATH
 #+end_src
 
-+ source your ~/.bashrc if you are using the bash shell
-
-#+BEGIN_SRC sh
-source ~/.bashrc
-#+END_SRC
-
 + source your ~/.zshenv if you are using the zsh shell
 
 #+BEGIN_SRC sh
 source ~/.zshenv
 #+END_SRC
-
-*** ffmpeg install
-*** ffplay
-
-note you need to export SDL_VIDEODRIVER=wayland in your shell config
-
-zsh shell
-
-#+begin_example
-~/.zshenv
-#+end_example
-
-#+begin_src sh
-export SDL_VIDEODRIVER=wayland
-#+end_src
-
-bash shell
-
-#+begin_example
-~/.bashrc
-#+end_example
-
-#+begin_src sh
-export SDL_VIDEODRIVER=wayland
-#+end_src
-
-mac
-
-#+begin_src sh
-export SDL_VIDEODRIVER=cocoa
-#+end_src
-
-windows
-
-#+begin_src sh
-export SDL_VIDEODRIVER=windows
-#+end_src
 
 ** audio-silence
 :PROPERTIES:
