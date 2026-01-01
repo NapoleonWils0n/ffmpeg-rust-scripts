@@ -6,9 +6,7 @@
 
 use clap::Parser;
 use std::process::Command;
-// [LIB-01] Path import used for file existence check
 use std::path::Path;
-// [LIB-03] Shared logic for extracting file stems and extensions
 use ffmpeg_scripts_rust::get_media_info; 
 
 #[derive(Parser, Debug)]
@@ -16,28 +14,32 @@ use ffmpeg_scripts_rust::get_media_info;
     author,
     version,
     about = "create a waveform image from a video or audio file",
-    after_help = "Example:\n  waveform -i input.mp4 -c orange -o waveform.png\n\nColors: https://ffmpeg.org/ffmpeg-utils.html#Color\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/",
+    after_help = "Example:\n  waveform -i input.mp4 -c orange -j jpg\n\nColors: https://ffmpeg.org/ffmpeg-utils.html#Color\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/",
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
 struct Args {
     /// input file
-    #[arg(short = 'i', help = "input file")]
+    #[arg(short = 'i', required = true, value_name = "INPUT")]
     infile: String,
 
     /// waveform color
-    #[arg(short = 'c', default_value = "white", help = "waveform color")]
+    #[arg(short = 'c', default_value = "white", value_name = "COLOR")]
     color: String,
 
     /// output width
-    #[arg(short = 'w', default_value = "1280", help = "width")]
+    #[arg(short = 'w', default_value = "1280", value_name = "WIDTH")]
     width: i32,
 
     /// output height
-    #[arg(short = 'e', default_value = "420", help = "height")]
+    #[arg(short = 'e', default_value = "420", value_name = "HEIGHT")]
     height: i32,
 
-    /// output file
-    #[arg(short = 'o', help = "output file")]
+    /// image format jpg or png
+    #[arg(short = 'j', default_value = "jpg", value_name = "FORMAT")]
+    format: String,
+
+    /// output file optional
+    #[arg(short = 'o', value_name = "OUTFILE")]
     outfile: Option<String>,
 
     /// Print help
@@ -52,44 +54,40 @@ struct Args {
 fn main() {
     let args = Args::parse();
 
-    // Ensure the source file exists before calling FFmpeg
     if !Path::new(&args.infile).exists() {
         eprintln!("Error: Input file '{}' not found.", args.infile);
         std::process::exit(1);
     }
 
     let info = get_media_info(&args.infile);
+    let ext = args.format.to_lowercase();
     
-    // Default naming: input-waveform.png
     let out = args.outfile.clone().unwrap_or_else(|| {
-        format!("{}-waveform.png", info.stem)
+        format!("{}-waveform.{}", info.stem, ext)
     });
 
-    // Use ./ prefix to ensure FFmpeg doesn't treat colons in the filename as a protocol
     let out_path = format!("./{}", out);
 
-    // Build the showwavespic filter string
     let filter = format!(
         "showwavespic=s={}x{}:colors={}", 
         args.width, args.height, args.color
     );
 
-    println!("Generating waveform...");
-
     let status = Command::new("ffmpeg")
         .args([
             "-hide_banner", 
-            "-v", "fatal", // Suppress non-fatal header parsing warnings (e.g., Opus packets)
+            "-v", "error", 
             "-stats",
             "-i", &args.infile,
             "-filter_complex", &filter,
             "-frames:v", "1",
-            &out_path
+            "-y",
+            &out_path,
         ])
         .status()
         .expect("Failed to execute FFmpeg");
 
-    if status.success() {
-        println!("Waveform saved to: {}", out);
+    if !status.success() {
+        std::process::exit(1);
     }
 }
