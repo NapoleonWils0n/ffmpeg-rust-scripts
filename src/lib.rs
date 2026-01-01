@@ -24,6 +24,7 @@ use std::process::Command; // Needed for [LIB-06]
 // - scene-cut
 // - scene-cut-to
 // - scene-detect
+// - scene-detect-auto
 // - scene-images
 // - scopes
 // - subtitle-add
@@ -64,6 +65,7 @@ pub struct MediaInfo {
 // - scene-cut
 // - scene-cut-to
 // - scene-detect
+// - scene-detect-auto
 // - scene-images
 // - subtitle-add
 // - trim-clip
@@ -100,6 +102,7 @@ pub fn get_media_info(path_str: &str) -> MediaInfo {
 // - overlay-pip
 // - pan-scan
 // - scene-cut
+// - scene-detect-auto
 // - scene-time
 // - scene-images
 // - sexagesimal-time
@@ -206,6 +209,7 @@ pub fn get_video_duration(path: &str) -> f64 {
 // - pan-scan
 // - scene-cut
 // - scene-detect
+// - scene-detect-auto
 // - scene-time
 // - scene-images
 // - trim-short
@@ -224,6 +228,7 @@ pub fn format_seconds_ms(total_sec: f64) -> String {
 // used by: 
 // - scene-cut
 // - scene-detect
+// - scene-detect-auto
 // - scene-images
 // - trim-short
 pub fn format_time_for_filename(time_str: &str) -> String {
