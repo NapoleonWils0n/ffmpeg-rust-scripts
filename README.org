@@ -42,6 +42,8 @@ A collection of ffmpeg Rust scripts for basic editing tasks
 
 Your note is correct for a standard cargo build. However, since you are using Nix, you have a second "pure" option:
 
+note you do not need to be inside the nix develop shell to run nix build
+
 Command:
 
 #+begin_src sh
