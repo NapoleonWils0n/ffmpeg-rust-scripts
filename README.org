@@ -691,6 +691,60 @@ You can install both yt-dlp (for downloading media) and Deno (for any secondary 
 choco install yt-dlp deno
 #+end_src
 
+**** Environment Path Setup
+
+You need to put the .exe files in a place where Windows can find them.
+
+We recommend creating a bin folder in your User directory.
+
+***** Automatic Setup (Recommended)
+
+This is the easiest method and should be performed as a regular user (you do not need Administrator privileges).
+
+Open PowerShell and paste the following code.
+
+It will create the C:\Users\YourName\bin folder and automatically add it to your Path.
+
+#+begin_src sh
+$binDir = "$HOME\bin" if (!(Test-Path $binDir)) { New-Item -ItemType Directory -Path $binDir } $oldPath = [Environment]::GetEnvironmentVariable("Path", "User") if ($oldPath -notlike "$binDir") { $newPath = "$oldPath;$binDir".Replace(";;", ";") [Environment]::SetEnvironmentVariable("Path", $newPath, "User") Write-Host "Success! Folder created and Path updated." } else { Write-Host "Path already exists." }
+#+end_src
+
+After running the command, restart PowerShell for the changes to take effect.
+
+***** Manual Setup
+
+If you prefer to manage your folders manually, follow these steps:
+
+1) Create a folder named bin in your User directory (e.g., C:\Users\YourName\bin).
+
+2) Open the Start Menu, search for Edit the system environment variables, and open it.
+
+3) Click Environment Variables.
+
+4) Under User variables, select Path and click Edit.
+
+5) Click New and paste the full path to your bin folder.
+
+6) Click OK on all windows to save.
+
+**** Release Download
+
+Download the Windows release zip file.
+
+***** Extract and Install
+
+Extract the windows-ffmpeg-scripts-rust-version-1.0.zip file.
+
+Move all the .exe files from the extracted folder into the bin directory you created in the previous step.
+
+***** Verify Installation
+
+Open a new PowerShell window and run the version command for one of the scripts to verify it is working:
+
+#+begin_src sh
+extract-frame -v
+#+end_src
+
 **** ffplay
 
 #+begin_src sh
