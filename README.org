@@ -706,7 +706,7 @@ Open PowerShell and paste the following code.
 It will create the C:\Users\YourName\bin folder and automatically add it to your Path.
 
 #+begin_src sh
-$binDir = "$HOME\bin" if (!(Test-Path $binDir)) { New-Item -ItemType Directory -Path $binDir } $oldPath = [Environment]::GetEnvironmentVariable("Path", "User") if ($oldPath -notlike "$binDir") { $newPath = "$oldPath;$binDir".Replace(";;", ";") [Environment]::SetEnvironmentVariable("Path", $newPath, "User") $env:Path = [Environment]::GetEnvironmentVariable("Path", "User") + ";" + [Environment]::GetEnvironmentVariable("Path", "Machine") Write-Host "Success! Folder created and Path updated." } else { Write-Host "Path already exists." }
+$binDir = "$HOME\bin"; if (!(Test-Path $binDir)) { New-Item -ItemType Directory -Path $binDir }; $oldPath = [Environment]::GetEnvironmentVariable("Path", "User"); if ($oldPath -notlike "$binDir") { $newPath = "$oldPath;$binDir".Replace(";;", ";"); [Environment]::SetEnvironmentVariable("Path", $newPath, "User"); $env:Path = [Environment]::GetEnvironmentVariable("Path", "User") + ";" + [Environment]::GetEnvironmentVariable("Path", "Machine"); Write-Host "Success! Folder created and Path updated." } else { Write-Host "Path already exists." }
 #+end_src
 
 After running the command, restart PowerShell for the changes to take effect.
