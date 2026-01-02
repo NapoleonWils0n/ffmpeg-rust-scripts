@@ -301,22 +301,48 @@ The ! -name "*.*" logic in standard find can sometimes be finicky depending on t
 
 This will cleanly grab your 32 binaries and ignore all the compiler junk.
 
-**** windows nixos build
+**** Window build 
+
+To build binaries for Windows, we use the MinGW-w64 toolchain.
+
+You must be inside the nix develop shell to run this command.
+
+This ensures the environment variables for the linker and library paths are correctly set.
 
 #+begin_src sh
 nix develop
 #+end_src
 
-Binaries go to: target/x86_64-pc-windows-gnu/release/
+Build the binaries using the gnu target
 
 #+begin_src sh
 cargo build --release --target x86_64-pc-windows-gnu
 #+end_src
 
-To copy the Windows builds
+The binaries will be located in target/x86_64-pc-windows-gnu/release/.
+
+list the binaries
+
+#+begin_src sh
+ls -l target/x86_64-pc-windows-gnu/release/*.exe 
+#+end_src
+
+Copy the binaries to the build directory on the desktop
 
 #+begin_src sh
 fd -t f -e exe --max-depth 1 . target/x86_64-pc-windows-gnu/release/ -x cp {} ~/Desktop/build/windows/
+#+end_src
+
+***** Troubleshooting the Windows Build
+
+If the build fails with an error stating it cannot find -l:libpthread.a, ensure your flake.nix includes the CARGO_TARGET_X86_64_PC_WINDOWS_GNU_RUSTFLAGS variable in the shellHook.
+
+If you have recently modified the flake.nix, you may need to exit the shell and run nix develop again to refresh the environment.
+
+Running a cargo clean before rebuilding can also help resolve linking conflicts.
+
+#+begin_src sh
+cargo clean
 #+end_src
 
 ** scripts install
