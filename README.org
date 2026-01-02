@@ -3,7 +3,9 @@
 * ffmpeg Scripts Rust
 ** About this repository
 
+#+begin_quote
 A collection of ffmpeg Rust scripts for basic editing tasks
+#+end_quote
 
 ** Installation instructions
 
