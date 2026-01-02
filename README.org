@@ -1,10 +1,11 @@
-#+STARTUP: content
+#+STARTUP: show2levels
 #+OPTIONS: num:nil author:nil
 * ffmpeg Scripts Rust
+** About this repository
 
 A collection of ffmpeg Rust scripts for basic editing tasks
 
-** Install
+** Installation instructions
 
 + [[#nixos-install][NixOS]]
 + [[#linux-install][Linux]]
@@ -12,7 +13,7 @@ A collection of ffmpeg Rust scripts for basic editing tasks
 + [[#mac-install][Mac]]
 + [[#freebsd-install][Freebsd]]
 
-** ffmpeg scripts
+** List of ffmpeg scripts
 
 + [[#audio-silence][audio-silence]]
 + [[#combine-clips][combine-clips]]
@@ -33,6 +34,7 @@ A collection of ffmpeg Rust scripts for basic editing tasks
 + [[#scene-cut][scene-cut]]
 + [[#scene-cut-to][scene-cut-to]]
 + [[#scene-detect][scene-detect]]
++ [[#scene-detect-auto][scene-detect-auto]]
 + [[#scene-images][scene-images]]
 + [[#scene-time][scene-time]]
 + [[#sexagesimal-time][sexagesimal-time]]
@@ -900,7 +902,8 @@ export PATH
 source ~/.zshenv
 #+END_SRC
 
-** audio-silence
+** ffmpeg scripts
+*** audio-silence
 :PROPERTIES:
 :CUSTOM_ID: audio-silence
 :END:
@@ -945,7 +948,7 @@ Example:
   ffmpeg: https://www.ffmpeg.org/
 #+end_example
 
-*** audio-silence batch process
+**** audio-silence batch process
 
 Batch process files in the current working directory
   
@@ -970,7 +973,7 @@ find . -type f -name "*.mp4" -exec sh -c \
 "{}" \;
 #+END_SRC
 
-** chapter-add
+*** chapter-add
 :PROPERTIES:
 :CUSTOM_ID: chapter-add
 :END:
@@ -1009,7 +1012,7 @@ Example:
   ffmpeg: https://www.ffmpeg.org/
 #+end_example
 
-** chapter-csv
+*** chapter-csv
 :PROPERTIES:
 :CUSTOM_ID: chapter-csv
 :END:
@@ -1058,7 +1061,7 @@ The last record is the duration of the video and is used as the end time for the
 00:10:00,End
 #+end_example
 
-** chapter-extract
+*** chapter-extract
 :PROPERTIES:
 :CUSTOM_ID: chapter-extract
 :END:
@@ -1103,7 +1106,7 @@ Dependencies:
 tr ',' ' ' < input.txt > output.txt
 #+end_src
 
-** clip-time
+*** clip-time
 :PROPERTIES:
 :CUSTOM_ID: clip-time
 :END:
@@ -1142,7 +1145,7 @@ Input format:
   (Pairs represent start and end of a clip)
 #+end_example
 
-** combine-clips
+*** combine-clips
 :PROPERTIES:
 :CUSTOM_ID: combine-clips
 :END:
@@ -1177,7 +1180,7 @@ Dependencies:
 ffmpeg, ffprobe: https://www.ffmpeg.org/
 #+end_example
 
-*** combine-clips batch process
+**** combine-clips batch process
 
 Batch process files in the current working directory
   
@@ -1207,7 +1210,7 @@ find . -type f -name "*.mp4" -exec sh -c \
 "{}" \;
 #+END_SRC
 
-** contact-sheet
+*** contact-sheet
 :PROPERTIES:
 :CUSTOM_ID: contact-sheet
 :END:
@@ -1261,7 +1264,7 @@ Notes:
   -x on enables timestamps. -j sets image format (jpg/png).
 #+end_example
 
-*** contact-sheet batch process
+**** contact-sheet batch process
 
 batch process videos and create thumbnails from the videos and tile into an image
 
@@ -1271,7 +1274,7 @@ find . -type f -name "*.mp4" -exec sh -c \
 "{}" \;
 #+END_SRC
 
-** ebu-meter
+*** ebu-meter
 :PROPERTIES:
 :CUSTOM_ID: ebu-meter
 :END:
@@ -1310,7 +1313,7 @@ Dependencies:
   ffplay: https://www.ffmpeg.org/
 #+end_example
 
-** extract-frame
+*** extract-frame
 :PROPERTIES:
 :CUSTOM_ID: extract-frame
 :END:
@@ -1361,7 +1364,7 @@ Notes:
   If -o is not provided, defaults to: input-frame-[timestamp].ext
 #+end_example
 
-*** extract-frame batch process
+**** extract-frame batch process
 
 Batch process files in the current working directory
   
@@ -1384,7 +1387,7 @@ find . -type f -name "*.mp4" -exec sh -c \
 "{}" \;
 #+END_SRC
 
-** fade-clip
+*** fade-clip
 :PROPERTIES:
 :CUSTOM_ID: fade-clip
 :END:
@@ -1422,7 +1425,7 @@ Dependencies:
   ffmpeg: https://www.ffmpeg.org/
 #+end_example
 
-*** fade-clip batch process
+**** fade-clip batch process
 
 Batch process files in the current working directory
   
@@ -1445,7 +1448,7 @@ find . -type f -name "*.mp4" -exec sh -c \
 "{}" \;
 #+END_SRC
 
-** img2video
+*** img2video
 :PROPERTIES:
 :CUSTOM_ID: img2video
 :END:
@@ -1483,7 +1486,7 @@ Example:
   ffmpeg: https://www.ffmpeg.org/
 #+end_example
 
-*** img2video batch process
+**** img2video batch process
 
 Batch process files in the current working directory
   
@@ -1498,7 +1501,7 @@ find . -type f -name "*.png" -exec sh -c \
 "{}" \;
 #+END_SRC
 
-** overlay-clip
+*** overlay-clip
 :PROPERTIES:
 :CUSTOM_ID: overlay-clip
 :END:
@@ -1537,7 +1540,7 @@ Dependencies:
   ffmpeg: https://www.ffmpeg.org/
 #+end_example
 
-** overlay-pip
+*** overlay-pip
 :PROPERTIES:
 :CUSTOM_ID: overlay-pip
 :END:
@@ -1582,7 +1585,7 @@ Dependencies:
   ffmpeg: https://www.ffmpeg.org/
 #+end_example
 
-** pan-scan
+*** pan-scan
 :PROPERTIES:
 :CUSTOM_ID: pan-scan
 :END:
@@ -1621,7 +1624,7 @@ Dependencies:
   ffmpeg: https://www.ffmpeg.org/
 #+end_example
 
-** scene-cut
+*** scene-cut
 :PROPERTIES:
 :CUSTOM_ID: scene-cut
 :END:
@@ -1684,7 +1687,7 @@ and another 30 second clip that starts at 60
 60,30
 #+end_example
 
-** scene-cut-to
+*** scene-cut-to
 :PROPERTIES:
 :CUSTOM_ID: scene-cut-to
 :END:
@@ -1719,7 +1722,7 @@ and another 30 second clip that starts at 00:01:00 to 00:01:30
 00:01:00,00:01:30
 #+end_example
 
-** scene-detect
+*** scene-detect
 :PROPERTIES:
 :CUSTOM_ID: scene-detect
 :END:
@@ -1762,7 +1765,12 @@ Dependencies:
   ffmpeg: https://www.ffmpeg.org/
 #+end_example
 
-** scene-images
+*** scene-detect-auto
+:PROPERTIES:
+:CUSTOM_ID: scene-detect-auto
+:END:
+
+*** scene-images
 :PROPERTIES:
 :CUSTOM_ID: scene-images
 :END:
@@ -1804,7 +1812,7 @@ Dependencies:
   ffmpeg: https://www.ffmpeg.org/
 #+end_example
 
-** scene-time
+*** scene-time
 :PROPERTIES:
 :CUSTOM_ID: scene-time
 :END:
@@ -1859,7 +1867,7 @@ Dependencies:
   ffmpeg: https://www.ffmpeg.org/
 #+end_example
 
-** scopes
+*** scopes
 :PROPERTIES:
 :CUSTOM_ID: scopes
 :END:
@@ -1895,7 +1903,7 @@ Dependencies:
   ffplay: https://www.ffmpeg.org/
 #+end_example
 
-** sexagesimal-time
+*** sexagesimal-time
 :PROPERTIES:
 :CUSTOM_ID: sexagesimal-time
 :END:
@@ -1939,7 +1947,7 @@ ouput
 
 also works with milliseconds
 
-** subtitle-add
+*** subtitle-add
 :PROPERTIES:
 :CUSTOM_ID: subtitle-add
 :END:
@@ -1978,7 +1986,7 @@ Example:
   ffmpeg: https://www.ffmpeg.org/
 #+end_example
 
-*** subtitle-add batch process
+**** subtitle-add batch process
 
 Batch process files in the current working directory
   
@@ -2006,7 +2014,7 @@ find . -type f -name "*.mp4" -exec sh -c \
 "{}" \;
 #+END_SRC
 
-** trim-clip
+*** trim-clip
 :PROPERTIES:
 :CUSTOM_ID: trim-clip
 :END:
@@ -2057,7 +2065,7 @@ Notes:
   If -o is not provided, defaults to: input-name-[start-end].(mp4|webm|aac|mp3|wav|ogg)
 #+end_example
 
-*** trim-clip batch process
+**** trim-clip batch process
 
 Batch process files in the current working directory
   
@@ -2073,7 +2081,7 @@ find . -type f -name "*.mp4" -exec sh -c \
 "{}" \;
 #+END_SRC
 
-** trim-clip-to
+*** trim-clip-to
 :PROPERTIES:
 :CUSTOM_ID: trim-clip-to
 :END:
@@ -2127,7 +2135,7 @@ Notes:
   If -o is not provided, defaults to: input-name-[start–end].(mp4|webm|aac|mp3|wav|ogg)
 #+end_example
 
-*** trim-clip-to batch process
+**** trim-clip-to batch process
 
 Batch process files in the current working directory
   
@@ -2142,7 +2150,7 @@ find . -type f -name "*.mp4" -exec sh -c \
 "{}" \;
 #+END_SRC
 
-** trim-remote-clip
+*** trim-remote-clip
 :PROPERTIES:
 :CUSTOM_ID: trim-remote-clip
 :END:
@@ -2191,7 +2199,7 @@ Dependencies:
   yt-dlp: https://github.com/yt-dlp/yt-dlp
 #+end_example
 
-** trim-short
+*** trim-short
 :PROPERTIES:
 :CUSTOM_ID: trim-short
 :END:
@@ -2237,7 +2245,7 @@ Dependencies:
   ffmpeg: https://www.ffmpeg.org/
 #+end_example
 
-*** trim-short batch process
+**** trim-short batch process
 
 Batch process files in the current working directory
   
@@ -2253,7 +2261,7 @@ find . -type f -name "*.mp4" -exec sh -c \
 "{}" \;
 #+END_SRC
 
-** vid2gif
+*** vid2gif
 :PROPERTIES:
 :CUSTOM_ID: vid2gif
 :END:
@@ -2292,7 +2300,7 @@ Dependencies:
   ffmpeg, ffprobe: https://www.ffmpeg.org/
 #+end_example
 
-** waveform
+*** waveform
 :PROPERTIES:
 :CUSTOM_ID: waveform
 :END:
@@ -2335,7 +2343,7 @@ Dependencies:
   ffmpeg: https://www.ffmpeg.org/
 #+end_example
 
-*** waveform batch process
+**** waveform batch process
 
 Batch process files in the current working directory
   
@@ -2350,7 +2358,7 @@ find . -type f -name "*.mp4" -exec sh -c \
 "{}" \;
 #+END_SRC
 
-** webp
+*** webp
 :PROPERTIES:
 :CUSTOM_ID: webp
 :END:
@@ -2389,7 +2397,7 @@ Dependencies:
   ffmpeg, ffprobe: https://www.ffmpeg.org/
 #+end_example
 
-*** webp batch process
+**** webp batch process
 
 Batch process files in the current working directory
 
@@ -2397,7 +2405,7 @@ Batch process files in the current working directory
 find . -type f -name "*.mp4" -exec sh -c 'webp -i "${0}"' "{}" \;
 #+END_SRC
 
-** xfade
+*** xfade
 :PROPERTIES:
 :CUSTOM_ID: xfade
 :END:
@@ -2443,7 +2451,7 @@ vertopen, vuslice, wipebl, wipebr, wipedown, wipeleft, wiperight,
 wipetl, wipetr, wipeup
 #+end_example
 
-** zoompan
+*** zoompan
 :PROPERTIES:
 :CUSTOM_ID: zoompan
 :END:
@@ -2483,7 +2491,7 @@ Dependencies:
   ffmpeg: https://www.ffmpeg.org/
 #+end_example
 
-*** zoompan batch process
+**** zoompan batch process
 
 Batch process files in the current working directory
   
