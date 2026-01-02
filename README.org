@@ -293,7 +293,10 @@ ldd target/x86_64-unknown-linux-musl/release/scene-detect-auto
 
 Expected Output: It should say statically linked or not a dynamic executable.
 
-This confirms that a user on Ubuntu, Debian, or Arch can just download that file and run it immediately (provided they have ffmpeg installed).
+#+begin_verse
+This confirms that a user on Ubuntu, Debian,
+or Arch can just download that file and run it immediately (provided they have ffmpeg installed).
+#+end_verse
 
 Copy the binaries to the build directory on the desktop
 
@@ -356,9 +359,15 @@ fd -t f -e exe --max-depth 1 . target/x86_64-pc-windows-gnu/release/ -x cp {} ~/
 
 **** Troubleshooting the Windows Build
 
-If the build fails with an error stating it cannot find -l:libpthread.a, ensure your flake.nix includes the CARGO_TARGET_X86_64_PC_WINDOWS_GNU_RUSTFLAGS variable in the shellHook.
+#+begin_verse
+If the build fails with an error stating it cannot find -l:libpthread.a,
+ensure your flake.nix includes the CARGO_TARGET_X86_64_PC_WINDOWS_GNU_RUSTFLAGS variable in the shellHook.
+#+end_verse
 
-If you have recently modified the flake.nix, you may need to exit the shell and run nix develop again to refresh the environment.
+#+begin_verse
+If you have recently modified the flake.nix,
+you may need to exit the shell and run nix develop again to refresh the environment.
+#+end_verse
 
 Running a cargo clean before rebuilding can also help resolve linking conflicts.
 
@@ -416,8 +425,10 @@ path=("$HOME/bin" "$path[@]")
 export PATH
 #+end_src
 
+#+begin_verse
 To ensure ffplay renders correctly on NixOS,
 you must export the correct SDL_VIDEODRIVER for your display server (Wayland or X11).
+#+end_verse
 
 Set ffplay driver: use 'wayland' or 'x11'
 
@@ -455,8 +466,10 @@ if [ -d "$HOME/bin" ]; then
 fi
 #+END_SRC
 
+#+begin_verse
 To ensure ffplay renders correctly on NixOS,
 you must export the correct SDL_VIDEODRIVER for your display server (Wayland or X11).
+#+end_verse
 
 Set ffplay driver: use 'wayland' or 'x11'
 
@@ -504,8 +517,10 @@ mv nixos-ffmpeg-scripts-rust-version-1.0/* ~/bin/
 :END:
 **** ffmpeg install
 
-install ffmpeg on debian or ubuntu,
+#+begin_verse
+Install ffmpeg on debian or ubuntu,
 for other linux distros see the documentation for your package manager
+#+end_verse
 
 #+BEGIN_SRC sh
 sudo apt install ffmpeg
@@ -657,13 +672,21 @@ mv linux-ffmpeg-scripts-rust-version-1.0/* ~/bin/
 :CUSTOM_ID: windows-install
 :END:
 
-This section covers how to install the necessary dependencies and the Rust scripts on Windows. We recommend using the Chocolatey package manager to install ffmpeg, yt-dlp, and deno quickly. However, you can also install these tools manually from their respective websites if you prefer.
+#+begin_verse
+This section covers how to install the necessary dependencies and the Rust scripts on Windows.
+
+We recommend using the Chocolatey package manager to install ffmpeg, yt-dlp, and deno quickly.
+However, you can also install these tools manually from their respective websites if you prefer.
+#+end_verse
 
 **** chocolatey
 
 [[https://chocolatey.org/]]
 
-The first step is to open PowerShell on your Windows 11 computer, and that too with administrator privileges. Opening PowerShell with administrator privileges is important, as you will be unable to install Chocolatey without that.
+#+begin_verse
+The first step is to open PowerShell on your Windows 11 computer, and that too with administrator privileges.
+Opening PowerShell with administrator privileges is important, as you will be unable to install Chocolatey without that.
+#+end_verse
 
 Now type in the following command to know the execution policy status of PowerShell.
 
@@ -671,7 +694,10 @@ Now type in the following command to know the execution policy status of PowerSh
 Get-ExecutionPolicy
 #+end_example
 
-If it says ‘Restricted’ as shown in the below screenshot, type in the following screenshot, type in the following command as shown below, all on the PowerShell with administrator privileges.
+#+begin_verse
+If it says ‘Restricted’,
+type in the following command as shown below, all on the PowerShell with administrator privileges.
+#+end_verse
 
 #+begin_example
 Set-ExecutionPolicy AllSigned
