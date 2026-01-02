@@ -235,17 +235,25 @@ Keep in mind that if you change your Rust code and run nix build again, the bina
 
 You'll just need to run that cp command again to "deploy" your latest versions.
 
-**** linux nixos build
+**** Linux build (static)
+
+To build portable binaries that run on any Linux distribution, we use the musl target.
+
+This statically links all libraries so the binary is self-contained.
+
+You must be inside the nix develop shell to run this command.
 
 #+begin_src sh
 nix develop
 #+end_src
 
-Binaries go to: target/x86_64-unknown-linux-musl/release/
+Build the binaries using the musl target
 
 #+begin_src sh
 cargo build --release --target x86_64-unknown-linux-musl
 #+end_src
+
+The binaries will be located in target/x86_64-unknown-linux-musl/release/.
 
 list the binaries
 
@@ -254,21 +262,26 @@ ls -l target/x86_64-unknown-linux-musl/release/
 #+end_src
 
 How to verify they are truly "Static"
-One of the main reasons to use musl is to ensure the binary has no external dependencies. You can verify this by running the ldd command on one of the new binaries:
+
+One of the main reasons to use musl is to ensure the binary has no external dependencies.
+
+You can verify this by running the ldd command on one of the new binaries:
 
 #+begin_src sh
 ldd target/x86_64-unknown-linux-musl/release/scene-detect-auto
 #+end_src
 
-Expected Output: It should say statically linked or not a dynamic executable. This confirms that a user on Ubuntu, Debian, or Arch can just download that file and run it immediately (provided they have ffmpeg installed).
+Expected Output: It should say statically linked or not a dynamic executable.
 
-copy the linux binaries
+This confirms that a user on Ubuntu, Debian, or Arch can just download that file and run it immediately (provided they have ffmpeg installed).
 
-fd command
+Copy the binaries to the build directory on the desktop
 
 #+begin_src sh
 fd -t f -d 1 -E "*.*" . target/x86_64-unknown-linux-musl/release/ -x cp {} ~/Desktop/build/linux/
 #+end_src
+
+explaination of the fd command
 
 #+begin_example
 -t f: Look for files only.
@@ -284,14 +297,9 @@ target/.../release/: The directory to search in.
 -x cp {} ...: Execute the copy command for every search result.
 #+end_example
 
-Why fd is better here:
-The ! -name "*.*" logic in standard find can sometimes be finicky depending on the shell, but fd's -E (exclude) flag is very robust. This will cleanly grab your 32 binaries and ignore all the compiler junk.
+The ! -name "*.*" logic in standard find can sometimes be finicky depending on the shell, but fd's -E (exclude) flag is very robust.
 
-Use this find command. It is the safest way to ensure you only get the executable binaries and nothing else
-
-#+begin_src sh
-find target/x86_64-unknown-linux-musl/release/ -maxdepth 1 -type f ! -name "*.*" -exec cp {} ~/Desktop/build/linux/ \;
-#+end_src
+This will cleanly grab your 32 binaries and ignore all the compiler junk.
 
 **** windows nixos build
 
