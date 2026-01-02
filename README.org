@@ -326,6 +326,40 @@ mv linux-ffmpeg-scripts-rust-version-1.0/* ~/bin/
 
 [[https://chocolatey.org/]]
 
+The first step is to open PowerShell on your Windows 11 computer, and that too with administrator privileges. Opening PowerShell with administrator privileges is important, as you will be unable to install Chocolatey without that.
+
+Now type in the following command to know the execution policy status of PowerShell.
+
+#+begin_example
+Get-ExecutionPolicy
+#+end_example
+
+If it says ‘Restricted’ as shown in the below screenshot, type in the following screenshot, type in the following command as shown below, all on the PowerShell with administrator privileges.
+
+#+begin_example
+Set-ExecutionPolicy AllSigned
+#+end_example
+
+You will have to type ‘Y’ and hit the enter key when you will be asked for a confirmation.
+
+Now run the following command:
+
+#+begin_example
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+#+end_example
+
+**** ffmpeg install
+
+#+begin_src sh
+choco install ffmpeg
+#+end_src
+
+**** yt-dlp deno
+
+#+begin_src sh
+choco install yt-dlp deno
+#+end_src
+
 **** ffplay
 
 #+begin_src sh
