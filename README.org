@@ -675,11 +675,17 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManage
 
 **** ffmpeg install
 
+Install ffmpeg using Chocolatey.
+
+This will allow the scripts to access the ffmpeg and ffprobe binaries from the command line.
+
 #+begin_src sh
 choco install ffmpeg
 #+end_src
 
 **** yt-dlp deno
+
+You can install both yt-dlp (for downloading media) and Deno (for any secondary script requirements) in a single command.
 
 #+begin_src sh
 choco install yt-dlp deno
