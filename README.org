@@ -38,13 +38,12 @@ A collection of ffmpeg Rust scripts for basic editing tasks
 + [[#zoompan][zoompan]]
 
 ** NixOS Build & Distribution
-*** NixOS
 
 This section covers how to compile the scripts for different platforms using Nix.
 
 We use three distinct targets to ensure maximum compatibility.
 
-**** Setup Build Workspace
+*** Setup Build Workspace
 
 First, create a structured directory on your Desktop to collect the finished binaries.
 
@@ -60,8 +59,8 @@ Optional: Clean existing binaries if doing a fresh release
 rm -f ~/Desktop/build/{nixos,linux,windows}/*
 #+end_src
 
-**** flake.nix
-***** create the project directory
+*** flake.nix
+**** create the project directory
 
 #+begin_src sh
 mkdir -p ~/git/projects/ffmpeg-scripts-rust
@@ -73,7 +72,7 @@ change directory into the project directory
 cd ~/git/projects/ffmpeg-scripts-rust
 #+end_src
 
-***** create the flake.nix
+**** create the flake.nix
 
 #+begin_src sh
 vi flake.nix
@@ -140,7 +139,7 @@ flake.nix
 
 #+end_src
 
-***** run nix develop
+**** run nix develop
 
 run nix develop which will set up the rust environment
 
@@ -148,7 +147,7 @@ run nix develop which will set up the rust environment
 nix develop
 #+end_src
 
-***** gitignore
+**** gitignore
 
 a .gitignore file will be created
 
@@ -193,7 +192,7 @@ and add a commit message
 git commit -m "update .gitignore to exclude build results"
 #+end_src
 
-**** NixOS build
+*** NixOS build
 
 note you do not need to be inside the nix develop shell to run nix build
 
@@ -235,7 +234,7 @@ Keep in mind that if you change your Rust code and run nix build again, the bina
 
 You'll just need to run that cp command again to "deploy" your latest versions.
 
-**** Linux build (static)
+*** Linux build (static)
 
 To build portable binaries that run on any Linux distribution, we use the musl target.
 
@@ -301,7 +300,7 @@ The ! -name "*.*" logic in standard find can sometimes be finicky depending on t
 
 This will cleanly grab your 32 binaries and ignore all the compiler junk.
 
-**** Windows build (static)
+*** Windows build (static)
 
 To build binaries for Windows, we use the MinGW-w64 toolchain.
 
@@ -333,7 +332,7 @@ Copy the binaries to the build directory on the desktop
 fd -t f -e exe --max-depth 1 . target/x86_64-pc-windows-gnu/release/ -x cp {} ~/Desktop/build/windows/
 #+end_src
 
-***** Troubleshooting the Windows Build
+**** Troubleshooting the Windows Build
 
 If the build fails with an error stating it cannot find -l:libpthread.a, ensure your flake.nix includes the CARGO_TARGET_X86_64_PC_WINDOWS_GNU_RUSTFLAGS variable in the shellHook.
 
@@ -345,8 +344,15 @@ Running a cargo clean before rebuilding can also help resolve linking conflicts.
 cargo clean
 #+end_src
 
-** scripts install
-*** linux install
+** Scripts install
+*** NixOS install
+:PROPERTIES:
+:CUSTOM_ID: nixos-install
+:END:
+*** Linux install
+:PROPERTIES:
+:CUSTOM_ID: linux-install
+:END:
 **** ffmpeg install
 
 install ffmpeg on debian or ubuntu,
@@ -491,7 +497,10 @@ tar xzvf linux-ffmpeg-scripts-rust-version-1.0.tar.gz
 mv linux-ffmpeg-scripts-rust-version-1.0/* ~/bin/
 #+end_src
 
-*** windows install
+*** Windows install
+:PROPERTIES:
+:CUSTOM_ID: windows-install
+:END:
 **** chocolatey
 
 [[https://chocolatey.org/]]
@@ -536,7 +545,10 @@ choco install yt-dlp deno
 export SDL_VIDEODRIVER=windows
 #+end_src
 
-*** mac install
+*** Mac OS install
+:PROPERTIES:
+:CUSTOM_ID: mac-install
+:END:
 **** xcode install
 
 #+begin_src sh
@@ -608,7 +620,10 @@ fi
 source ~/.bashrc
 #+END_SRC
 
-*** freebsd install
+*** Freebsd install
+:PROPERTIES:
+:CUSTOM_ID: freebsd-install
+:END:
 **** install rust
 
 #+begin_src sh
