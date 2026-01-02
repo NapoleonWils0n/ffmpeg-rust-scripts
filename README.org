@@ -644,6 +644,9 @@ mv linux-ffmpeg-scripts-rust-version-1.0/* ~/bin/
 :PROPERTIES:
 :CUSTOM_ID: windows-install
 :END:
+
+This section covers how to install the necessary dependencies and the Rust scripts on Windows. We recommend using the Chocolatey package manager to install ffmpeg, yt-dlp, and deno quickly. However, you can also install these tools manually from their respective websites if you prefer.
+
 **** chocolatey
 
 [[https://chocolatey.org/]]
