@@ -193,19 +193,29 @@ and add a commit message
 git commit -m "update .gitignore to exclude build results"
 #+end_src
 
-**** nixos build
+**** NixOS build
 
 note you do not need to be inside the nix develop shell to run nix build
+
+run nix build to build the binaries for NixOS
 
 #+begin_src sh
 nix build
 #+end_src
 
-Result: This will place your binaries in ./result/bin/ instead of target/release/.
+This will place your binaries in ./result/bin/ instead of target/release/.
 
-Advantage: This ensures the build is 100% reproducible and isolated from your local system state.
+Building this way ensures the build is 100% reproducible and isolated from your local system state.
 
-Instead of a simple mv (which might fail if the source is the read-only Nix store), you should copy them. When you copy a binary out of the Nix store, it keeps its "rpath" (it still knows exactly where to find its library dependencies in /nix/store), so it will continue to work perfectly.
+Instead of a simple mv, which might fail if the source is the read-only Nix store, you should copy the binaries.
+
+When you copy a binary out of the Nix store, it keeps its "rpath." This means it still knows exactly where to find its library dependencies in the nix store, so it will continue to work perfectly.
+
+Create the bin directory in your home if you dont have one
+
+#+begin_src sh
+mkdir -p ~/bin
+#+end_src
 
 Run this command to copy all 32 binaries at once to the bin directory in your home
 
@@ -221,7 +231,9 @@ cp ./result/bin/* ~/Desktop/build/nixos/
 
 A Note on Updates
 
-Keep in mind that if you change your Rust code and run nix build again, the binaries in ~/bin will not update automatically. You'll just need to run that cp command again to "deploy" your latest versions.
+Keep in mind that if you change your Rust code and run nix build again, the binaries in ~/bin will not update automatically.
+
+You'll just need to run that cp command again to "deploy" your latest versions.
 
 **** linux nixos build
 
