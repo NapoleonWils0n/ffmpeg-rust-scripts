@@ -407,6 +407,8 @@ export PATH
 To ensure ffplay renders correctly on NixOS,
 you must export the correct SDL_VIDEODRIVER for your display server (Wayland or X11).
 
+Set ffplay driver: use 'wayland' or 'x11'
+
 + wayland
 
 #+begin_src sh
@@ -443,6 +445,8 @@ fi
 
 To ensure ffplay renders correctly on NixOS,
 you must export the correct SDL_VIDEODRIVER for your display server (Wayland or X11).
+
+Set ffplay driver: use 'wayland' or 'x11'
 
 + wayland
 
@@ -557,6 +561,8 @@ export PATH
 To ensure ffplay renders correctly on Linux,
 you must export the correct SDL_VIDEODRIVER for your display server (Wayland or X11).
 
+Set ffplay driver: use 'wayland' or 'x11'
+
 + wayland
 
 #+begin_src sh
@@ -593,6 +599,8 @@ fi
 
 To ensure ffplay renders correctly on Linux,
 you must export the correct SDL_VIDEODRIVER for your display server (Wayland or X11).
+
+Set ffplay driver: use 'wayland' or 'x11'
 
 + wayland
 
