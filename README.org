@@ -359,6 +359,123 @@ cargo clean
 :PROPERTIES:
 :CUSTOM_ID: nixos-install
 :END:
+**** ffmpeg install
+
+install ffmpeg with home-manager
+
+#+begin_example
+ffmpeg-full
+#+end_example
+
+**** ffplay 
+
+you need to export SDL_VIDEODRIVER=wayland in your shell config for ffplay
+
+***** zsh shell
+
+#+begin_example
+~/.zshenv
+#+end_example
+
++ wayland
+
+#+begin_src sh
+export SDL_VIDEODRIVER=wayland
+#+end_src
+
++ X11
+
+#+begin_src sh
+export SDL_VIDEODRIVER=x11
+#+end_src
+
+***** bash shell
+
+#+begin_example
+~/.bashrc
+#+end_example
+
++ wayland
+
+#+begin_src sh
+export SDL_VIDEODRIVER=wayland
+#+end_src
+
++ X11
+
+#+begin_src sh
+export SDL_VIDEODRIVER=x11
+#+end_src
+
+**** yt-dlp install
+
+install yt-dlp with home-manager
+
+#+begin_example
+yt-dlp
+#+end_example
+
+**** bin directory for scripts
+***** create bin directory
+
+create a bin directory in your home to add the scripts to
+
+#+BEGIN_SRC sh
+mkdir -p ~/bin
+#+END_SRC
+
+***** zsh shell
+
+if you are using zsh add the following code to your ~/.zshenv file
+
+for the rust scripts, yt-dlp and deno
+
+#+begin_src sh
+typeset -U PATH path
+path=("$HOME/bin" "${HOME}/.deno/bin" "$path[@]")
+export PATH
+#+end_src
+
++ source your ~/.zshenv if you are using the zsh shell
+
+#+BEGIN_SRC sh
+source ~/.zshenv
+#+END_SRC
+
+***** bash shell
+
+if you are using bash add the following code to your ~/.bashrc
+
+for the rust scripts, yt-dlp and deno
+
+#+BEGIN_SRC sh
+if [ -d "$HOME/bin" ]; then
+   PATH="$HOME/bin:$HOME/.deno/bin:$PATH"
+fi
+#+END_SRC
+
++ source your ~/.bashrc if you are using the bash shell
+
+#+BEGIN_SRC sh
+source ~/.bashrc
+#+END_SRC
+
+**** release download
+
+download the NixOS release
+
+***** untar the tar.gz file
+
+#+begin_src sh
+tar xzvf nixos-ffmpeg-scripts-rust-version-1.0.tar.gz
+#+end_src
+
+***** move the scripts to the bin directory
+
+#+begin_src sh
+mv nixos-ffmpeg-scripts-rust-version-1.0/* ~/bin/
+#+end_src
+
 *** Linux install
 :PROPERTIES:
 :CUSTOM_ID: linux-install
