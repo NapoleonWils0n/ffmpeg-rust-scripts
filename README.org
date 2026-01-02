@@ -390,13 +390,13 @@ mkdir -p ~/bin
 
 ***** zsh shell
 
-if you are using zsh add the following code to your ~/.zshenv file
+If you are using zsh add the following code to your ~/.zshenv file
+
+This sets up the PATH for the rust scripts and configures the ffplay video driver.
 
 #+begin_example
 ~/.zshenv
 #+end_example
-
-for the rust scripts
 
 #+begin_src sh
 typeset -U PATH path
@@ -427,9 +427,9 @@ source ~/.zshenv
 
 ***** bash shell
 
-if you are using bash add the following code to your ~/.bashrc
+If you are using bash add the following code to your ~/.bashrc
 
-for the rust scripts, yt-dlp and deno
+This sets up the PATH for the rust scripts and configures the ffplay video driver.
 
 #+begin_example
 ~/.bashrc
@@ -471,7 +471,7 @@ Download the latest NixOS release archive and follow these steps to install the 
 Note: Replace version-1.0 with the actual version number you downloaded.
 
 #+begin_src sh
-tar xzvf nixos-ffmpeg-scripts-rust-version-1.0.tar.gz
+tar -xf nixos-ffmpeg-scripts-rust-version-1.0.tar.gz
 #+end_src
 
 ***** Deploy the scripts
@@ -540,13 +540,13 @@ mkdir -p ~/bin
 
 ***** zsh shell
 
-if you are using zsh add the following code to your ~/.zshenv file
+If you are using zsh add the following code to your ~/.zshenv file
+
+This sets up the PATH for the rust scripts, yt-dlp, and deno, and configures the ffplay video driver.
 
 #+begin_example
 ~/.zshenv
 #+end_example
-
-for the rust scripts, yt-dlp and deno
 
 #+begin_src sh
 typeset -U PATH path
@@ -577,13 +577,13 @@ source ~/.zshenv
 
 ***** bash shell
 
-if you are using bash add the following code to your ~/.bashrc
+If you are using bash add the following code to your ~/.bashrc
+
+This sets up the PATH for the rust scripts, yt-dlp, and deno, and configures the ffplay video driver.
 
 #+begin_example
 ~/.bashrc
 #+end_example
-
-for the rust scripts, yt-dlp and deno
 
 #+BEGIN_SRC sh
 if [ -d "$HOME/bin" ]; then
@@ -621,7 +621,7 @@ Download the latest Linux release archive and follow these steps to install the 
 Note: Replace version-1.0 with the actual version number you downloaded.
 
 #+begin_src sh
-tar xzvf linux-ffmpeg-scripts-rust-version-1.0.tar.gz
+tar -xf linux-ffmpeg-scripts-rust-version-1.0.tar.gz
 #+end_src
 
 ***** Deploy the scripts
