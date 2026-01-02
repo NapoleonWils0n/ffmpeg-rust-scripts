@@ -39,6 +39,9 @@ A collection of ffmpeg Rust scripts for basic editing tasks
 
 ** nixos build binaries
 *** nixos
+
+project notes for buidling the binaries on nixos
+
 **** create the build directory
 
 create the build directory to copy the binaries into
@@ -80,16 +83,23 @@ Advantage: This ensures the build is 100% reproducible and isolated from your lo
 
 Instead of a simple mv (which might fail if the source is the read-only Nix store), you should copy them. When you copy a binary out of the Nix store, it keeps its "rpath" (it still knows exactly where to find its library dependencies in /nix/store), so it will continue to work perfectly.
 
-Run this command to copy all 32 binaries at once:
+Run this command to copy all 32 binaries at once to the bin directory in your home
 
 #+begin_src sh
 cp ./result/bin/* ~/bin/
 #+end_src
 
+copy the scripts to the build directory on the desktop for github
+
+#+begin_src sh
+cp ./result/bin/* ~/Desktop/build/nixos/
+#+end_src
+
 A Note on Updates
+
 Keep in mind that if you change your Rust code and run nix build again, the binaries in ~/bin will not update automatically. You'll just need to run that cp command again to "deploy" your latest versions.
 
-*** linux nixos build
+**** linux nixos build
 
 #+begin_src sh
 nix develop
@@ -147,7 +157,7 @@ Use this find command. It is the safest way to ensure you only get the executabl
 find target/x86_64-unknown-linux-musl/release/ -maxdepth 1 -type f ! -name "*.*" -exec cp {} ~/Desktop/build/linux/ \;
 #+end_src
 
-*** windows nixos build
+**** windows nixos build
 
 #+begin_src sh
 nix develop
