@@ -312,13 +312,13 @@ download the linux release
 ***** untar the tar.gz file
 
 #+begin_src sh
-tar xzvf linux-ffmpeg-scripts-rust.tar.gz
+tar xzvf linux-ffmpeg-scripts-rust-version-1.0.tar.gz
 #+end_src
 
 ***** move the scripts to the bin directory
 
 #+begin_src sh
-mv linux-ffmpeg-scripts-rust/* ~/bin/
+mv linux-ffmpeg-scripts-rust-version-1.0/* ~/bin/
 #+end_src
 
 *** windows install
@@ -435,6 +435,11 @@ if you want to use the libfdk_aac audio you should also enable that option when 
 the ffmpeg port, and build the lame package for mp3 support
 
 **** yt-dlp install
+
+#+begin_src sh
+sudo pkg install yt-dlp deno
+#+end_src
+
 **** bin directory for scripts
 ***** create bin directory
 
