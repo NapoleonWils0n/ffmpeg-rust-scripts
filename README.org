@@ -217,13 +217,16 @@ run nix build to build the binaries for NixOS
 nix build
 #+end_src
 
+#+begin_verse
 This will place your binaries in ./result/bin/ instead of target/release/.
-
 Building this way ensures the build is 100% reproducible and isolated from your local system state.
-
 Instead of a simple mv, which might fail if the source is the read-only Nix store, you should copy the binaries.
+#+end_verse
 
-When you copy a binary out of the Nix store, it keeps its "rpath." This means it still knows exactly where to find its library dependencies in the nix store, so it will continue to work perfectly.
+#+begin_verse
+When you copy a binary out of the Nix store, it keeps its "rpath."
+This means it still knows exactly where to find its library dependencies in the nix store, so it will continue to work perfectly.
+#+end_verse
 
 Create the bin directory in your home if you dont have one
 
@@ -245,15 +248,17 @@ cp ./result/bin/* ~/Desktop/build/nixos/
 
 A Note on Updates
 
+#+begin_verse
 Keep in mind that if you change your Rust code and run nix build again, the binaries in ~/bin will not update automatically.
-
 You'll just need to run that cp command again to "deploy" your latest versions.
+#+end_verse
 
 *** Linux build (static)
 
+#+begin_verse
 To build portable binaries that run on any Linux distribution, we use the musl target.
-
 This statically links all libraries so the binary is self-contained.
+#+end_verse
 
 You must be inside the nix develop shell to run this command.
 
@@ -275,9 +280,10 @@ list the binaries
 ls -l target/x86_64-unknown-linux-musl/release/
 #+end_src
 
+#+begin_verse
 How to verify they are truly "Static"
-
 One of the main reasons to use musl is to ensure the binary has no external dependencies.
+#+end_verse
 
 You can verify this by running the ldd command on one of the new binaries:
 
@@ -317,9 +323,10 @@ This will cleanly grab your 32 binaries and ignore all the compiler junk.
 
 *** Windows build (static)
 
+#+begin_verse
 To build binaries for Windows, we use the MinGW-w64 toolchain.
-
 You must be inside the nix develop shell to run this command.
+#+end_verse
 
 This ensures the environment variables for the linker and library paths are correctly set.
 
