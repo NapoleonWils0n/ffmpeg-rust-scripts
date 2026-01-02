@@ -37,17 +37,27 @@ A collection of ffmpeg Rust scripts for basic editing tasks
 + [[#xfade][xfade]]
 + [[#zoompan][zoompan]]
 
-** nixos build binaries
-*** nixos
+** NixOS Build & Distribution
+*** Nixos
 
-project notes for buidling the binaries on nixos
+This section covers how to compile the scripts for different platforms using Nix.
 
-**** create the build directory
+We use three distinct targets to ensure maximum compatibility.
 
-create the build directory to copy the binaries into
+**** Setup Build Workspace
+
+First, create a structured directory on your Desktop to collect the finished binaries.
+
+Create directories for each target platform
 
 #+begin_src sh
 mkdir -p ~/Desktop/build/{nixos,linux,windows}
+#+end_src
+
+Optional: Clean existing binaries if doing a fresh release
+
+#+begin_src sh
+rm -f ~/Desktop/build/{nixos,linux,windows}/*
 #+end_src
 
 **** gitignore
