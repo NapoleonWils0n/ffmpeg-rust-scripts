@@ -361,64 +361,28 @@ cargo clean
 :END:
 **** ffmpeg install
 
-install ffmpeg with home-manager
+Install ffmpeg with home-manager by adding the following package.
+
+[[https://github.com/nix-community/home-manager]]
 
 #+begin_example
 ffmpeg-full
 #+end_example
 
-**** ffplay 
-
-you need to export SDL_VIDEODRIVER=wayland in your shell config for ffplay
-
-***** zsh shell
-
-#+begin_example
-~/.zshenv
-#+end_example
-
-+ wayland
-
-#+begin_src sh
-export SDL_VIDEODRIVER=wayland
-#+end_src
-
-+ X11
-
-#+begin_src sh
-export SDL_VIDEODRIVER=x11
-#+end_src
-
-***** bash shell
-
-#+begin_example
-~/.bashrc
-#+end_example
-
-+ wayland
-
-#+begin_src sh
-export SDL_VIDEODRIVER=wayland
-#+end_src
-
-+ X11
-
-#+begin_src sh
-export SDL_VIDEODRIVER=x11
-#+end_src
-
 **** yt-dlp install
 
 install yt-dlp with home-manager
+
+[[https://github.com/nix-community/home-manager]]
 
 #+begin_example
 yt-dlp
 #+end_example
 
-**** bin directory for scripts
+**** Environment Path Setup
 ***** create bin directory
 
-create a bin directory in your home to add the scripts to
+Create a bin directory in your home folder to store the scripts.
 
 #+BEGIN_SRC sh
 mkdir -p ~/bin
@@ -428,12 +392,31 @@ mkdir -p ~/bin
 
 if you are using zsh add the following code to your ~/.zshenv file
 
-for the rust scripts, yt-dlp and deno
+#+begin_example
+~/.zshenv
+#+end_example
+
+for the rust scripts
 
 #+begin_src sh
 typeset -U PATH path
-path=("$HOME/bin" "${HOME}/.deno/bin" "$path[@]")
+path=("$HOME/bin" "$path[@]")
 export PATH
+#+end_src
+
+To ensure ffplay renders correctly on NixOS,
+you must export the correct SDL_VIDEODRIVER for your display server (Wayland or X11).
+
++ wayland
+
+#+begin_src sh
+export SDL_VIDEODRIVER=wayland
+#+end_src
+
++ X11
+
+#+begin_src sh
+export SDL_VIDEODRIVER=x11
 #+end_src
 
 + source your ~/.zshenv if you are using the zsh shell
@@ -448,11 +431,30 @@ if you are using bash add the following code to your ~/.bashrc
 
 for the rust scripts, yt-dlp and deno
 
+#+begin_example
+~/.bashrc
+#+end_example
+
 #+BEGIN_SRC sh
 if [ -d "$HOME/bin" ]; then
-   PATH="$HOME/bin:$HOME/.deno/bin:$PATH"
+   PATH="$HOME/bin:$PATH"
 fi
 #+END_SRC
+
+To ensure ffplay renders correctly on NixOS,
+you must export the correct SDL_VIDEODRIVER for your display server (Wayland or X11).
+
++ wayland
+
+#+begin_src sh
+export SDL_VIDEODRIVER=wayland
+#+end_src
+
++ X11
+
+#+begin_src sh
+export SDL_VIDEODRIVER=x11
+#+end_src
 
 + source your ~/.bashrc if you are using the bash shell
 
@@ -460,17 +462,21 @@ fi
 source ~/.bashrc
 #+END_SRC
 
-**** release download
+**** Release download
 
-download the NixOS release
+Download the latest NixOS release archive and follow these steps to install the binaries.
 
-***** untar the tar.gz file
+***** Extract the archive
+
+Note: Replace version-1.0 with the actual version number you downloaded.
 
 #+begin_src sh
 tar xzvf nixos-ffmpeg-scripts-rust-version-1.0.tar.gz
 #+end_src
 
-***** move the scripts to the bin directory
+***** Deploy the scripts
+
+Move the extracted binaries into your local ~/bin directory.
 
 #+begin_src sh
 mv nixos-ffmpeg-scripts-rust-version-1.0/* ~/bin/
@@ -488,46 +494,6 @@ for other linux distros see the documentation for your package manager
 #+BEGIN_SRC sh
 sudo apt install ffmpeg
 #+END_SRC
-
-**** ffplay 
-
-you need to export SDL_VIDEODRIVER=wayland in your shell config for ffplay
-
-***** zsh shell
-
-#+begin_example
-~/.zshenv
-#+end_example
-
-+ wayland
-
-#+begin_src sh
-export SDL_VIDEODRIVER=wayland
-#+end_src
-
-+ X11
-
-#+begin_src sh
-export SDL_VIDEODRIVER=x11
-#+end_src
-
-***** bash shell
-
-#+begin_example
-~/.bashrc
-#+end_example
-
-+ wayland
-
-#+begin_src sh
-export SDL_VIDEODRIVER=wayland
-#+end_src
-
-+ X11
-
-#+begin_src sh
-export SDL_VIDEODRIVER=x11
-#+end_src
 
 **** yt-dlp install
 
