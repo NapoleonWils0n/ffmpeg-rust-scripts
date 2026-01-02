@@ -301,7 +301,7 @@ The ! -name "*.*" logic in standard find can sometimes be finicky depending on t
 
 This will cleanly grab your 32 binaries and ignore all the compiler junk.
 
-**** Window build 
+**** Windows build 
 
 To build binaries for Windows, we use the MinGW-w64 toolchain.
 
