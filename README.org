@@ -3,9 +3,9 @@
 * ffmpeg Scripts Rust
 ** About this repository
 
-#+begin_quote
+#+begin_verse
 A collection of ffmpeg Rust scripts for basic editing tasks
-#+end_quote
+#+end_verse
 
 ** Installation instructions
 
@@ -53,9 +53,10 @@ A collection of ffmpeg Rust scripts for basic editing tasks
 
 ** NixOS Build & Distribution
 
+#+begin_verse
 This section covers how to compile the scripts for different platforms using Nix.
-
 We use three distinct targets to ensure maximum compatibility.
+#+end_verse
 
 *** Setup Build Workspace
 
