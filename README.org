@@ -6,7 +6,13 @@ A collection of ffmpeg Rust scripts for basic editing tasks
 
 ** Install
 
-** Scripts
++ [[#nixos-install][NixOS]]
++ [[#linux-install][Linux]]
++ [[#windows-install][Windows]]
++ [[#mac-install][Mac]]
++ [[#freebsd-install][Freebsd]]
+
+** ffmpeg scripts
 
 + [[#audio-silence][audio-silence]]
 + [[#combine-clips][combine-clips]]
