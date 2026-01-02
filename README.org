@@ -4,6 +4,10 @@
 
 A collection of ffmpeg Rust scripts for basic editing tasks
 
+** Install
+
+** Scripts
+
 + [[#audio-silence][audio-silence]]
 + [[#combine-clips][combine-clips]]
 + [[#chapter-add][chapter-add]]
