@@ -1593,19 +1593,19 @@ Dependencies:
 
 scene-cut takes a cut file and video and cuts the video into clips
 
-+ script usage
+***** Script usage and help.
 
 #+BEGIN_SRC sh
 scene-cut -i input -c cutfile
 #+END_SRC
 
-+ script help
+Run the script with the -h option to show the help.
 
 #+begin_src sh
 scene-cut -h
 #+end_src
 
-note remove [OPTIONS] from help
+Help output.
 
 #+begin_example
 Split a video into individual scenes based on a cutlist
@@ -1627,22 +1627,30 @@ Dependencies:
 
 ffmpeg requires a start point and a duration, not an end point
 
+#+begin_verse
 cut file - hours, minutes, seconds
 in this example we create 2 - 30 seconds clips
+#+end_verse
 
+#+begin_verse
 a 30 second clip that starts at 00:00:00
 and another 30 second clip that starts at 00:01:00
+#+end_verse
 
 #+begin_example
 00:00:00,00:00:30
 00:01:00,00:00:30
 #+end_example
 
+#+begin_verse
 cut file - seconds
 in this example we create 2 - 30 seconds clips
+#+end_verse
 
+#+begin_verse
 a 30 second clip that starts at 0
 and another 30 second clip that starts at 60
+#+end_verse
 
 #+begin_example
 0,30
