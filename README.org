@@ -2155,17 +2155,19 @@ find . -type f -name "*.mp4" -exec sh -c \
 
 convert a csv file into a chapter metadata file for ffmpeg
 
-+ script usage
+***** Script usage and help.
 
 #+BEGIN_SRC sh
 chapter-csv -i input -o output
 #+END_SRC
 
-+ script help
+Run the script with the -h option to show the help.
 
 #+begin_src sh
 chapter-add -h
 #+end_src
+
+Help output.
 
 #+begin_example
 Convert a chapter CSV (Start, End, Title) to FFmpeg metadata format
@@ -2185,9 +2187,12 @@ Example:
   ffmpeg: https://www.ffmpeg.org/
 #+end_example
 
-+ csv file example
+csv file example
 
-The last record is the duration of the video and is used as the end time for the previous chapter,and End isnt used as a chapter
+#+begin_verse
+The last record is the duration of the video and is used as the end time for the previous chapter,
+and End isnt used as a chapter
+#+end_verse
 
 #+begin_example
 00:00:00,Intro
@@ -2202,20 +2207,24 @@ The last record is the duration of the video and is used as the end time for the
 :CUSTOM_ID: chapter-add
 :END:
 
+#+begin_verse
 add chapters to a video or audio file with ffmpeg using a metadata file,
 use the chapter-csv script to create the metadata file from a csv files
+#+end_verse
 
-+ script usage
+***** Script usage and help.
 
 #+BEGIN_SRC sh
 chapter-add -i input -c metadata.txt -o output
 #+END_SRC
 
-+ script help
+Run the script with the -h option to show the help.
 
 #+begin_src sh
 chapter-add -h
 #+end_src
+
+Help output.
 
 #+begin_example
 Mux FFmpeg metadata chapters into a video or audio file without re-encoding
@@ -2243,17 +2252,19 @@ Example:
 
 extract chapters from a video or audo file and save as a csv file
 
-+ script usage
+***** Script usage and help.
 
 #+BEGIN_SRC sh
 chapter-extract -i input -o output
 #+END_SRC
 
-+ script help
+Run the script with the -h option to show the help.
 
 #+begin_src sh
 chapter-extract -h
 #+end_src
+
+Help output.
 
 #+begin_example
 Extract chapters from a video or audio file and save as a CSV
@@ -2275,7 +2286,7 @@ Dependencies:
   ffmpeg, ffprobe: https://www.ffmpeg.org/
 #+end_example
 
-+ convert the csv file to youtube timestamps
+convert the csv file to youtube timestamps
 
 #+begin_src sh
 tr ',' ' ' < input.txt > output.txt
@@ -2288,17 +2299,19 @@ tr ',' ' ' < input.txt > output.txt
 
 add subtitles to a video file
 
-+ script usage
+***** Script usage and help.
 
 #+BEGIN_SRC sh
 subtitle-add -i input.(mp4|mkv|mov|m4v) -s subtitle.(srt|vtt) -o output.mp4
 #+END_SRC
 
-+ script help
+Run the script with the -h option to show the help.
 
 #+begin_src sh
 subtitle-add -h
 #+end_src
+
+Help output.
 
 #+begin_example
 Add SRT/VTT subtitles to a video as a track you can toggle on and off
@@ -2324,8 +2337,10 @@ Example:
 
 Batch process files in the current working directory
   
+#+begin_verse
 Note we omit the -o option to use the default outfile name,
 infile-name-subs-date-time
+#+end_verse
 
 The video and subtitle files you want to combine must have the same name
 
@@ -2338,9 +2353,10 @@ file2.mp4
 file2.srt
 #+END_EXAMPLE
 
+#+begin_verse
 running the following code will run the subtitle-add script and combine
-file1.mp4 with file1.srt and 
-file2.mp4 with file2.srt
+file1.mp4 with file1.srt and file2.mp4 with file2.srt
+#+end_verse
 
 #+BEGIN_SRC sh
 find . -type f -name "*.mp4" -exec sh -c \
