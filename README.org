@@ -882,7 +882,9 @@ source ~/.bashrc
 :PROPERTIES:
 :CUSTOM_ID: freebsd-install
 :END:
-**** install rust
+**** Rust install
+
+Run the following command in the terminal to install Rust
 
 #+begin_src sh
 sudo pkg install rust
@@ -902,49 +904,47 @@ cargo build --release
 sudo pkg install ffmpeg
 #+END_SRC
 
-you can also install ffmpeg from ports,
+#+begin_verse
+You can also install ffmpeg from ports,
 or use poudriere to build the ffmpeg package
+#+end_verse
 
-note the ebumeter script uses ffplay which isnt installed with the ffmpeg package,
+#+begin_verse
+Note the ebumeter script uses ffplay which isnt installed with the ffmpeg package,
 so you need to build ffmpeg with the sdl option enable from ports or with poudriere
+#+end_verse
 
-if you want to use the libfdk_aac audio you should also enable that option when building
+#+begin_verse
+If you want to use the libfdk_aac audio you should also enable that option when building
 the ffmpeg port, and build the lame package for mp3 support
+#+end_verse
 
 **** yt-dlp install
+
+Run the following command in the terminal to install yt-dlp and deno
 
 #+begin_src sh
 sudo pkg install yt-dlp deno
 #+end_src
 
-**** bin directory for scripts
+**** Environment Path Setup
 ***** create bin directory
 
-create a bin directory in your home to add the scripts to
+Create a bin directory in your home folder to store the scripts.
 
 #+BEGIN_SRC sh
 mkdir -p ~/bin
 #+END_SRC
 
-***** bash shell
-
-if you are using bash add the following code to your ~/.bashrc
-
-#+BEGIN_SRC sh
-if [ -d "$HOME/bin" ]; then
-   PATH="$HOME/bin:$PATH"
-fi
-#+END_SRC
-
-+ source your ~/.bashrc if you are using the bash shell
-
-#+BEGIN_SRC sh
-source ~/.bashrc
-#+END_SRC
-
 ***** zsh shell
 
-if you are using zsh add the following code to your ~/.zshenv file
+If you are using zsh add the following code to your ~/.zshenv file
+
+This sets up the PATH for the rust scripts.
+
+#+begin_example
+~/.zshenv
+#+end_example
 
 #+begin_src sh
 typeset -U PATH path
@@ -952,10 +952,70 @@ path=("$HOME/bin" "$path[@]")
 export PATH
 #+end_src
 
-+ source your ~/.zshenv if you are using the zsh shell
+#+begin_verse
+To ensure ffplay renders correctly on Freebsd,
+you must export the correct SDL_VIDEODRIVER for your display server (Wayland or X11).
+#+end_verse
+
+Set ffplay driver: use 'wayland' or 'x11'
+
++ wayland
+
+#+begin_src sh
+export SDL_VIDEODRIVER=wayland
+#+end_src
+
++ X11
+
+#+begin_src sh
+export SDL_VIDEODRIVER=x11
+#+end_src
+
+Source your ~/.zshenv if you are using the zsh shell
 
 #+BEGIN_SRC sh
 source ~/.zshenv
+#+END_SRC
+
+***** bash shell
+
+If you are using bash add the following code to your ~/.bashrc
+
+This sets up the PATH for the rust scripts.
+
+#+begin_example
+~/.bashrc
+#+end_example
+
+#+BEGIN_SRC sh
+if [ -d "$HOME/bin" ]; then
+   PATH="$HOME/bin:$PATH"
+fi
+#+END_SRC
+
+#+begin_verse
+To ensure ffplay renders correctly on Freebsd,
+you must export the correct SDL_VIDEODRIVER for your display server (Wayland or X11).
+#+end_verse
+
+Set ffplay driver: use 'wayland' or 'x11'
+
++ wayland
+
+#+begin_src sh
+export SDL_VIDEODRIVER=wayland
+#+end_src
+
++ X11
+
+#+begin_src sh
+export SDL_VIDEODRIVER=x11
+#+end_src
+
+Source your ~/.bashrc if you are using the bash shell
+
+#+BEGIN_SRC sh
+source ~/.bashrc
 #+END_SRC
 
 ** ffmpeg scripts
