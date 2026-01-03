@@ -4,7 +4,66 @@
 ** Project overview
 
 #+begin_verse
-A collection of ffmpeg Rust scripts for basic editing tasks
+FFmpeg Scripts Rust is a collection of high-performance utilities designed to automate common video and audio editing tasks.
+
+By leveraging Rust, these scripts provide a fast, safe, and portable alternative to traditional shell scripts.
+#+end_verse
+
+*** Script Categories
+
+The tools are organized into functional categories.
+
+#+begin_verse
+Scene Detection & Cutting: Automatically identify scene changes and split videos into logical segments.
+
+Trimming & Clipping: Precise tools for extracting clips using timestamps, durations, or remote URLs.
+
+Chapters & Metadata: Extract, create, and manage metadata and chapter markers for media files.
+
+Overlays & Transitions: Add fades, crossfades, Picture-in-Picture (PiP) effects, and Ken Burns animations.
+
+Visualization & Analysis: Generate waveforms, scopes, and measure EBU R128 loudness levels.
+
+Conversion & Extras: Create high-quality GIFs, WebP images, and handle time format conversions.
+#+end_verse
+
+*** Supported Operating Systems
+
+This project is designed to be cross-platform and work on:
+
+#+begin_verse
+NixOS (via Home Manager)
+
+Linux (standard distributions like Ubuntu, Arch, etc.)
+
+Windows (Windows 10/11)
+
+macOS
+
+FreeBSD
+#+end_verse
+
+*** Binary Availability & Compilation
+
+#+begin_verse
+Statically Compiled Binaries: Provided for NixOS, Linux, and Windows.
+These are standalone executables that do not require a Rust runtime to be installed on your system.
+#+end_verse
+
+#+begin_verse
+Manual Compilation: For macOS and FreeBSD, you will need to install the Rust toolchain and compile the scripts from source to ensure compatibility with your specific system architecture.
+#+end_verse
+
+*** Key Features
+
+#+begin_verse
+Stateless & Portable: No complex databases; scripts operate directly on your files.
+
+High Performance: Rust's speed ensures that logic-heavy tasks (like calculating scene changes) happen instantly.
+
+Human Readable: Uses clear CLI arguments and provides helpful -h documentation for every tool.
+
+Pipe-friendly: Designed to work in sequence with other command-line utilities like fd or find for batch processing.
 #+end_verse
 
 ** Installation instructions
