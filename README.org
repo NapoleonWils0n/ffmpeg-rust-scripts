@@ -1478,7 +1478,7 @@ Lower values detect more scenes; higher values detect fewer.
 #+end_verse
 
 #+begin_src sh
-scene-detect-auto -i input.mp4 -t 0.5
+scene-detect -i input.mp4 -t 0.5
 #+end_src
 
 #+begin_verse
