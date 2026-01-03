@@ -485,13 +485,13 @@ mkdir -p ~/bin
 
 ***** zsh shell
 
-If you are using zsh add the following code to your ~/.zshenv file
-
-This sets up the PATH for the rust scripts and configures the ffplay video driver.
-
 #+begin_example
 ~/.zshenv
 #+end_example
+
+If you are using zsh add the following code to your ~/.zshenv file
+
+This sets up the PATH for the rust scripts and configures the ffplay video driver.
 
 #+begin_src sh
 typeset -U PATH path
@@ -526,13 +526,13 @@ source ~/.zshenv
 
 ***** bash shell
 
-If you are using bash add the following code to your ~/.bashrc
-
-This sets up the PATH for the rust scripts and configures the ffplay video driver.
-
 #+begin_example
 ~/.bashrc
 #+end_example
+
+If you are using bash add the following code to your ~/.bashrc
+
+This sets up the PATH for the rust scripts and configures the ffplay video driver.
 
 #+BEGIN_SRC sh
 if [ -d "$HOME/bin" ]; then
@@ -645,13 +645,13 @@ mkdir -p ~/bin
 
 ***** zsh shell
 
-If you are using zsh add the following code to your ~/.zshenv file
-
-This sets up the PATH for the rust scripts, yt-dlp, and deno, and configures the ffplay video driver.
-
 #+begin_example
 ~/.zshenv
 #+end_example
+
+If you are using zsh add the following code to your ~/.zshenv file
+
+This sets up the PATH for the rust scripts, yt-dlp, and deno, and configures the ffplay video driver.
 
 #+begin_src sh
 typeset -U PATH path
@@ -686,13 +686,13 @@ source ~/.zshenv
 
 ***** bash shell
 
-If you are using bash add the following code to your ~/.bashrc
-
-This sets up the PATH for the rust scripts, yt-dlp, and deno, and configures the ffplay video driver.
-
 #+begin_example
 ~/.bashrc
 #+end_example
+
+If you are using bash add the following code to your ~/.bashrc
+
+This sets up the PATH for the rust scripts, yt-dlp, and deno, and configures the ffplay video driver.
 
 #+BEGIN_SRC sh
 if [ -d "$HOME/bin" ]; then
@@ -918,16 +918,16 @@ mkdir -p ~/bin
 
 ***** zsh shell
 
+#+begin_example
+~/.zshenv
+#+end_example
+
 #+begin_verse
 Add the following code to your ~/.zshenv file.
 This is the default shell for macOS.
 #+end_verse
 
 This sets up the PATH for the rust scripts.
-
-#+begin_example
-~/.zshenv
-#+end_example
 
 #+begin_src sh
 typeset -U PATH path
@@ -943,13 +943,13 @@ source ~/.zshenv
 
 ***** bash shell
 
-If you are using bash add the following code to your ~/.bashrc
-
-This sets up the PATH for the rust scripts.
-
 #+begin_example
 ~/.bashrc
 #+end_example
+
+If you are using bash add the following code to your ~/.bashrc
+
+This sets up the PATH for the rust scripts.
 
 #+BEGIN_SRC sh
 if [ -d "$HOME/bin" ]; then
@@ -966,7 +966,8 @@ source ~/.bashrc
 **** Compile and Install
 
 #+begin_verse
-Since macOS requires manual compilation, follow these steps to build the binaries and move them to your bin folder.
+Since macOS requires manual compilation,
+follow these steps to build the binaries and move them to your bin folder.
 #+end_verse
 
 ***** Clone the git repository
@@ -1025,7 +1026,10 @@ This is normal, but you only need the files that match the script names.
 :END:
 **** Rust install
 
-Run the following command in the terminal to install Rust
+#+begin_verse
+Install the required tools and the Rust toolchain using the pkg manager.
+Run the following command in the terminal to install Rust.
+#+end_verse
 
 #+begin_src sh
 sudo pkg install rust
@@ -1071,15 +1075,54 @@ Create a bin directory in your home folder to store the scripts.
 mkdir -p ~/bin
 #+END_SRC
 
+***** sh shell
+
+#+begin_example
+~/.profile
+#+end_example
+
+#+begin_verse
+For the default shell (sh or tcsh) shell on Freebsd,
+edit your shell ~/.profile
+#+end_verse
+
+add this code to your ~/.profile file.
+
+#+begin_src sh
+if [ -d "$HOME/bin" ]; then
+    PATH="$HOME/bin:$PATH"
+fi
+#+end_src
+
+Set ffplay driver: use 'wayland' or 'x11'
+
++ wayland
+
+#+begin_src sh
+export SDL_VIDEODRIVER=wayland
+#+end_src
+
++ X11
+
+#+begin_src sh
+export SDL_VIDEODRIVER=x11
+#+end_src
+
+Source your ~/.profile
+
+#+BEGIN_SRC sh
+source ~/.profile
+#+END_SRC
+
 ***** zsh shell
-
-If you are using zsh add the following code to your ~/.zshenv file
-
-This sets up the PATH for the rust scripts.
 
 #+begin_example
 ~/.zshenv
 #+end_example
+
+If you are using zsh add the following code to your ~/.zshenv file
+
+This sets up the PATH for the rust scripts.
 
 #+begin_src sh
 typeset -U PATH path
@@ -1114,13 +1157,13 @@ source ~/.zshenv
 
 ***** bash shell
 
-If you are using bash add the following code to your ~/.bashrc
-
-This sets up the PATH for the rust scripts.
-
 #+begin_example
 ~/.bashrc
 #+end_example
+
+If you are using bash add the following code to your ~/.bashrc
+
+This sets up the PATH for the rust scripts.
 
 #+BEGIN_SRC sh
 if [ -d "$HOME/bin" ]; then
@@ -1152,6 +1195,63 @@ Source your ~/.bashrc if you are using the bash shell
 #+BEGIN_SRC sh
 source ~/.bashrc
 #+END_SRC
+
+**** Compile and Install
+
+#+begin_verse
+Since Freebsd requires manual compilation,
+follow these steps to build the binaries and move them to your bin folder.
+#+end_verse
+
+***** Clone the git repository
+
+Create a directory to store the git repository in your home directory.
+
+#+begin_src sh
+mkdir -p ~/git 
+#+end_src
+
+Change into the git directory in your home.
+
+#+begin_src sh
+cd ~/git
+#+end_src
+
+Run the following command in the terminal to clone the ffmpeg-scripts-rust git repository.
+
+#+begin_src sh
+git clone https://github.com/NapoleonWils0n/ffmpeg-scripts-rust
+#+end_src
+
+***** Build the project using Cargo.
+
+Change directory into the ffmpeg-scripts-rust git repository.
+
+#+begin_src sh
+cd ffmpeg-scripts-rust
+#+end_src
+
+Build the project with Cargo.
+
+#+begin_src sh
+cargo build --release
+#+end_src
+
+#+begin_verse
+When you run cargo build --release,
+Rust places the binaries in target/release/
+#+end_verse
+
+Copy the scripts to the bin directory in your home.
+
+#+begin_src sh
+cp target/release/* ~/bin/
+#+end_src
+
+#+begin_verse
+Note: You may see some non-executable files in the bin folder after this command (like .d files).
+This is normal, but you only need the files that match the script names.
+#+end_verse
 
 ** ffmpeg scripts
 *** Scene Detection
