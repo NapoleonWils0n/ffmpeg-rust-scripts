@@ -1530,8 +1530,10 @@ Dependencies:
 :CUSTOM_ID: scene-time
 :END:
 
+#+begin_verse
 scene-time takes a cut file,
 created with the scene-detect script either in seconds or sexagesimal format
+#+end_verse
 
 #+begin_example
 0:00:00
@@ -1539,28 +1541,32 @@ created with the scene-detect script either in seconds or sexagesimal format
 0:00:15.750000
 #+end_example
 
+#+begin_verse
 The script creates clips by subtracting the cut point from the start point
 and converts sexagesimal format and then creates a file with the start point
 a comma and then the duration of the clip
+#+end_verse
 
-the output of the scene-time script is used with the scene-cut script to create the clips
+The output of the scene-time script is used with the scene-cut script to create the clips
 
 #+begin_example
 0,11.875
 11.875,3.875
 #+end_example
 
-+ script usage
+***** Script usage and help.
 
 #+BEGIN_SRC sh
 scene-time -i input -o output
 #+END_SRC
 
-+ script help
+Run the script with the -h option to show the help.
 
 #+begin_src sh
 scene-time -h
 #+end_src
+
+Help output.
 
 #+begin_example
 Create ffmpeg cutlist from scene detection timestamps
