@@ -1352,6 +1352,8 @@ scene-detect-auto -i input.mp4 -t 0.5
 
 ***** Script usage and help.
 
+Script usage.
+
 #+begin_src sh
 scene-detect-auto -i <INPUT> -t <THRESHOLD>
 #+end_src
@@ -1396,17 +1398,19 @@ scene-detect takes a video file and a threshold for the scene detection from 0.1
 you can also use the -s and -e options to set a range for thew scene detection,
 if you dont specify a range scene detection will be perform on the whole video
 
-+ script usage
+Script usage.
 
 #+BEGIN_SRC sh
 scene-detect -s 00:00:00 -i input -e 00:00:00 -t (0.1 - 0.9) -f sec -o output
 #+END_SRC
 
-+ script help
+Run the script with the -h option to show the help.
 
 #+begin_src sh
 scene-detect -h
 #+end_src
+
+Help output.
 
 #+begin_example
 Detect scene changes in a video
