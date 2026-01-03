@@ -68,6 +68,11 @@ Pipe-friendly: Designed to work in sequence with other command-line utilities li
 
 ** Installation instructions
 
+#+begin_verse
+Choose your operating system below for specific installation steps,
+including dependency management and environment path configuration.
+#+end_verse
+
 + [[#nixos-install][NixOS]]
 + [[#linux-install][Linux]]
 + [[#windows-install][Windows]]
