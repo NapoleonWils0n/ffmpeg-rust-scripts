@@ -867,7 +867,7 @@ by running the following command in the terminal.
 #+end_verse
 
 #+begin_src sh
-xcode-select —install 
+xcode-select --install
 #+end_src
 
 **** Rust install
