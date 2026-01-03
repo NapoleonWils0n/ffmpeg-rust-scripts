@@ -1268,6 +1268,8 @@ This is normal, but you only need the files that match the script names.
 :CUSTOM_ID: scene-detect-auto
 :END:
 
+Automated scene detection and video splitting.
+
 The scene-detect-auto script performs the functions of the following scripts automatically
 
 1) scene-detect (Identifies scene changes)
@@ -1348,7 +1350,7 @@ Lower values detect more scenes; higher values detect fewer.
 scene-detect-auto -i input.mp4 -t 0.5
 #+end_src
 
-Script usage.
+***** Script usage and help.
 
 #+begin_src sh
 scene-detect-auto -i <INPUT> -t <THRESHOLD>
