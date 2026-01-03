@@ -1035,14 +1035,6 @@ Run the following command in the terminal to install Rust.
 sudo pkg install rust
 #+end_src
 
-clone the repo
-
-use cargo to build the repo
-
-#+begin_src sh
-cargo build --release
-#+end_src
-
 **** Install Dependencies
 
 Install dependencies with pkg.
