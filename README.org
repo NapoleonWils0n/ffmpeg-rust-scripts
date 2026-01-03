@@ -963,13 +963,13 @@ Source your ~/.bashrc if you are using the bash shell
 source ~/.bashrc
 #+END_SRC
 
-***** Compile and Install
+**** Compile and Install
 
 #+begin_verse
 Since macOS requires manual compilation, follow these steps to build the binaries and move them to your bin folder.
 #+end_verse
 
-****** Clone the git repository
+***** Clone the git repository
 
 Create a directory to store the git repository in your home directory.
 
@@ -989,7 +989,7 @@ Run the following command in the terminal to clone the ffmpeg-scripts-rust git r
 git clone https://github.com/NapoleonWils0n/ffmpeg-scripts-rust
 #+end_src
 
-****** Build the project using Cargo.
+***** Build the project using Cargo.
 
 Change directory into the ffmpeg-scripts-rust git repository.
 
