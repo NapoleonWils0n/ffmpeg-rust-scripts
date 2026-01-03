@@ -444,7 +444,7 @@ export SDL_VIDEODRIVER=wayland
 export SDL_VIDEODRIVER=x11
 #+end_src
 
-+ source your ~/.zshenv if you are using the zsh shell
+Source your ~/.zshenv if you are using the zsh shell
 
 #+BEGIN_SRC sh
 source ~/.zshenv
@@ -485,7 +485,7 @@ export SDL_VIDEODRIVER=wayland
 export SDL_VIDEODRIVER=x11
 #+end_src
 
-+ source your ~/.bashrc if you are using the bash shell
+Source your ~/.bashrc if you are using the bash shell
 
 #+BEGIN_SRC sh
 source ~/.bashrc
@@ -585,8 +585,10 @@ path=("$HOME/bin" "${HOME}/.deno/bin" "$path[@]")
 export PATH
 #+end_src
 
+#+begin_verse
 To ensure ffplay renders correctly on Linux,
 you must export the correct SDL_VIDEODRIVER for your display server (Wayland or X11).
+#+end_verse
 
 Set ffplay driver: use 'wayland' or 'x11'
 
@@ -602,7 +604,7 @@ export SDL_VIDEODRIVER=wayland
 export SDL_VIDEODRIVER=x11
 #+end_src
 
-+ source your ~/.zshenv if you are using the zsh shell
+Source your ~/.zshenv if you are using the zsh shell
 
 #+BEGIN_SRC sh
 source ~/.zshenv
@@ -624,8 +626,10 @@ if [ -d "$HOME/bin" ]; then
 fi
 #+END_SRC
 
+#+begin_verse
 To ensure ffplay renders correctly on Linux,
 you must export the correct SDL_VIDEODRIVER for your display server (Wayland or X11).
+#+end_verse
 
 Set ffplay driver: use 'wayland' or 'x11'
 
@@ -641,7 +645,7 @@ export SDL_VIDEODRIVER=wayland
 export SDL_VIDEODRIVER=x11
 #+end_src
 
-+ source your ~/.bashrc if you are using the bash shell
+Source your ~/.bashrc if you are using the bash shell
 
 #+BEGIN_SRC sh
 source ~/.bashrc
@@ -821,16 +825,10 @@ Run the following command in the terminal to install ffmpeg and yt-dlp with home
 brew install ffmpeg yt-dlp
 #+end_src
 
-**** ffplay
-
-#+begin_src sh
-export SDL_VIDEODRIVER=cocoa
-#+end_src
-
-**** bin directory for scripts
+**** Environment Path Setup
 ***** create bin directory
 
-create a bin directory in your home to add the scripts to
+Create a bin directory in your home folder to store the scripts.
 
 #+BEGIN_SRC sh
 mkdir -p ~/bin
@@ -838,7 +836,13 @@ mkdir -p ~/bin
 
 ***** zsh shell
 
-if you are using zsh add the following code to your ~/.zshenv file
+If you are using zsh add the following code to your ~/.zshenv file
+
+This sets up the PATH for the rust scripts.
+
+#+begin_example
+~/.zshenv
+#+end_example
 
 #+begin_src sh
 typeset -U PATH path
@@ -846,7 +850,7 @@ path=("$HOME/bin" "$path[@]")
 export PATH
 #+end_src
 
-+ source your ~/.zshenv if you are using the zsh shell
+Source your ~/.zshenv if you are using the zsh shell
 
 #+BEGIN_SRC sh
 source ~/.zshenv
@@ -854,7 +858,13 @@ source ~/.zshenv
 
 ***** bash shell
 
-if you are using bash add the following code to your ~/.bashrc
+If you are using bash add the following code to your ~/.bashrc
+
+This sets up the PATH for the rust scripts.
+
+#+begin_example
+~/.bashrc
+#+end_example
 
 #+BEGIN_SRC sh
 if [ -d "$HOME/bin" ]; then
@@ -862,7 +872,7 @@ if [ -d "$HOME/bin" ]; then
 fi
 #+END_SRC
 
-+ source your ~/.bashrc if you are using the bash shell
+Source your ~/.bashrc if you are using the bash shell
 
 #+BEGIN_SRC sh
 source ~/.bashrc
