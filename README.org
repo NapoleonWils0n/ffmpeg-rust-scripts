@@ -1662,21 +1662,25 @@ and another 30 second clip that starts at 60
 :CUSTOM_ID: scene-images
 :END:
 
+#+begin_verse
 scene-images takes a video file and a cut file,
 created with the scene-detect script either in seconds or sexagesimal format
 and then creates an image for each cut point
+#+end_verse
 
-+ script usage
+***** Script usage and help.
 
 #+BEGIN_SRC sh
 scene-images -i input -c cutfile -t (png|jpg) -x width -y height
 #+END_SRC
 
-+ script help
+Run the script with the -h option to show the help.
 
 #+begin_src sh
 scene-images -h
 #+end_src
+
+Help output.
 
 #+begin_example
 Create thumbnails from scene detection timestamps
