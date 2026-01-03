@@ -1401,7 +1401,15 @@ you can also use the -s and -e options to set a range for the scene detection.
 If you dont specify a range scene detection will be perform on the whole video.
 #+end_verse
 
+#+begin_verse
+Note: manual scene-detection uses 3 scripts that work together
+#+end_verse
 
+1) scene-detect (Identifies scene changes)
+
+2) scene-time (Converts timestamps to a cutlist)
+
+3) scene-cut (Splits the video into clips)
 
 #+begin_verse
 Because this script can generate a large number of video clips,
@@ -1469,6 +1477,14 @@ scene-detect -i input.mp4
 #+begin_verse
 Use the -t option to adjust the sensitivity.
 Lower values detect more scenes; higher values detect fewer.
+#+end_verse
+
+#+begin_verse
+Note: this will create a text file called input-detection.txt
+
+Where input is the name of the video that has been processed.
+
+You use the input-detection.txt file with scene-time script in the next step.
 #+end_verse
 
 ***** Script usage and help.
