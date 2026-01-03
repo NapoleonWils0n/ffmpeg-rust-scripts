@@ -1268,7 +1268,122 @@ This is normal, but you only need the files that match the script names.
 :CUSTOM_ID: scene-detect-auto
 :END:
 
+The scene-detect-auto script performs the functions of the following scripts automatically
 
+1) scene-detect (Identifies scene changes)
+
+2) scene-time (Converts timestamps to a cutlist)
+
+3) scene-cut (Splits the video into clips)
+
+#+begin_verse
+Because this script can generate a large number of video clips,
+it is best to create a dedicated directory for each video you want to process.
+#+end_verse
+
+***** 1) Create a directory
+
+#+begin_verse
+Create a directory for your project (e.g., "scene-detect").
+using the command line or your file manager
+#+end_verse
+
+On NixOS, Linux, Mac or Freebsd
+
+#+begin_src sh
+mkdir -p scene-detect
+#+end_src
+
+On Windows (PowerShell)
+
+#+begin_src sh
+New-Item -ItemType Directory -Path "scene-detect"
+#+end_src
+
+#+begin_verse
+Move the video to process into the scene-cut directory,
+where input.mp4 is the name of the video to process
+#+end_verse
+
+***** 2) Move your video into the directory
+
+Move the video file (e.g., input.mp4) into the folder you just created.
+
+On NixOS, Linux, Mac or Freebsd
+
+#+begin_src sh
+mv input.mp4 scene-detect/
+#+end_src
+
+On Windows (PowerShell):
+
+#+begin_src sh
+Move-Item -Path "input.mp4" -Destination "scene-detect"
+#+end_src
+
+***** 3) Change into the directory
+
+On all operating systems:
+
+#+begin_src sh
+cd scene-detect
+#+end_src
+
+***** 4) Run the script
+
+#+begin_verse
+Run the script with the -i option. By default, the detection threshold is 0.3.
+#+end_verse
+
+#+begin_src sh
+scene-detect-auto -i input.mp4
+#+end_src
+
+#+begin_verse
+Use the -t option to adjust the sensitivity.
+Lower values detect more scenes; higher values detect fewer.
+#+end_verse
+
+#+begin_src sh
+scene-detect-auto -i input.mp4 -t 0.5
+#+end_src
+
+Script usage.
+
+#+begin_src sh
+scene-detect-auto -i <INPUT> -t <THRESHOLD>
+#+end_src
+
+Run the script with the -h option to show the help.
+
+#+begin_src sh
+scene-detect-auto -h
+#+end_src
+
+Help output.
+
+#+begin_example
+Automated scene detection and video splitting
+
+Usage: scene-detect-auto [OPTIONS] -i <INPUT>
+
+Options:
+  -i <INPUT>      input video file
+  -t <THRESHOLD>  detection threshold (0.0 to 1.0) [default: 0.3]
+  -h, --help      Print help
+  -v, --version   Print version
+
+Example:
+  scene-detect-auto -i input.mp4
+
+Dependencies:
+  ffmpeg, ffprobe: https://www.ffmpeg.org/
+
+Notes:
+  Creates detection.txt and cutlist.txt automatically.
+#+end_example
+
+Notes: Creates detection.txt and cutlist.txt automatically.
 
 **** scene-detect
 :PROPERTIES:
