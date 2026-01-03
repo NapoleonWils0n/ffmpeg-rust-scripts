@@ -2372,17 +2372,19 @@ find . -type f -name "*.mp4" -exec sh -c \
 
 overlay one video clip on top of another video clip
 
-+ script usage
+***** Script usage and help.
 
 #+BEGIN_SRC sh
 overlay-clip -a background.mp4 -b logo.mp4 -p 00:00:05
 #+END_SRC
 
-+ script help
+Run the script with the -h option to show the help.
 
 #+begin_src sh
 overlay-clip -h
 #+end_src
+
+Help output.
 
 #+begin_example
 Overlay one video clip on top of another video clip
@@ -2411,17 +2413,19 @@ Dependencies:
 
 create a picture in picture
 
-+ script usage
+***** Script usage and help.
 
 #+BEGIN_SRC sh
 overlay-pip -a input -b input -p 00:00:30 -m [00] -x (tl|tr|bl|br) -w [000] -f (0.1-9|1) -b [00] -c colour -o output.mp4
 #+END_SRC
 
-+ script help
+Run the script with the -h option to show the help.
 
 #+begin_src sh
 overlay-pip -h
 #+end_src
+
+Help output.
 
 #+begin_example
 Create a Picture-in-Picture (PiP) overlay
@@ -2456,17 +2460,19 @@ Dependencies:
 
 fade video and audio in and out
 
-+ script usage
+***** Script usage and help.
 
 #+BEGIN_SRC sh
 fade-clip -i input.(mp4|mkv|mov|m4v) -d (0.[0-9]|1) -o output.mp4
 #+END_SRC
 
-+ script help
+Run the script with the -h option to show the help.
 
 #+begin_src sh
 fade-clip -h
 #+end_src
+
+Help output.
 
 #+begin_example
 Fade in a video and audio clip
@@ -2491,10 +2497,12 @@ Dependencies:
 
 Batch process files in the current working directory
   
+#+begin_verse
 Note we omit the -o option to use the default outfile name,
 infile-name-fade-date-time
+#+end_verse
 
-+ fade-clip with default option of 0.5
+fade-clip with default option of 0.5
 
 #+BEGIN_SRC sh
 find . -type f -name "*.mp4" -exec sh -c \
@@ -2502,7 +2510,7 @@ find . -type f -name "*.mp4" -exec sh -c \
 "{}" \;
 #+END_SRC
 
-+ fade-clip and override the default option of 0.5 with -d 1 for a 1 second fade
+fade-clip and override the default option of 0.5 with -d 1 for a 1 second fade
 
 #+BEGIN_SRC sh
 find . -type f -name "*.mp4" -exec sh -c \
@@ -2519,17 +2527,19 @@ apply a transition between two clips with the xfade filters
 
 [[https://trac.ffmpeg.org/wiki/Xfade][xfade ffmpeg wiki]]
 
-+ script usage
+***** Script usage and help.
 
 #+begin_src sh
 xfade -a clip1.(mp4|mkv|mov|m4v) -b clip2.(mp4|mkv|mov|m4v) -d duration -t transition -f offset -o output.mp4
 #+end_src
 
-+ script help
+Run the script with the -h option to show the help.
 
 #+begin_src sh
 xfade -h
 #+end_src
+
+Help output.
 
 #+begin_example
 FFmpeg xfade transitions
@@ -2563,17 +2573,19 @@ wipetl, wipetr, wipeup
 
 pan image
 
-+ script usage
+***** Script usage and help.
 
 #+BEGIN_SRC sh
 pan-scan -i input -d 00:00:10 -p (l|r|u|d) -o output.mp4
 #+END_SRC
 
-+ script help
+Run the script with the -h option to show the help.
 
 #+begin_src sh
 pan-scan -h
 #+end_src
+
+Help output.
 
 #+begin_example
 Pan scan over an image using scale/crop math
@@ -2602,17 +2614,19 @@ Dependencies:
 
 convert a image to video and apply the ken burns effect to the clip
 
-+ script usage
+***** Script usage and help.
 
 #+BEGIN_SRC sh
 zoompan -i input.(png|jpg|jpeg) -d (000) -z (in|out) -p (tl|c|tc|tr|bl|br) -o output.mp4
 #+END_SRC
 
-+ script help
+Run the script with the -h option to show the help.
 
 #+begin_src sh
 zoompan -h
 #+end_src
+
+Help output.
 
 #+begin_example
 Ken Burns style zoom animation
@@ -2639,11 +2653,15 @@ Dependencies:
 
 Batch process files in the current working directory
   
+#+begin_verse
 Note we omit the -o option to use the default outfile name,
 infile-name-zoompan-date-time
+#+end_verse
 
+#+begin_verse
 Batch process all the png files in the current working directory,
 apply the zoompan script with a 5 second duration, zoom in to the center of the image
+#+end_verse
 
 #+BEGIN_SRC sh
 find . -type f -name "*.png" -exec sh -c \
@@ -2659,17 +2677,19 @@ find . -type f -name "*.png" -exec sh -c \
 
 create a waveform from an audio or video file and save as a png
 
-+ script usage
+***** Script usage and help.
 
 #+BEGIN_SRC sh
 waveform -i input.(mp4|mkv|mov|m4v|webm|aac|m4a|wav|mp3) -o output.png
 #+END_SRC
 
-+ script help
+Run the script with the -h option to show the help.
 
 #+begin_src sh
 waveform -h
 #+end_src
+
+Help output.
 
 #+begin_example
 create a waveform image from a video or audio file
@@ -2699,8 +2719,7 @@ Dependencies:
 
 Batch process files in the current working directory
   
-Note we omit the -o option to use the default outfile name,
-infile-name-waveform-date-time
+Note we omit the -o option to use the default outfile name
 
 Create waveform images from all the mp4 fies in the current directory
 
@@ -2715,11 +2734,15 @@ find . -type f -name "*.mp4" -exec sh -c \
 :CUSTOM_ID: scopes
 :END:
 
-+ script help
+***** Script usage and help.
+
+Run the script with the -h option to show the help.
 
 #+begin_src sh
 scopes -h
 #+end_src
+
+Help output.
 
 #+begin_example
 Display video with professional scopes stacked below
@@ -2753,19 +2776,23 @@ Dependencies:
 
 ffplay ebu meter
 
-+ script usage
+***** Script usage and help.
 
 #+BEGIN_SRC sh
 ebu-meter -i input.(mp4|mkv|mov|m4v|webm|aac|m4a|wav|mp3) -t (00)
 #+END_SRC
 
+#+begin_example
 -t = luf target, eg 16
+#+end_example
 
-+ script help
+Run the script with the -h option to show the help.
 
 #+begin_src sh
 ebu-meter -h
 #+end_src
+
+Help output.
 
 #+begin_example
 display EBU R128 audio loudness meter
@@ -2792,21 +2819,26 @@ Dependencies:
 
 create a contact-sheet from a video
 
+#+begin_verse
 Note that you can use two different time unit formats: sexagesimal (HOURS:MM:SS.MILLISECONDS, as in 01:23:45.678), or in seconds.
 If a fraction is used, such as 02:30.05, this is interpreted as "5 100ths of a second", not as frame 5. 
-For instance, 02:30.5 would be 2 minutes, 30 seconds, and a half a second, which would be the same as using 150.5 in seconds. 
 
-+ script usage
+For instance, 02:30.5 would be 2 minutes, 30 seconds, and a half a second, which would be the same as using 150.5 in seconds.
+#+end_verse
+
+***** Script usage and help.
 
 #+BEGIN_SRC sh
 contact-sheet -i input -s 00:00:00.000 -w 000 -t 0x0 -p 00 -m 00 -c color -f fontcolor -b boxcolor -x on -o output.png
 #+END_SRC
 
-+ script help
+Run the script with the -h option to show the help.
 
 #+begin_src sh
 contact-sheet -h
 #+end_src
+
+Help output.
 
 #+begin_example
 create an image with thumbnails from a video
@@ -2841,7 +2873,7 @@ Notes:
 
 ***** contact-sheet batch process
 
-batch process videos and create thumbnails from the videos and tile into an image
+batch process videos and create a contact sheet
 
 #+BEGIN_SRC sh
 find . -type f -name "*.mp4" -exec sh -c \
