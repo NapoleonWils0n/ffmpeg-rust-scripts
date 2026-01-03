@@ -787,13 +787,17 @@ extract-frame -v
 :PROPERTIES:
 :CUSTOM_ID: mac-install
 :END:
-**** xcode install
+**** Xcode install
+
+Open the terminal and run the following command to install Xcode
 
 #+begin_src sh
 xcode-select —install 
 #+end_src
 
-**** rust install
+**** Rust install
+
+Run the following command in the terminal to install Rust
 
 #+begin_src sh
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
@@ -803,9 +807,15 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 [[https://brew.sh/]]
 
+Run the following command in the terminal to install homebrew
+
 #+begin_src sh
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 #+end_src
+
+**** ffmpeg yt-dlp install
+
+Run the following command in the terminal to install ffmpeg and yt-dlp with homebrew
 
 #+begin_src sh
 brew install ffmpeg yt-dlp
