@@ -1303,7 +1303,7 @@ New-Item -ItemType Directory -Path "scene-detect"
 #+end_src
 
 #+begin_verse
-Move the video to process into the scene-cut directory,
+Move the video to process into the scene-detect directory,
 where input.mp4 is the name of the video to process
 #+end_verse
 
