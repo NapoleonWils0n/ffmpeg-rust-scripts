@@ -504,7 +504,7 @@ To ensure ffplay renders correctly on NixOS,
 you must export the correct SDL_VIDEODRIVER for your display server (Wayland or X11).
 #+end_verse
 
-Set ffplay driver: use 'wayland' or 'x11'
+Set ffplay driver: use either 'wayland' or 'x11'
 
 + wayland
 
@@ -545,7 +545,7 @@ To ensure ffplay renders correctly on NixOS,
 you must export the correct SDL_VIDEODRIVER for your display server (Wayland or X11).
 #+end_verse
 
-Set ffplay driver: use 'wayland' or 'x11'
+Set ffplay driver: use either 'wayland' or 'x11'
 
 + wayland
 
@@ -664,7 +664,7 @@ To ensure ffplay renders correctly on Linux,
 you must export the correct SDL_VIDEODRIVER for your display server (Wayland or X11).
 #+end_verse
 
-Set ffplay driver: use 'wayland' or 'x11'
+Set ffplay driver: use either 'wayland' or 'x11'
 
 + wayland
 
@@ -705,7 +705,7 @@ To ensure ffplay renders correctly on Linux,
 you must export the correct SDL_VIDEODRIVER for your display server (Wayland or X11).
 #+end_verse
 
-Set ffplay driver: use 'wayland' or 'x11'
+Set ffplay driver: use either 'wayland' or 'x11'
 
 + wayland
 
@@ -1094,7 +1094,9 @@ if [ -d "$HOME/bin" ]; then
 fi
 #+end_src
 
-Set ffplay driver: use 'wayland' or 'x11'
+Set ffplay driver: use either 'wayland' or 'x11'
+
+Note for the sh shell you need to use export
 
 + wayland
 
@@ -1108,10 +1110,24 @@ export SDL_VIDEODRIVER=wayland
 export SDL_VIDEODRIVER=x11
 #+end_src
 
-Source your ~/.profile
+Note for the tcsh shell you need to use setenv
+
++ wayland
+
+#+begin_src sh
+setenv SDL_VIDEODRIVER wayland
+#+end_src
+
++ X11
+
+#+begin_src sh
+setenv SDL_VIDEODRIVER x11
+#+end_src
+
+Reload your ~/.profile
 
 #+BEGIN_SRC sh
-source ~/.profile
+. ~/.profile
 #+END_SRC
 
 ***** zsh shell
