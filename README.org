@@ -1717,17 +1717,19 @@ Note that you can use two different time unit formats: sexagesimal (HOURS:MM:SS.
 If a fraction is used, such as 02:30.05, this is interpreted as "5 100ths of a second", not as frame 5. 
 For instance, 02:30.5 would be 2 minutes, 30 seconds, and a half a second, which would be the same as using 150.5 in seconds. 
 
-+ script usage
+***** Script usage and help.
 
 #+BEGIN_SRC sh
 trim-clip -s 00:00:00.000 -i input.(mp4|mov|mkv|m4v|aac|m4a|wav|mp3) -t 00:00:00.000 -o output.(mp4|aac|mp3|wav)
 #+END_SRC
 
-+ script help
+Run the script with the -h option to show the help.
 
 #+begin_src sh
 trim-clip -h
 #+end_src
+
+Help output.
 
 #+begin_example
 trim video or audio clips with millisecond accuracy
