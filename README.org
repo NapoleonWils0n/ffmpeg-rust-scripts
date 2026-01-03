@@ -404,7 +404,10 @@ Install dependencies with home-manager by adding the following packages.
 [[https://github.com/nix-community/home-manager]]
 
 #+begin_example
-ffmpeg-full yt-dlp deno fd
+ffmpeg-full
+yt-dlp
+deno
+fd
 #+end_example
 
 **** Environment Path Setup
