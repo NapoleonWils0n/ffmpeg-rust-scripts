@@ -1003,11 +1003,21 @@ Build the project with Cargo.
 cargo build --release
 #+end_src
 
+#+begin_verse
+When you run cargo build --release,
+Rust places the binaries in target/release/
+#+end_verse
+
 Copy the scripts to the bin directory in your home.
 
 #+begin_src sh
-cp ./result/bin/* ~/bin/
+cp target/release/* ~/bin/
 #+end_src
+
+#+begin_verse
+Note: You may see some non-executable files in the bin folder after this command (like .d files).
+This is normal, but you only need the files that match the script names.
+#+end_verse
 
 *** Freebsd install
 :PROPERTIES:
