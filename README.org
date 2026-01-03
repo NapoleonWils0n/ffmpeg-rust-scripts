@@ -1482,7 +1482,7 @@ scene-detect -i input.mp4 -t 0.5
 #+end_src
 
 #+begin_verse
-Note: this will create a text file called input-detection.txt
+Note: this will create a text file called input-detection.txt (where "input" is the name of your video).
 
 Where input is the name of the video that has been processed.
 
