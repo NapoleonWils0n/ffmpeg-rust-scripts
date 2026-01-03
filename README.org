@@ -397,24 +397,14 @@ cargo clean
 :PROPERTIES:
 :CUSTOM_ID: nixos-install
 :END:
-**** ffmpeg install
+**** Install Dependencies
 
-Install ffmpeg with home-manager by adding the following package.
-
-[[https://github.com/nix-community/home-manager]]
-
-#+begin_example
-ffmpeg-full
-#+end_example
-
-**** yt-dlp install
-
-install yt-dlp with home-manager
+Install dependencies with home-manager by adding the following packages.
 
 [[https://github.com/nix-community/home-manager]]
 
 #+begin_example
-yt-dlp
+ffmpeg-full yt-dlp deno fd
 #+end_example
 
 **** Environment Path Setup
@@ -700,7 +690,7 @@ We recommend using the Chocolatey package manager to install ffmpeg, yt-dlp, and
 However, you can also install these tools manually from their respective websites if you prefer.
 #+end_verse
 
-**** chocolatey
+**** Chocolatey
 
 [[https://chocolatey.org/]]
 
@@ -732,22 +722,12 @@ Now run the following command:
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 #+end_example
 
-**** ffmpeg install
+**** Install Dependencies
 
-Install ffmpeg using Chocolatey.
-
-This will allow the scripts to access the ffmpeg and ffprobe binaries from the command line.
+Install dependencies with Chocolatey.
 
 #+begin_src sh
-choco install ffmpeg
-#+end_src
-
-**** yt-dlp deno
-
-You can install both yt-dlp (for downloading media) and Deno (for any secondary script requirements) in a single command.
-
-#+begin_src sh
-choco install yt-dlp deno
+choco install ffmpeg yt-dlp deno fd
 #+end_src
 
 **** Environment Path Setup
@@ -834,12 +814,12 @@ Run the following command in the terminal to install homebrew
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 #+end_src
 
-**** ffmpeg yt-dlp install
+**** Install Dependencies
 
-Run the following command in the terminal to install ffmpeg and yt-dlp with homebrew
+Install dependencies with homebrew
 
 #+begin_src sh
-brew install ffmpeg yt-dlp
+brew install ffmpeg yt-dlp deno fd
 #+end_src
 
 **** Environment Path Setup
@@ -915,10 +895,12 @@ use cargo to build the repo
 cargo build --release
 #+end_src
 
-**** ffmpeg install
+**** Install Dependencies
+
+Install dependencies with pkg.
 
 #+BEGIN_SRC sh
-sudo pkg install ffmpeg
+sudo pkg install ffmpeg yt-dlp deno fd-find
 #+END_SRC
 
 #+begin_verse
@@ -935,14 +917,6 @@ so you need to build ffmpeg with the sdl option enable from ports or with poudri
 If you want to use the libfdk_aac audio you should also enable that option when building
 the ffmpeg port, and build the lame package for mp3 support
 #+end_verse
-
-**** yt-dlp install
-
-Run the following command in the terminal to install yt-dlp and deno
-
-#+begin_src sh
-sudo pkg install yt-dlp deno
-#+end_src
 
 **** Environment Path Setup
 ***** create bin directory
