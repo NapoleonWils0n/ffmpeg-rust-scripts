@@ -2049,14 +2049,32 @@ scene-cut-to -h
 Help output.
 
 #+begin_example
+split video into clips using a start,duration cutlist by calculating end-point
 
+Usage: scene-cut-to -i <INPUT> -c <CUTLIST> [OPTIONS]
+
+Options:
+  -i <INPUT>     input video file
+  -c <CUTLIST>   cutlist file comma-separated start,duration
+  -h, --help     Print help
+  -v, --version  Print version
+
+Example:
+  scene-cut-to -i input.mp4 -c cutlist.txt
+
+Dependencies:
+  ffmpeg: https://www.ffmpeg.org/
 #+end_example
 
+#+begin_verse
 cut file - hours, minutes, seconds
 in this example we create 2 - 30 seconds clips
+#+end_verse
 
+#+begin_verse
 a 30 second clip that starts at 00:00:00 to 00:00:30
 and another 30 second clip that starts at 00:01:00 to 00:01:30
+#+end_verse
 
 #+begin_example
 00:00:00,00:00:30
@@ -2068,19 +2086,21 @@ and another 30 second clip that starts at 00:01:00 to 00:01:30
 :CUSTOM_ID: combine-clips
 :END:
 
-combine an image or video file with an audio clip
+combine a video file with an audio clip
 
-+ script usage
+***** Script usage and help.
 
 #+BEGIN_SRC sh
 combine-clips -i input.(mp4|mkv|mov|m4v|png|jpg) -a audio.(m4a|aac|wav|mp3) -o output.mp4
 #+END_SRC
 
-+ script help
+Run the script with the -h option to show the help.
 
 #+begin_src sh
 combine-clips -h
 #+end_src
+
+Help output.
 
 #+begin_example
 Combine audio and video files
@@ -2102,10 +2122,9 @@ ffmpeg, ffprobe: https://www.ffmpeg.org/
 
 Batch process files in the current working directory
   
-Note we omit the -o option to use the default outfile name,
-infile-name-combined-date-time
+Note we omit the -o option to use the default outfile name
 
-+ batch combine video and audio files into video clips
+batch combine video and audio files into video clips
 
 The video and audio files you want to combine must have the same name
 
@@ -2119,8 +2138,8 @@ file2.wav
 #+END_EXAMPLE
 
 running the following code will combine
-file1.mp4 with file1.wav and 
-file2.mp4 with file2.wav
+
+file1.mp4 with file1.wav and file2.mp4 with file2.wav
 
 #+BEGIN_SRC sh
 find . -type f -name "*.mp4" -exec sh -c \
