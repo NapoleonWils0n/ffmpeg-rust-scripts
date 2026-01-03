@@ -1394,11 +1394,84 @@ Notes: Creates detection.txt and cutlist.txt automatically.
 :CUSTOM_ID: scene-detect
 :END:
 
+#+begin_verse
 scene-detect takes a video file and a threshold for the scene detection from 0.1 to 0.9
-you can also use the -s and -e options to set a range for thew scene detection,
-if you dont specify a range scene detection will be perform on the whole video
+you can also use the -s and -e options to set a range for the scene detection.
 
-Script usage.
+If you dont specify a range scene detection will be perform on the whole video.
+#+end_verse
+
+
+
+#+begin_verse
+Because this script can generate a large number of video clips,
+it is best to create a dedicated directory for each video you want to process.
+#+end_verse
+
+***** 1) Create a directory
+
+#+begin_verse
+Create a directory for your project (e.g., "scene-detect").
+using the command line or your file manager
+#+end_verse
+
+On NixOS, Linux, Mac or Freebsd
+
+#+begin_src sh
+mkdir -p scene-detect
+#+end_src
+
+On Windows (PowerShell)
+
+#+begin_src sh
+New-Item -ItemType Directory -Path "scene-detect"
+#+end_src
+
+#+begin_verse
+Move the video to process into the scene-detect directory,
+where input.mp4 is the name of the video to process
+#+end_verse
+
+***** 2) Move your video into the directory
+
+Move the video file (e.g., input.mp4) into the folder you just created.
+
+On NixOS, Linux, Mac or Freebsd
+
+#+begin_src sh
+mv input.mp4 scene-detect/
+#+end_src
+
+On Windows (PowerShell):
+
+#+begin_src sh
+Move-Item -Path "input.mp4" -Destination "scene-detect"
+#+end_src
+
+***** 3) Change into the directory
+
+On all operating systems:
+
+#+begin_src sh
+cd scene-detect
+#+end_src
+
+***** 4) Run the script
+
+#+begin_verse
+Run the script with the -i option. By default, the detection threshold is 0.3.
+#+end_verse
+
+#+begin_src sh
+scene-detect -i input.mp4
+#+end_src
+
+#+begin_verse
+Use the -t option to adjust the sensitivity.
+Lower values detect more scenes; higher values detect fewer.
+#+end_verse
+
+***** Script usage and help.
 
 #+BEGIN_SRC sh
 scene-detect -s 00:00:00 -i input -e 00:00:00 -t (0.1 - 0.9) -f sec -o output
