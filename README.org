@@ -857,7 +857,14 @@ extract-frame -v
 :END:
 **** Xcode install
 
-Open the terminal and run the following command to install Xcode
+#+begin_verse
+On macOS, you will need to install the development tools and the Rust compiler to build the scripts from source.
+#+end_verse
+
+#+begin_verse
+Install the Xcode Command Line Tools to provide the necessary compilers,
+by running the following command in the terminal.
+#+end_verse
 
 #+begin_src sh
 xcode-select —install 
@@ -865,7 +872,7 @@ xcode-select —install
 
 **** Rust install
 
-Run the following command in the terminal to install Rust
+Install the Rust toolchain using rustup.
 
 #+begin_src sh
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
@@ -875,15 +882,26 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 [[https://brew.sh/]]
 
-Run the following command in the terminal to install homebrew
+#+begin_verse
+Install the Homebrew package manager.
+Run the following command in the terminal to install homebrew.
+#+end_verse
 
 #+begin_src sh
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 #+end_src
 
+#+begin_verse
+Note: When the installer finishes, look for the "Next steps" section in your terminal.
+You must run the commands provided there to add Homebrew to your system PATH.
+#+end_verse
+
 **** Install Dependencies
 
-Install dependencies with homebrew
+#+begin_verse
+Install dependencies with homebrew,
+by running the following command in the terminal.
+#+end_verse
 
 #+begin_src sh
 brew install ffmpeg yt-dlp deno fd
@@ -900,7 +918,10 @@ mkdir -p ~/bin
 
 ***** zsh shell
 
-If you are using zsh add the following code to your ~/.zshenv file
+#+begin_verse
+Add the following code to your ~/.zshenv file.
+This is the default shell for macOS.
+#+end_verse
 
 This sets up the PATH for the rust scripts.
 
@@ -914,7 +935,7 @@ path=("$HOME/bin" "$path[@]")
 export PATH
 #+end_src
 
-Source your ~/.zshenv if you are using the zsh shell
+Source the configuration to apply changes.
 
 #+BEGIN_SRC sh
 source ~/.zshenv
@@ -941,6 +962,52 @@ Source your ~/.bashrc if you are using the bash shell
 #+BEGIN_SRC sh
 source ~/.bashrc
 #+END_SRC
+
+***** Compile and Install
+
+#+begin_verse
+Since macOS requires manual compilation, follow these steps to build the binaries and move them to your bin folder.
+#+end_verse
+
+****** Clone the git repository
+
+Create a directory to store the git repository in your home directory.
+
+#+begin_src sh
+mkdir -p ~/git 
+#+end_src
+
+Change into the git directory in your home.
+
+#+begin_src sh
+cd ~/git
+#+end_src
+
+Run the following command in the terminal to clone the ffmpeg-scripts-rust git repository.
+
+#+begin_src sh
+git clone https://github.com/NapoleonWils0n/ffmpeg-scripts-rust
+#+end_src
+
+****** Build the project using Cargo.
+
+Change directory into the ffmpeg-scripts-rust git repository.
+
+#+begin_src sh
+cd ffmpeg-scripts-rust
+#+end_src
+
+Build the project with Cargo.
+
+#+begin_src sh
+cargo build --release
+#+end_src
+
+Copy the scripts to the bin directory in your home.
+
+#+begin_src sh
+cp ./result/bin/* ~/bin/
+#+end_src
 
 *** Freebsd install
 :PROPERTIES:
