@@ -1789,17 +1789,19 @@ For instance, 02:30.5 would be 2 minutes, 30 seconds, and a half a second, which
 the trim-clip-to use's a start time with the -s option,
 and an end time with the -t option
 
-+ script usage
+***** Script usage and help.
 
 #+BEGIN_SRC sh
 trim-clip-to -s 00:00:00.000 -i input.(mp4|mov|mkv|m4v|aac|m4a|wav|mp3) -t 00:00:00.000 -o output.(mp4|aac|mp3|wav)
 #+END_SRC
 
-+ script help
+Run the script with the -h option to show the help.
 
 #+begin_src sh
 trim-clip-to -h
 #+end_src
+
+Help output.
 
 #+begin_example
 trim video or audio clips by specifying start and end timestamps
