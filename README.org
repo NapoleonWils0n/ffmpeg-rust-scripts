@@ -2154,23 +2154,32 @@ Note: 02:30.5 is interpreted as 2 minutes, 30 seconds, and a half-second
 
 ***** trim-short batch process
 
-Batch process files in the current working directory
+Batch process files in the current working directory using fd.
   
 #+begin_verse
-Note we omit the -o option to use the default outfile name,
-infile-name-trimmed-date-time
+Note we omit the -o option to use the default outfile name: infile-name-short-[start-end].ext
 #+end_verse
 
 #+begin_verse
-Batch trim all the mp4 files in the current directory,
-from 00:00:00 to 00:00:30
+The script supports many file types (mp4, mkv, mov, webm).
+To batch process, specify the extension you want to search for using the -e flag.
 #+end_verse
 
-#+BEGIN_SRC sh
-find . -type f -name "*.mp4" -exec sh -c \
-'trim-short -s 00:00:00 -i "${0}" -t 00:00:30' \
-"{}" \;
-#+END_SRC
+#+begin_verse
+Batch trim from 30 seconds to 1 minute 30 all mp4 files in the current directory:
+#+end_verse
+
+#+begin_src sh
+fd -e mp4 -x trim-short -s 00:00:30 -i {} -t 00:01:30
+#+end_src
+
+#+begin_verse
+Batch trim from 30 seconds to 1 minute 30 all mkv files in the current directory:
+#+end_verse
+
+#+begin_src sh
+fd -e mkv -x trim-short -s 00:00:30 -i {} -t 00:01:30
+#+end_src
 
 ***** Script usage and help.
 
