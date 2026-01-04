@@ -2647,7 +2647,7 @@ Provide the input video -i and the metadata text file -m.
 #+end_verse
 
 #+begin_src sh
-chapter-add -i input.mp4 -m metadata.txt -o ouput.mp4
+chapter-add -i input.mp4 -m metadata.txt -o output.mp4
 #+end_src
 
 #+begin_verse
