@@ -1839,10 +1839,10 @@ Note: 02:30.5 is interpreted as 2 minutes, 30 seconds, and a half-second
 ***** Run the script
 
 #+begin_verse
-Provide the start time (-s), the input file (-i), and the end time (-t).
+Provide the start time -s, the input file -i, and the end time -t.
 #+end_verse
 
-Note: The end time (-t) is the number of seconds (duration) after the start time.
+Note: The end time -t is the number of seconds (duration) after the start time.
 
 #+begin_src sh
 trim-clip -s 00:00:30 -i input.mp4 -t 00:00:30 -o clip.mp4
@@ -1850,7 +1850,7 @@ trim-clip -s 00:00:30 -i input.mp4 -t 00:00:30 -o clip.mp4
 
 #+begin_verse
 This example creates a 30-second clip starting at the 30-second mark and ending at 60 seconds.
-If you omit the output (-o) option, the script will automatically name the file: input-name-[start-end].mp4
+If you omit the output -o option, the script will automatically name the file: input-name-[start-end].mp4
 #+end_verse
 
 ***** trim-clip batch process
@@ -1953,7 +1953,7 @@ Note: 02:30.5 is interpreted as 2 minutes, 30 seconds, and a half-second
 ***** Run the script
 
 #+begin_verse
-Provide the start time (-s), the input file (-i), and the End Timestamp (-t).
+Provide the start time -s, the input file -i, and the End Timestamp -t.
 #+end_verse
 
 #+begin_verse
@@ -1967,7 +1967,7 @@ trim-clip-to -s 00:00:30 -i input.mp4 -t 00:01:30 -o clip.mp4
 
 #+begin_verse
 This example creates a 1-minute clip starting at the 30-second mark and ending exactly at 1 minute and 30 seconds.
-If you omit the output (-o) option, the script will automatically name the file: input-name-[start-end].mp4
+If you omit the output -o option, the script will automatically name the file: input-name-[start-end].mp4
 #+end_verse
 
 ***** trim-clip-to batch process
@@ -2074,7 +2074,7 @@ you should specify your preferred format options in your yt-dlp configuration fi
 ***** Run the script
 
 #+begin_verse
-Provide the start time (-s), the url (-i), and the end time (-e).
+Provide the start time -s, the url -i, and the end time -e.
 #+end_verse
 
 #+begin_src sh
@@ -2083,7 +2083,7 @@ trim-remote-clip -s 00:00:30 -i url -e 00:01:30 -o clip.mp4
 
 #+begin_verse
 This example creates a 1 minute clip starting at the 30-second mark and ending at 1 minute 30 seconds.
-If you omit the output (-o) option, the script will automatically name the file: Title-[start-end].mp4
+If you omit the output -o option, the script will automatically name the file: Title-[start-end].mp4
 #+end_verse
 
 ***** Script usage and help.
@@ -2144,9 +2144,9 @@ You can use two different time unit formats:
 Note: 02:30.5 is interpreted as 2 minutes, 30 seconds, and a half-second
 #+end_verse
 
-Note: If no end time (-t) is provided, the script defaults to a 60-second duration.
+Note: If no end time -t is provided, the script defaults to a 60-second duration.
 
-***** 1) The X-Position (-x)
+***** 1) The X-Position -x
 
 #+begin_verse
 Since you are cropping a horizontal video into a vertical one,
@@ -2167,7 +2167,7 @@ you can specify which part of the frame to keep using the -x option (percentage)
 
 ***** 2) Run the script
 
-Provide the input file (-i), start time (-s), and optional end time (-t)
+Provide the input file -i, start time -s, and optional end time -t
 
 Default length of 60 seconds and centered in the middle of the video.
 
@@ -2285,7 +2285,7 @@ The script processes these in pairs: the first line is the start of the clip, an
 ***** 2) Run the script
 
 #+begin_verse
-Provide the input file containing your timestamps (-i) and the optional output filename (-o).
+Provide the input file containing your timestamps -i and the optional output filename -o.
 #+end_verse
 
 #+begin_src sh
@@ -2293,7 +2293,7 @@ clip-time -i timestamps.txt -o cutlist.txt
 #+end_src
 
 #+begin_verse
-If you omit the output (-o) option,
+If you omit the output -o option,
 the script will automatically name the file: input-name-cutlist.txt.
 #+end_verse
 
@@ -2373,7 +2373,7 @@ The script requires a text file where each line defines a clip using the format:
 
 ***** 2) Run the script
 
-Provide the input video file (-i) and the cutlist file (-c).
+Provide the input video file -i and the cutlist file -c.
 
 #+begin_src sh
 scene-cut-to -i input.mp4 -c cutlist.txt
@@ -2436,12 +2436,58 @@ and another 30 second clip that starts at 00:01:00 to 00:01:30
 :CUSTOM_ID: combine-clips
 :END:
 
-combine a video file with an audio clip
+#+begin_verse
+The combine-clips script merges a video file with an external audio file.
+Because it uses "stream copying" -c copy, the process is nearly instantaneous and results in zero quality loss.
+#+end_verse
+
+***** 1) Run the script
+
+Provide the input video -i and the input audio -a.
+
+#+begin_src sh
+combine-clips -i video.mp4 -a audio.wav -o combined-video.mp4
+#+end_src
+
+#+begin_verse
+If you omit the output -o option,
+the script automatically generates a name based on the video title and its duration: video-name-combined-[HH:MM:SS].mp4.
+#+end_verse
+
+***** combine-clips batch process
+
+#+begin_verse
+You can batch-combine multiple pairs of files using fd.
+This is useful when you have several videos and matching audio files with the same base name.
+#+end_verse
+
+#+BEGIN_EXAMPLE
+file1.mp4
+file1.wav
+file2.mp4
+file2.wav
+#+END_EXAMPLE
+
+To automatically pair and combine these, run:
+
+#+begin_src sh
+fd -e mp4 -x combine-clips -i {} -a {.}.wav
+#+end_src
+
+#+begin_verse
+running the following code will combine
+file1.mp4 with file1.wav and file2.mp4 with file2.wav
+#+end_verse
+
+#+begin_verse
+Note: The {.} syntax in fd strips the extension from the video file,
+allowing the script to find the matching .wav file automatically.
+#+end_verse
 
 ***** Script usage and help.
 
 #+BEGIN_SRC sh
-combine-clips -i input.(mp4|mkv|mov|m4v|png|jpg) -a audio.(m4a|aac|wav|mp3) -o output.mp4
+combine-clips -i input -a audio -o output.mp4
 #+END_SRC
 
 Run the script with the -h option to show the help.
@@ -2467,35 +2513,6 @@ Options:
 Dependencies:
 ffmpeg, ffprobe: https://www.ffmpeg.org/
 #+end_example
-
-***** combine-clips batch process
-
-Batch process files in the current working directory
-  
-Note we omit the -o option to use the default outfile name
-
-batch combine video and audio files into video clips
-
-The video and audio files you want to combine must have the same name
-
-for example
-
-#+BEGIN_EXAMPLE
-file1.mp4
-file1.wav
-file2.mp4
-file2.wav
-#+END_EXAMPLE
-
-running the following code will combine
-
-file1.mp4 with file1.wav and file2.mp4 with file2.wav
-
-#+BEGIN_SRC sh
-find . -type f -name "*.mp4" -exec sh -c \
-'combine-clip -i "${0}" -a "${0%.*}.wav"' \
-"{}" \;
-#+END_SRC
 
 *** Chapters and Metadata
 **** chapter-csv
