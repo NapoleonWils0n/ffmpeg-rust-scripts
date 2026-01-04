@@ -2705,8 +2705,49 @@ Example:
 
 #+begin_verse
 The chapter-extract script performs the reverse of the chapter workflow:
-it pulls existing chapter markers out of a media file and saves them into a portable CSV format.
+it pulls existing chapter markers out of a media file and saves them into the same portable CSV format used by the other tools.
 #+end_verse
+
+***** 1) The Output Format
+
+#+begin_verse
+The script generates a CSV file with two columns: Time, Title.
+It automatically adds an "End" record at the bottom based on the final chapter's duration.
+#+end_verse
+
+Example output (chapters.csv):
+
+#+begin_example
+00:00:00,Intro
+00:00:10,Scene 1
+00:00:20,Scene 2
+00:00:30,Scene 3
+00:01:00,End
+#+end_example
+
+***** 2) Run the script
+
+Provide the input video -i and the optional output filename -o.
+
+#+begin_src sh
+chapter-extract -i movie.mp4 -o chapters.csv
+#+end_src
+
+#+begin_verse
+If you omit the output -o option,
+the script defaults to: input-name.csv.
+#+end_verse
+
+***** 3) Use for YouTube Timestamps
+
+#+begin_verse
+Since the output is already in "Time, Title" format, you can easily use this for YouTube descriptions.
+To remove the commas for a cleaner look, use the following command.
+#+end_verse
+
+#+begin_src sh
+tr ',' ' ' < input.txt > output.txt
+#+end_src
 
 ***** Script usage and help.
 
@@ -2741,12 +2782,6 @@ Example:
 Dependencies:
   ffmpeg, ffprobe: https://www.ffmpeg.org/
 #+end_example
-
-convert the csv file to youtube timestamps
-
-#+begin_src sh
-tr ',' ' ' < input.txt > output.txt
-#+end_src
 
 **** subtitle-add
 :PROPERTIES:
