@@ -1955,22 +1955,57 @@ the trim-clip-to use's a start time with the -s option,
 and an end time with the -t option
 #+end_verse
 
-***** trim-clip-to batch process
-
-Batch process files in the current working directory
-  
-Note we omit the -o option to use the default outfile name
+***** Run the script
 
 #+begin_verse
-Batch trim all the mp4 files in the current directory,
-from 00:00:00 to 00:00:30
+Provide the start time (-s), the input file (-i), and the end time (-t).
 #+end_verse
 
-#+BEGIN_SRC sh
-find . -type f -name "*.mp4" -exec sh -c \
-'trim-clip-to -s 00:00:00 -i "${0}" -t 00:00:30' \
-"{}" \;
-#+END_SRC
+#+begin_src sh
+trim-clip-to -s 00:00:30 -i input.mp4 -t 00:01:30 -o clip.mp4
+#+end_src
+
+#+begin_verse
+This example creates a 1 minute clip starting at the 30-second mark and ending at 1 minute 30 seconds.
+If you omit the output (-o) option, the script will automatically name the file: input-name-[start-end].mp4
+#+end_verse
+
+***** trim-clip-to batch process
+
+Batch process files in the current working directory using fd.
+  
+#+begin_verse
+Note we omit the -o option to use the default outfile name: infile-name-[start-end].ext
+#+end_verse
+
+#+begin_verse
+The script supports many file types (mp4, mkv, mov, webm, wav, mp3, m4a, ogg).
+To batch process, specify the extension you want to search for using the -e flag.
+#+end_verse
+
+#+begin_verse
+Batch trim the first 30 seconds of all mp4 files in the current directory:
+#+end_verse
+
+#+begin_src sh
+fd -e mp4 -x trim-clip-to -s 00:00:00 -i {} -t 00:00:30
+#+end_src
+
+#+begin_verse
+Batch trim the first 30 seconds of all mkv files in the current directory:
+#+end_verse
+
+#+begin_src sh
+fd -e mkv -x trim-clip-to -s 00:00:00 -i {} -t 00:00:30
+#+end_src
+
+#+begin_verse
+Batch trim the first 30 seconds of all mp3 files in the current directory:
+#+end_verse
+
+#+begin_src sh
+fd -e mp3 -x trim-clip-to -s 00:00:00 -i {} -t 00:00:30
+#+end_src
 
 ***** Script usage and help.
 
