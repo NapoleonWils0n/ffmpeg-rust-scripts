@@ -2052,21 +2052,47 @@ Notes:
 :CUSTOM_ID: trim-remote-clip
 :END:
 
-trim video clip
-
-[[https://trac.ffmpeg.org/wiki/Seeking][ffmpeg wiki seeking]]
+#+begin_verse
+The trim-clip-to script allows for precise trimming of video or audio files with millisecond accuracy.
+It uses [[https://trac.ffmpeg.org/wiki/Seeking][FFmpeg Input Seeking]] to ensure the extraction is both fast and frame-accurate.
+#+end_verse
 
 #+begin_verse
-Note that you can use two different time unit formats: sexagesimal (HOURS:MM:SS.MILLISECONDS, as in 01:23:45.678), or in seconds.
-If a fraction is used, such as 02:30.05, this is interpreted as "5 100ths of a second", not as frame 5. 
+You can use two different time unit formats:
 
-For instance, 02:30.5 would be 2 minutes, 30 seconds, and a half a second, which would be the same as using 150.5 in seconds.
+1) Sexagesimal: (HOURS:MM:SS.MILLISECONDS, e.g., 01:23:45.678)
+
+2) Seconds: (e.g., 150.5)
+
+Note: 02:30.5 is interpreted as 2 minutes, 30 seconds, and a half-second
+#+end_verse
+
+trim-remote-clip trims an online video supported by yt-dlp
+
+#+begin_verse
+the trim-remote-clip use's a start time with the -s option,
+and an end time with the -t option
+#+end_verse
+
+***** Run the script
+
+#+begin_verse
+Provide the start time (-s), the url (-i), and the end time (-t).
+#+end_verse
+
+#+begin_src sh
+trim-remote-clip -s 00:00:30 -i input.mp4 -t 00:01:30 -o clip.mp4
+#+end_src
+
+#+begin_verse
+This example creates a 1 minute clip starting at the 30-second mark and ending at 1 minute 30 seconds.
+If you omit the output (-o) option, the script will automatically name the file: input-name-[start-end].mp4
 #+end_verse
 
 ***** Script usage and help.
 
 #+BEGIN_SRC sh
-trim-remote-clip -s 00:00:00.000 -i url -t 00:00:00.000 -o output.(mp4|aac|mp3|wav)
+trim-remote-clip -s 00:00:00.000 -i url -t 00:00:00.000 -o output
 #+END_SRC
 
 Run the script with the -h option to show the help.
