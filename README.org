@@ -2629,14 +2629,46 @@ and End isnt used as a chapter
 :END:
 
 #+begin_verse
-add chapters to a video or audio file with ffmpeg using a metadata file,
-use the chapter-csv script to create the metadata file from a csv files
+The chapter-add script is Step 2 in the chapter creation workflow.
+It takes the metadata file created by chapter-csv and "muxes" it into your video or audio file.
 #+end_verse
+
+***** 1) Fast and Lossless
+
+#+begin_verse
+Because this script uses "stream copying" (-codec copy), it does not re-encode your media.
+Adding chapters is nearly instantaneous and preserves the original quality of your video and audio.
+#+end_verse
+
+***** 2) Run the script
+
+#+begin_verse
+Provide the input video -i and the metadata text file -m.
+#+end_verse
+
+#+begin_src sh
+chapter-add -i input.mp4 -m metadata.txt -o ouput.mp4
+#+end_src
+
+#+begin_verse
+If you omit the output -o option,
+the script automatically names the file: input-name-chapters.ext (using the original file extension).
+#+end_verse
+
+***** 3) Verify the results
+
+You can verify the chapters are present by playing the video in a player like mpv
+
+or by using ffprobe
+
+#+begin_src sh
+ffprobe -i output.mp4 -show_chapters
+#+end_src
 
 ***** Script usage and help.
 
 #+BEGIN_SRC sh
-chapter-add -i input -c metadata.txt -o output
+chapter-add -i input -m metadata.txt -o output
 #+END_SRC
 
 Run the script with the -h option to show the help.
