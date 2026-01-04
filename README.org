@@ -2580,7 +2580,7 @@ chapter-csv -i input -o output
 Run the script with the -h option to show the help.
 
 #+begin_src sh
-chapter-add -h
+chapter-csv -h
 #+end_src
 
 Help output.
