@@ -1683,7 +1683,7 @@ input-scene-001-[00:00:00–00:00:30].mp4
 ***** Script usage and help.
 
 #+BEGIN_SRC sh
-scene-cut -i input -c cutfile
+scene-cut -i input.mp4 -c cutfile.txt
 #+END_SRC
 
 Run the script with the -h option to show the help.
