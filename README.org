@@ -2529,8 +2529,13 @@ It converts a simple list of timestamps and titles into the complex metadata for
 
 #+begin_verse
 The input CSV file should contain a timestamp followed by a title on each line.
+The script automatically calculates the duration of each chapter by using the start time of the next line.
+#+end_verse
 
-Important: The very last line must be the total duration of the video (labeled as "End");
+#+begin_verse
+Important:
+
+The very last line must be the total duration of the video (labeled as "End");
 this tells the script when the final chapter finishes.
 #+end_verse
 
