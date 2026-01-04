@@ -2790,10 +2790,40 @@ Dependencies:
 
 add subtitles to a video file
 
+***** subtitle-add batch process
+
+Batch process files in the current working directory
+  
+#+begin_verse
+Note we omit the -o option to use the default outfile name
+#+end_verse
+
+The video and subtitle files you want to combine must have the same name
+
+for example
+
+#+BEGIN_EXAMPLE
+file1.mp4
+file1.srt
+file2.mp4
+file2.srt
+#+END_EXAMPLE
+
+#+begin_verse
+running the following code will run the subtitle-add script and combine
+file1.mp4 with file1.srt and file2.mp4 with file2.srt
+#+end_verse
+
+#+BEGIN_SRC sh
+find . -type f -name "*.mp4" -exec sh -c \
+'subtitle-add -i "${0}" -s "${0%.*}.srt"' \
+"{}" \;
+#+END_SRC
+
 ***** Script usage and help.
 
 #+BEGIN_SRC sh
-subtitle-add -i input.(mp4|mkv|mov|m4v) -s subtitle.(srt|vtt) -o output.mp4
+subtitle-add -i input -s subtitle.(srt|vtt) -o output.mp4
 #+END_SRC
 
 Run the script with the -h option to show the help.
@@ -2823,37 +2853,6 @@ Example:
   Dependencies:
   ffmpeg: https://www.ffmpeg.org/
 #+end_example
-
-***** subtitle-add batch process
-
-Batch process files in the current working directory
-  
-#+begin_verse
-Note we omit the -o option to use the default outfile name,
-infile-name-subs-date-time
-#+end_verse
-
-The video and subtitle files you want to combine must have the same name
-
-for example
-
-#+BEGIN_EXAMPLE
-file1.mp4
-file1.srt
-file2.mp4
-file2.srt
-#+END_EXAMPLE
-
-#+begin_verse
-running the following code will run the subtitle-add script and combine
-file1.mp4 with file1.srt and file2.mp4 with file2.srt
-#+end_verse
-
-#+BEGIN_SRC sh
-find . -type f -name "*.mp4" -exec sh -c \
-'subtitle-add -i "${0}" -s "${0%.*}.srt"' \
-"{}" \;
-#+END_SRC
 
 *** Filters and Overlays
 **** overlay-clip
