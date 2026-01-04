@@ -2053,8 +2053,7 @@ Notes:
 :END:
 
 #+begin_verse
-The trim-clip-to script allows for precise trimming of video or audio files with millisecond accuracy.
-It uses [[https://trac.ffmpeg.org/wiki/Seeking][FFmpeg Input Seeking]] to ensure the extraction is both fast and frame-accurate.
+The trim-remote-clip script allows you to download and trim a specific segment of an online video without downloading the entire file. It leverages yt-dlp to fetch the stream and FFmpeg to extract the clip with millisecond accuracy.
 #+end_verse
 
 #+begin_verse
@@ -2068,34 +2067,29 @@ Note: 02:30.5 is interpreted as 2 minutes, 30 seconds, and a half-second
 #+end_verse
 
 #+begin_verse
-trim-remote-clip trims online video supported by yt-dlp.
-To change the quality of the clip downloaded you need to specify the options in your tr-dlp config file.
-#+end_verse
-
-#+begin_verse
-the trim-remote-clip use's a start time with the -s option,
-and an end time with the -t option
+To change the quality of the downloaded clip,
+you should specify your preferred format options in your yt-dlp configuration file.
 #+end_verse
 
 ***** Run the script
 
 #+begin_verse
-Provide the start time (-s), the url (-i), and the end time (-t).
+Provide the start time (-s), the url (-i), and the end time (-e).
 #+end_verse
 
 #+begin_src sh
-trim-remote-clip -s 00:00:30 -i input.mp4 -t 00:01:30 -o clip.mp4
+trim-remote-clip -s 00:00:30 -i url -e 00:01:30 -o clip.mp4
 #+end_src
 
 #+begin_verse
 This example creates a 1 minute clip starting at the 30-second mark and ending at 1 minute 30 seconds.
-If you omit the output (-o) option, the script will automatically name the file: input-name-[start-end].mp4
+If you omit the output (-o) option, the script will automatically name the file: Title-[start-end].mp4
 #+end_verse
 
 ***** Script usage and help.
 
 #+BEGIN_SRC sh
-trim-remote-clip -s 00:00:00.000 -i url -t 00:00:00.000 -o output
+trim-remote-clip -s 00:00:00.000 -i url -e 00:00:00.000 -o output
 #+END_SRC
 
 Run the script with the -h option to show the help.
