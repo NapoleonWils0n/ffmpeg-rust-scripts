@@ -1862,11 +1862,32 @@ Note we omit the -o option to use the default outfile name: infile-name-[start-e
 #+end_verse
 
 #+begin_verse
+The script supports many file types (mp4, mkv, mov, webm, wav, mp3, m4a, ogg).
+To batch process, specify the extension you want to search for using the -e flag.
+#+end_verse
+
+#+begin_verse
 Batch trim the first 30 seconds of all mp4 files in the current directory:
 #+end_verse
 
 #+begin_src sh
 fd -e mp4 -x trim-clip -s 00:00:00 -i {} -t 00:00:30
+#+end_src
+
+#+begin_verse
+Batch trim the first 30 seconds of all mkv files in the current directory:
+#+end_verse
+
+#+begin_src sh
+fd -e mkv -x trim-clip -s 00:00:00 -i {} -t 00:00:30
+#+end_src
+
+#+begin_verse
+Batch trim the first 30 seconds of all mp3 files in the current directory:
+#+end_verse
+
+#+begin_src sh
+fd -e mp3 -x trim-clip -s 00:00:00 -i {} -t 00:00:30
 #+end_src
 
 ***** Script usage and help.
