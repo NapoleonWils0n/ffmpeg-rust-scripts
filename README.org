@@ -2010,7 +2010,7 @@ fd -e mp3 -x trim-clip-to -s 00:00:30 -i {} -t 00:01:30
 ***** Script usage and help.
 
 #+BEGIN_SRC sh
-trim-clip-to -s 00:00:00.000 -i input.(mp4|mov|mkv|m4v|aac|m4a|wav|mp3) -t 00:00:00.000 -o output.(mp4|aac|mp3|wav)
+trim-clip-to -s 00:00:00.000 -i input -t 00:00:00.000 -o output
 #+END_SRC
 
 Run the script with the -h option to show the help.
