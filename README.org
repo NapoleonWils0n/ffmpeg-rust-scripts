@@ -2520,7 +2520,56 @@ ffmpeg, ffprobe: https://www.ffmpeg.org/
 :CUSTOM_ID: chapter-csv
 :END:
 
-convert a csv file into a chapter metadata file for ffmpeg
+#+begin_verse
+The chapter-csv script is Step 1 in the chapter creation workflow.
+It converts a simple list of timestamps and titles into the complex metadata format required by FFmpeg.
+#+end_verse
+
+***** 1) The CSV Input Format
+
+#+begin_verse
+The input CSV file should contain a timestamp followed by a title on each line.
+
+Important: The very last line must be the total duration of the video (labeled as "End");
+this tells the script when the final chapter finishes.
+#+end_verse
+
+Example chapters.csv:
+
+#+begin_example
+00:00:00,Intro
+00:02:30,Scene 1
+00:05:00,Scene 2
+00:07:00,Scene 3
+00:10:00,End
+#+end_example
+
+#+begin_verse
+In this example, Scene 3 will start at 07:00 and end at 10:00.
+The "End" label is a marker for the duration and is not created as a chapter itself.
+#+end_verse
+
+***** 2) Run the script
+
+Provide the input CSV file -i and the optional output filename -o.
+
+#+begin_src sh
+chapter-csv -i chapters.csv -o chapters-metadata.txt
+#+end_src
+
+#+begin_verse
+If you omit the output -o option,
+the script defaults to naming the file: input-name-metadata.txt.
+#+end_verse
+
+***** 3) The 2-Step Workflow
+
+#+begin_verse
+Managing chapters is a two-step process:
+
+Step 1: Use this script (chapter-csv) to generate a metadata text file.
+Step 2: Use the chapter-add script to mux that metadata file into your video.
+#+end_verse
 
 ***** Script usage and help.
 
