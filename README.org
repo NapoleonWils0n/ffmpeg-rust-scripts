@@ -2263,7 +2263,53 @@ Dependencies:
 :CUSTOM_ID: clip-time
 :END:
 
-convert timestamps into start and duration
+#+begin_verse
+The clip-time script converts a simple list of "Start" and "End" timestamps into a cutlist format (start,duration).
+This cutlist is then used by the scene-cut-to script to automate the extraction of multiple clips or images from a single video.
+#+end_verse
+
+***** 1) The Input Format
+
+#+begin_verse
+The input text file should contain one timestamp per line.
+The script processes these in pairs: the first line is the start of the clip, and the second line is the end.
+#+end_verse
+
+#+begin_example
+00:00:10.000
+00:00:20.000
+00:01:30.000
+00:01:45.500
+#+end_example
+
+***** 2) Run the script
+
+#+begin_verse
+Provide the input file containing your timestamps (-i) and the optional output filename (-o).
+#+end_verse
+
+#+begin_src sh
+clip-time -i timestamps.txt -o cutlist.txt
+#+end_src
+
+#+begin_verse
+If you omit the output (-o) option,
+the script will automatically name the file: input-name-cutlist.txt.
+#+end_verse
+
+***** 3) The Output Result
+
+#+begin_verse
+The resulting file will be formatted as start,duration,
+which is the required input scene-cut-to script.
+#+end_verse
+
+example output.
+
+#+begin_example
+00:00:10.000,00:00:10.000
+00:01:30.000,00:00:15.500
+#+end_example
 
 ***** Script usage and help.
 
