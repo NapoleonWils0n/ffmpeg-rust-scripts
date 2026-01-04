@@ -1531,7 +1531,7 @@ Dependencies:
 :END:
 
 #+begin_verse
-scene-time takes a cut file,
+scene-time takes a detection file,
 created with the scene-detect script either in seconds or sexagesimal format
 #+end_verse
 
