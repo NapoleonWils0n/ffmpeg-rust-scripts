@@ -2817,7 +2817,7 @@ subtitle-add -i input -s subtitle -o output.mp4
 You can use the -l option to specify the language.
 
 #+begin_src sh
-subtitle-add -i input.mp4 -s subtitle.srt -l eng -o output.mp4
+subtitle-add -i input -s subtitle.srt -l eng -o output.mp4
 #+end_src
 
 ***** subtitle-add batch process
