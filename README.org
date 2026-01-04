@@ -1633,7 +1633,10 @@ Dependencies:
 :CUSTOM_ID: scene-cut
 :END:
 
-scene-cut takes a cut file and video and cuts the video into clips
+#+begin_verse
+scene-cut takes a cutlist created with scene-time script in the previous step,
+and use it it to cut the video into clips based on the timestamps in the cutlist.
+#+end_verse
 
 ***** Script usage and help.
 
