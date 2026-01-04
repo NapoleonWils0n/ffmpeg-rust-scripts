@@ -1,6 +1,6 @@
 //==============================================================================
 // chapter-extract
-// Description: Extract chapters from media and save to CSV (Start, End, Title)
+// Description: Extract chapters from media and save to CSV (Time, Title)
 // References: [LIB-01] Path validation, [LIB-09] format_seconds_ms
 //==============================================================================
 
@@ -17,11 +17,10 @@ use ffmpeg_scripts_rust::{format_seconds_ms, get_media_info};
     version,
     about = "Extract chapters from a video or audio file and save as a CSV",
     after_help = "Example:\n  chapter-extract -i input.mkv -o chapters.csv\n\n  \
-                  This creates a CSV with: Start Time, End Time, Title\n\n\
+                  This creates a CSV with: Time, Title\n\n\
                   Dependencies:\n  \
                   ffmpeg, ffprobe: https://www.ffmpeg.org/",
 )]
-// [FIX]: Disable automatic flags to prevent the "Argument names must be unique" panic
 #[clap(disable_version_flag = true, disable_help_flag = true)]
 struct Args {
     /// Input video or audio file
@@ -44,20 +43,16 @@ struct Args {
 fn main() {
     let args = Args::parse();
 
-    // 1. Validate input file exists [LIB-01]
-    let path = Path::new(&args.infile);
-    if !path.exists() {
+    if !Path::new(&args.infile).exists() {
         eprintln!("Error: Input file '{}' not found.", args.infile);
         std::process::exit(1);
     }
 
-    // 2. Determine output filename
     let final_output = args.outfile.unwrap_or_else(|| {
         let info = get_media_info(&args.infile);
         format!("{}.csv", info.stem)
     });
 
-    // 3. Run ffprobe to get chapters in CSV format
     let output = Command::new("ffprobe")
         .args([
             "-v", "error",
@@ -75,6 +70,7 @@ fn main() {
 
     let stdout = String::from_utf8_lossy(&output.stdout);
     let mut csv_content = String::new();
+    let mut last_end_time = String::from("00:00:00");
 
     for line in stdout.lines() {
         let parts: Vec<&str> = line.split(',').collect();
@@ -83,14 +79,19 @@ fn main() {
             let end_raw: f64 = parts[6].parse().unwrap_or(0.0);
             let title = parts[7..].join(",").replace("\"", "");
 
-            let start = format_seconds_ms(start_raw);
-            let end = format_seconds_ms(end_raw);
+            // Convert to HH:MM:SS format (trimming milliseconds to match your chapter.csv)
+            let start = format_seconds_ms(start_raw).split('.').next().unwrap().to_string();
+            last_end_time = format_seconds_ms(end_raw).split('.').next().unwrap().to_string();
 
-            csv_content.push_str(&format!("{},{},{}\n", start, end, title));
+            csv_content.push_str(&format!("{},{}\n", start, title));
         }
     }
 
-    // 4. Write the formatted content to the CSV file
-    let mut file = File::create(&final_output).expect("Failed to create CSV file");
-    file.write_all(csv_content.as_bytes()).expect("Failed to write content");
+    // Add the final "End" marker using the end time of the last chapter found
+    if !csv_content.is_empty() {
+        csv_content.push_str(&format!("{},End\n", last_end_time));
+    }
+
+    let mut file = File::create(&final_output).expect("Failed to create output file");
+    file.write_all(csv_content.as_bytes()).expect("Failed to write to output file");
 }

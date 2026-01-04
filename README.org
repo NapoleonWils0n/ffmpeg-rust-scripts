@@ -2703,7 +2703,10 @@ Example:
 :CUSTOM_ID: chapter-extract
 :END:
 
-extract chapters from a video or audo file and save as a csv file
+#+begin_verse
+The chapter-extract script performs the reverse of the chapter workflow:
+it pulls existing chapter markers out of a media file and saves them into a portable CSV format.
+#+end_verse
 
 ***** Script usage and help.
 
