@@ -2814,6 +2814,12 @@ If muxing into MKV, it preserves the original subtitle format.
 subtitle-add -i input -s subtitle -o output.mp4
 #+END_SRC
 
+You can use the -l option to specify the language.
+
+#+begin_src sh
+subtitle-add -i input.mp4 -s subtitle.srt -l eng -o output.mp4
+#+end_src
+
 ***** subtitle-add batch process
 
 #+begin_verse
