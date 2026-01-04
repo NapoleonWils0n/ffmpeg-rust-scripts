@@ -1984,27 +1984,27 @@ To batch process, specify the extension you want to search for using the -e flag
 #+end_verse
 
 #+begin_verse
-Batch trim the first 30 seconds of all mp4 files in the current directory:
+Batch trim from 30 seconds to 1 minute 30 all mp4 files in the current directory:
 #+end_verse
 
 #+begin_src sh
-fd -e mp4 -x trim-clip-to -s 00:00:00 -i {} -t 00:00:30
+fd -e mp4 -x trim-clip-to -s 00:00:30 -i {} -t 00:01:30
 #+end_src
 
 #+begin_verse
-Batch trim the first 30 seconds of all mkv files in the current directory:
+Batch trim from 30 seconds to 1 minute 30 all mkv files in the current directory:
 #+end_verse
 
 #+begin_src sh
-fd -e mkv -x trim-clip-to -s 00:00:00 -i {} -t 00:00:30
+fd -e mkv -x trim-clip-to -s 00:00:30 -i {} -t 00:01:30
 #+end_src
 
 #+begin_verse
-Batch trim the first 30 seconds of all mp3 files in the current directory:
+Batch trim from 30 seconds to 1 minute 30 all mp3 files in the current directory:
 #+end_verse
 
 #+begin_src sh
-fd -e mp3 -x trim-clip-to -s 00:00:00 -i {} -t 00:00:30
+fd -e mp3 -x trim-clip-to -s 00:00:30 -i {} -t 00:01:30
 #+end_src
 
 ***** Script usage and help.
