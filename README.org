@@ -2067,7 +2067,10 @@ You can use two different time unit formats:
 Note: 02:30.5 is interpreted as 2 minutes, 30 seconds, and a half-second
 #+end_verse
 
-trim-remote-clip trims an online video supported by yt-dlp
+#+begin_verse
+trim-remote-clip trims online video supported by yt-dlp.
+To change the quality of the clip downloaded you need to specify the options in your tr-dlp config file.
+#+end_verse
 
 #+begin_verse
 the trim-remote-clip use's a start time with the -s option,
