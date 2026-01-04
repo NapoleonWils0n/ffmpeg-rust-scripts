@@ -2745,9 +2745,9 @@ Since the output is already in "Time, Title" format, you can easily use this for
 To remove the commas for a cleaner look, use the following command.
 #+end_verse
 
-#+begin_src sh
-tr ',' ' ' < input.txt > output.txt
-#+end_src
+#+begin_verse
+sed 's/,/ /' chapters.csv > youtube-timestamps.txt
+#+end_verse
 
 ***** Script usage and help.
 
