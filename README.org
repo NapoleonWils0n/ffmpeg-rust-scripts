@@ -2788,42 +2788,62 @@ Dependencies:
 :CUSTOM_ID: subtitle-add
 :END:
 
-add subtitles to a video file
-
-***** subtitle-add batch process
-
-Batch process files in the current working directory
-  
 #+begin_verse
-Note we omit the -o option to use the default outfile name
+The subtitle-add script allows you to "soft-mux" external subtitle files (like .srt or .vtt)
+into your video as a proper metadata track.
 #+end_verse
 
-The video and subtitle files you want to combine must have the same name
+#+begin_verse
+Unlike "hard-coding" (which burns the text into the image),
+this script adds a toggleable track that can be turned on or off in your video player.
 
-for example
+It uses stream copying, so the process is instant and does not lose any video quality.
+#+end_verse
 
-#+BEGIN_EXAMPLE
-file1.mp4
-file1.srt
-file2.mp4
-file2.srt
-#+END_EXAMPLE
+***** 1) Container Intelligence
 
 #+begin_verse
-running the following code will run the subtitle-add script and combine
-file1.mp4 with file1.srt and file2.mp4 with file2.srt
+The script is smart about container formats:
+
+If muxing into MP4, it automatically uses the mov_text codec required by Apple and web players.
+
+If muxing into MKV, it preserves the original subtitle format.
 #+end_verse
 
 #+BEGIN_SRC sh
-find . -type f -name "*.mp4" -exec sh -c \
-'subtitle-add -i "${0}" -s "${0%.*}.srt"' \
-"{}" \;
+subtitle-add -i input -s subtitle -o output.mp4
 #+END_SRC
+
+***** subtitle-add batch process
+
+#+begin_verse
+If you have a large library of videos and matching subtitle files,
+you can process them all at once using fd.
+#+end_verse
+
+Requirement: The video and subtitle files must have the same base name.
+
+Example structure:
+
+#+begin_example
+movie_01.mp4
+movie_01.srt
+movie_02.mp4
+movie_02.srt
+#+end_example
+
+Run the following command to batch-process every MP4 in the folder:
+
+#+begin_src sh
+fd -e mp4 -x subtitle-add -i {} -s {.}.srt
+#+end_src
+
+We omit the -o option so the script uses the default naming convention: input-subs.mp4
 
 ***** Script usage and help.
 
 #+BEGIN_SRC sh
-subtitle-add -i input -s subtitle.(srt|vtt) -o output.mp4
+subtitle-add -i input -s subtitle -o output.mp4
 #+END_SRC
 
 Run the script with the -h option to show the help.
