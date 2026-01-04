@@ -2351,8 +2351,37 @@ Input format:
 :END:
 
 #+begin_verse
-scene-cut-to takes a cut file and video and cuts the video into clips
-using a start time and a end position
+The scene-cut-to script automates the process of cutting a single video into multiple individual clips.
+It reads a cutlist (created by clip-time) and uses "End-point seeking" to ensure every clip is frame-accurate.
+#+end_verse
+
+***** 1) The Cutlist Input
+
+#+begin_verse
+The script requires a text file where each line defines a clip using the format: start,duration.
+#+end_verse
+
+#+begin_verse
+30-second clip starting at the beginning
+30-second clip starting at the 1-minute mark
+#+end_verse
+
+#+begin_example
+00:00:00,00:00:30
+00:01:00,00:00:30
+#+end_example
+
+***** 2) Run the script
+
+Provide the input video file (-i) and the cutlist file (-c).
+
+#+begin_src sh
+scene-cut-to -i input.mp4 -c cutlist.txt
+#+end_src
+
+#+begin_verse
+The script will process every line in the cutlist and generate individual files named:
+input-name-scene-001-[start-end].mp4.
 #+end_verse
 
 ***** Script usage and help.
