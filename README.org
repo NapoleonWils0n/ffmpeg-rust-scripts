@@ -2129,11 +2129,9 @@ Dependencies:
 :CUSTOM_ID: trim-short
 :END:
 
-Create a 9:16 vertical clip for YouTube Shorts or TikTok
-
 #+begin_verse
-The trim-clip-to script allows for precise trimming of video or audio files with millisecond accuracy.
-It uses [[https://trac.ffmpeg.org/wiki/Seeking][FFmpeg Input Seeking]] to ensure the extraction is both fast and frame-accurate.
+The trim-short script creates vertical 9:16 clips from horizontal video sources.
+It automatically crops and scales the footage to 1080x1920 resolution, making it ready for YouTube Shorts or TikTok
 #+end_verse
 
 #+begin_verse
@@ -2146,34 +2144,84 @@ You can use two different time unit formats:
 Note: 02:30.5 is interpreted as 2 minutes, 30 seconds, and a half-second
 #+end_verse
 
-***** trim-short batch process
+Note: If no end time (-t) is provided, the script defaults to a 60-second duration.
 
-Batch process files in the current working directory using fd.
-  
+***** 1) The X-Position (-x)
+
 #+begin_verse
-Note we omit the -o option to use the default outfile name: infile-name-short-[start-end].ext
+Since you are cropping a horizontal video into a vertical one,
+you can specify which part of the frame to keep using the -x option (percentage).
 #+end_verse
+
+#+begin_example
+0: Left side of the frame.
+
+25: Between the left and the center.
+
+50: Center (Default).
+
+75: Between the center and the right.
+
+100: Right side of the frame.
+#+end_example
+
+***** 2) Run the script
+
+Provide the input file (-i), start time (-s), and optional end time (-t)
+
+Default length of 60 seconds and centered in the middle of the video.
+
+#+begin_src sh
+trim-short -i input.mp4 -s 00:00:10
+#+end_src
+
+30 second clip using the -t option and centered in the middle of the video.
+
+#+begin_src sh
+trim-short -i input.mp4 -s 00:00:10 -t 00:00:40
+#+end_src
+
+30 second clip using the -t option and the -x option set to 75 for 3/4 poisition in the video.
+
+#+begin_src sh
+trim-short -i input.mp4 -s 00:00:10 -t 00:00:40 -x 75
+#+end_src
+
+***** trim-short batch process
 
 #+begin_verse
 The script supports many file types (mp4, mkv, mov, webm).
-To batch process, specify the extension you want to search for using the -e flag.
+To batch process, specify the extension you want to search for using the -e flag with fd.
 #+end_verse
+
+#+begin_verse
+Batch create 60-second shorts from the start of all .mp4 files (Centered):
+#+end_verse
+
+#+begin_src sh
+fd -e mp4 -x trim-short -i {} -s 00:00:00
+#+end_src
+  
+#+begin_verse
+Batch create shorts from all .mkv files starting at 30s, cropped to the left (25%):
+#+end_verse
+
+#+begin_src sh
+fd -e mkv -x trim-short -i {} -s 00:00:30 -x 25
+#+end_src
 
 #+begin_verse
 Batch trim from 30 seconds to 1 minute 30 all mp4 files in the current directory:
+Use the -x option for the script to specify the X position.
 #+end_verse
 
 #+begin_src sh
-fd -e mp4 -x trim-short -s 00:00:30 -i {} -t 00:01:30
+fd -e mp4 -x trim-short -s 00:00:30 -i {} -t 00:01:30 -x 25
 #+end_src
 
 #+begin_verse
-Batch trim from 30 seconds to 1 minute 30 all mkv files in the current directory:
+Note we omit the -o option to use the default outfile name: infile-name-short-[start-end].ext
 #+end_verse
-
-#+begin_src sh
-fd -e mkv -x trim-short -s 00:00:30 -i {} -t 00:01:30
-#+end_src
 
 ***** Script usage and help.
 
