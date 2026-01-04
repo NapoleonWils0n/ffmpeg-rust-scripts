@@ -2777,7 +2777,7 @@ Options:
 Example:
   chapter-extract -i input.mkv -o chapters.csv
 
-  This creates a CSV with: Start Time, End Time, Title
+  This creates a CSV with: Time, Title
 
 Dependencies:
   ffmpeg, ffprobe: https://www.ffmpeg.org/
