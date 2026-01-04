@@ -1950,15 +1950,15 @@ You can use two different time unit formats:
 Note: 02:30.5 is interpreted as 2 minutes, 30 seconds, and a half-second
 #+end_verse
 
-#+begin_verse
-the trim-clip-to use's a start time with the -s option,
-and an end time with the -t option
-#+end_verse
-
 ***** Run the script
 
 #+begin_verse
-Provide the start time (-s), the input file (-i), and the end time (-t).
+Provide the start time (-s), the input file (-i), and the End Timestamp (-t).
+#+end_verse
+
+#+begin_verse
+Note:
+Unlike trim-clip, the -t option here is the exact point on the timeline where you want the clip to stop.
 #+end_verse
 
 #+begin_src sh
@@ -1966,7 +1966,7 @@ trim-clip-to -s 00:00:30 -i input.mp4 -t 00:01:30 -o clip.mp4
 #+end_src
 
 #+begin_verse
-This example creates a 1 minute clip starting at the 30-second mark and ending at 1 minute 30 seconds.
+This example creates a 1-minute clip starting at the 30-second mark and ending exactly at 1 minute and 30 seconds.
 If you omit the output (-o) option, the script will automatically name the file: input-name-[start-end].mp4
 #+end_verse
 
