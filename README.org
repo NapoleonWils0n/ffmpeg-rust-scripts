@@ -3440,6 +3440,39 @@ Dependencies:
 :CUSTOM_ID: scopes
 :END:
 
+#+begin_verse
+The scopes script is a professional analysis tool that plays a video with technical scopes stacked vertically underneath.
+#+end_verse
+
+#+begin_verse
+It uses ffplay to provide a live playback window,
+and it automatically scales the scopes to match the width of your input video, ensuring a clean and consistent layout.
+#+end_verse
+
+#+begin_verse
+You can launch the playback with different analysis views using the following flags:
+
+-i: Displays a Histogram parade.
+-o: Displays an RGB Overlay waveform.
+-p: Displays an RGB Parade waveform.
+-s: Displays both the RGB Overlay and Parade stacked together.
+-w: Displays a standard Luma Waveform.
+-v: Displays a Vectorscope for color and saturation analysis.
+#+end_verse
+
+***** 2) Run the script
+
+To view your video with an RGB Parade, simply run:
+
+#+begin_src sh
+scopes -p input.mp4
+#+end_src
+
+#+begin_verse
+Note: Because this script uses ffplay for real-time visualization,
+it does not output a file; it opens an interactive playback window.
+#+end_verse
+
 ***** Script usage and help.
 
 Run the script with the -h option to show the help.
