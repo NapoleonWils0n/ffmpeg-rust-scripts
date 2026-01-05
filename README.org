@@ -3682,22 +3682,48 @@ Notes:
 :CUSTOM_ID: audio-silence
 :END:
 
-audio-silence add silent audio to a video clip
+The audio-silence script replaces or adds a silent audio track to a video file.
 
 #+begin_verse
-If the video doesnt have an audio track the script copies the video track,
-and adds a silent audio track to match the duration of the video and creates a new video clip
+It works by copying the original video stream without re-encoding and generating a silent AAC audio track using lavfi.
+
+This is useful for clearing existing audio or adding a silent track to a "video-only" file
+to ensure compatibility with players that require an audio stream.
 #+end_verse
 
+***** 1) Run the script
+
+Replace the audio in a video with a high-quality stereo silent track:
+
+#+begin_src sh
+audio-silence -i input.mp4 -c stereo -r 48000 -o output.mp4
+#+end_src
+
 #+begin_verse
-If the video has a video and audio track the script only copies the video track,
-and adds a silent audio track to match the duration of the video and creates a new video clip.
+If the -o option is omitted, the script generates a default name: input-silence.mp4
 #+end_verse
+
+***** 2) audio-silence batch process
+
+#+begin_verse
+To process all MP4 files in a directory, use fd.
+By default, the script uses mono channels and a 44100 sample rate.
+#+end_verse
+
+#+begin_src sh
+fd -e mp4 -x audio-silence -i {}
+#+end_src
+
+To override the defaults and use stereo at 48000Hz for all files
+
+#+begin_src sh
+fd -e mp4 -x audio-silence -i {} -c stereo -r 48000
+#+end_src
 
 ***** Script usage and help.
 
 #+BEGIN_SRC sh
-audio-silence -i input.(mp4|mkv|mov|m4v) -c (mono|stereo) -r (44100|48000) -o output.mp4
+audio-silence -i input.mp4 -c (mono|stereo) -r (44100|48000) -o output.mp4
 #+END_SRC
 
 Run the script with the -h option to show the help.
@@ -3727,37 +3753,6 @@ Example:
   Dependencies:
   ffmpeg: https://www.ffmpeg.org/
 #+end_example
-
-***** audio-silence batch process
-
-Batch process files in the current working directory
-  
-#+begin_verse
-
-#+end_verse
-Note we omit the -o option to use the default outfile name
-
-#+begin_verse
-audio-silence batch process without specifying the -c and -r options
-using the defaults of -c mono and -r 44100
-#+end_verse
-
-#+BEGIN_SRC sh
-find . -type f -name "*.mp4" -exec sh -c \
-'audio-silence -i "${0}"'     
-"{}" \;
-#+END_SRC
-
-#+begin_verse
-audio-silence batch process and override the defaults
-with the -c and -r options
-#+end_verse
-
-#+BEGIN_SRC sh
-find . -type f -name "*.mp4" -exec sh -c \
-'audio-silence -i "${0}" -c stereo -r 48000'     
-"{}" \;
-#+END_SRC
 
 **** extract-frame
 :PROPERTIES:
