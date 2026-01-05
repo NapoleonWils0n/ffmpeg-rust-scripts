@@ -3175,7 +3175,38 @@ wipetl, wipetr, wipeup
 :CUSTOM_ID: pan-scan
 :END:
 
-pan image
+#+begin_verse
+The pan-scan script animates a static image by panning the "camera" across it in a specified direction.
+#+end_verse
+
+#+begin_verse
+It automatically handles the scaling and cropping math
+to ensure the movement is smooth and the output matches the original image's aspect ratio.
+#+end_verse
+
+***** 1) Panning Directions
+
+#+begin_verse
+The script supports four primary movement directions via the -p flag:
+
+l: Pans the camera from left to right.
+r: Pans the camera from right to left.
+u: Pans the camera from top to bottom (panning "up" the image).
+d: Pans the camera from bottom to top (panning "down" the image)
+#+end_verse
+
+***** 2) Run the script
+
+Provide your image, the desired video length, and the direction of the pan.
+
+#+begin_src sh
+pan-scan -i input.jpg -d 00:00:10 -p l -o output.mp4
+#+end_src
+
+#+begin_verse
+If you omit the -o option, the script generates a descriptive name based on the direction and duration:
+input-pan-left-[00:00:10].mp4
+#+end_verse
 
 ***** Script usage and help.
 
