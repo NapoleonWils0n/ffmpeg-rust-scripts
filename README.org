@@ -2957,13 +2957,43 @@ Dependencies:
 :CUSTOM_ID: overlay-pip
 :END:
 
-create a picture in picture
+#+begin_verse
+The overlay-pip script creates a professional Picture-in-Picture effect.
+
+Unlike the basic overlay, this tool automatically scales the overlay video,
+adds a customizable border, and includes smooth fade-in/fade-out transitions.
+#+end_verse
+
+***** 1) Positioning and Style
+
+#+begin_verse
+The script provides granular control over where and how the PiP appears:
+
+Position -x:
+Choose the corner: tl (top-left), tr (top-right), bl (bottom-left), or br (bottom-right).
+
+Margin -m:
+The distance in pixels from the edge of the screen.
+
+Width -w:
+Scales the PiP video. Defaults to 1/4 of the background width.
+
+Border -k and -c:
+Set the thickness (4 or 0) and color (e.g., white, red, or hex codes like #2f2f2f).
+
+Fade -f:
+Automatically adds a smooth fade-in at the start and fade-out at the end of the PiP clip.
+#+end_verse
+
+***** 2) Run the script
+
+#+begin_src sh
+overlay-pip -a background.mp4 -b pip.mp4 -p 00:00:30 -x tr -m 20 -w 480 -k 4 -c white -o output.mp4
+#+end_src
+
+If you omit the -o option, the script generates a name based on the inputs and the start position
 
 ***** Script usage and help.
-
-#+BEGIN_SRC sh
-overlay-pip -a input -b input -p 00:00:30 -m [00] -x (tl|tr|bl|br) -w [000] -f (0.1-9|1) -b [00] -c colour -o output.mp4
-#+END_SRC
 
 Run the script with the -h option to show the help.
 
