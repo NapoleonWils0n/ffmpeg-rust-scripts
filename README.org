@@ -3263,32 +3263,66 @@ Dependencies:
 :CUSTOM_ID: zoompan
 :END:
 
-convert a image to video and apply the ken burns effect to the clip
-
-***** zoompan batch process
-
-Batch process files in the current working directory
-  
 #+begin_verse
-Note we omit the -o option to use the default outfile name,
-infile-name-zoompan-date-time
+The zoompan script converts a static image into a video clip by applying a Ken Burns-style zoom animation.
 #+end_verse
 
 #+begin_verse
-Batch process all the png files in the current working directory,
-apply the zoompan script with a 5 second duration, zoom in to the center of the image
+To prevent the "jitter" often associated with the standard FFmpeg zoompan filter,
+this script uses high-resolution initial scaling before applying the movement.
 #+end_verse
 
-#+BEGIN_SRC sh
-find . -type f -name "*.png" -exec sh -c \
-'zoompan -i "${0}" -d 5 -z in -p c' \
-"{}" \;
-#+END_SRC
+***** 1) Zoom and Position
+
+#+begin_verse
+You can control both the direction of the zoom and the anchor point of the camera:
+
+Zoom -z:
+Choose between in (gradual magnification) or out (gradual pull-back).
+
+Position -p:
+Set the anchor point for the zoom.
+
+Options include:
+c (center)
+tl (top-left)
+tr (top-right)
+bl (bottom-left)
+br (bottom-right)
+tc (top-center)
+bc (bottom-center)
+#+end_verse
+
+***** 2) Run the script
+
+#+begin_src sh
+zoompan -i input.jpg -d 00:00:10 -z in -p c -o output.mp4
+#+end_src
+
+#+begin_verse
+If the -o option is omitted, the script generates a descriptive name:
+image-zoom-in-c-[10].mp4.
+#+end_verse
+
+***** 3) zoompan batch process
+
+#+begin_verse
+Batch process all jpg files in the current working directory,
+applying a 5-second zoom-in to the center of each image using fd.
+#+end_verse
+
+#+begin_src sh
+fd -e jpg -x zoompan -i {} -d 5 -z in -p c
+#+end_src
+
+#+begin_verse
+We omit the -o option so the script uses the default naming convention for every file processed.
+#+end_verse
 
 ***** Script usage and help.
 
 #+BEGIN_SRC sh
-zoompan -i input.(png|jpg|jpeg) -d (000) -z (in|out) -p (tl|c|tc|tr|bl|br) -o output.mp4
+zoompan -i input.jpg -d 00:00:05 -z (in|out) -p (tl|c|tc|tr|bl|br) -o output.mp4
 #+END_SRC
 
 Run the script with the -h option to show the help.
