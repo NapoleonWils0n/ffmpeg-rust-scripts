@@ -454,6 +454,10 @@ Running a cargo clean before rebuilding can also help resolve linking conflicts.
 cargo clean
 #+end_src
 
+*** ffmpeg_scripts_rust
+
+Remove the ffmpeg_scripts_rust file from the NixOS, Linux and Windows build directories
+
 *** Remove old scripts before rebuilding.
 
 To remove the old scripts before rebuilding
