@@ -454,6 +454,28 @@ Running a cargo clean before rebuilding can also help resolve linking conflicts.
 cargo clean
 #+end_src
 
+*** Remove old scripts before rebuilding.
+
+To remove the old scripts before rebuilding
+
+**** nixos
+
+Remove the result symlink which points to the previous Nix store build.
+
+**** linux and windows
+
+Run nix develop to enter the development environment with all necessary dependencies
+
+#+begin_src sh
+nix develop
+#+end_src
+
+Remove the old compiled binaries and build artifacts (for both Linux and Windows targets) by running cargo clean.
+
+#+begin_src sh
+cargo clean
+#+end_src
+
 ** Scripts install
 *** NixOS install
 :PROPERTIES:
