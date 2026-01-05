@@ -3611,7 +3611,7 @@ contact-sheet -i input.mp4 -s 00:00:00 -w 320 -t 8x8 -x on -o output.png
 #+end_src
 
 #+begin_verse
-The default start time is 00:00:05 to exclude black frame with videos that up from black,
+The default start time is 00:00:05 to exclude black frame with videos that fade up from black,
 this can be overriden by using the -s option with 00:00:00
 #+end_verse
 
