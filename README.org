@@ -3827,7 +3827,7 @@ Usage: extract-frame [OPTIONS] -s <START> -i <INFILE>
 Options:
   -s <START>     timestamp to extract
   -i <INFILE>    input file
-  -f <FORMAT>    output format [default: png]
+  -f <FORMAT>    output format [default: jpg]
   -x <WIDTH>     output width
   -y <HEIGHT>    output height
   -o <OUTFILE>   optional output file

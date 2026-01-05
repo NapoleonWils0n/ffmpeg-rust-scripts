@@ -27,7 +27,7 @@ struct Args {
     infile: String,
 
     /// output format (png or jpg)
-    #[arg(short = 'f', default_value = "png", help = "output format")]
+    #[arg(short = 'f', default_value = "jpg", help = "output format")] // Changed default to jpg
     format: String,
 
     /// custom width
