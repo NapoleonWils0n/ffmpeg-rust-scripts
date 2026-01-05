@@ -3850,12 +3850,60 @@ Notes:
 :CUSTOM_ID: img2video
 :END:
 
-convert an image into a video file
+The img2video script converts a static image into a video file with a specified duration.
+
+#+begin_verse
+The script creates a high-compatibility H.264 video at 30fps with a YUV420P pixel format,
+ensuring it plays correctly on almost all devices and web platforms.
+#+end_verse
+
+***** 1) Time Formats
+
+#+begin_verse
+When specifying the duration with the -d option, you can use two formats:
+
+Seconds: A simple numerical value (e.g., 10).
+
+Sexagesimal: HOURS:MM:SS (e.g., 00:00:10).
+#+end_verse
+
+***** 2) Run the script
+
+Convert an image into a 10-second video clip:
+
+#+begin_src sh
+img2video -i input.png -d 00:00:10 -o output.mp4
+#+end_src
+
+#+begin_verse
+If the -o option is omitted,
+the script generates a default filename including the duration: input-[00:00:10].mp4.
+#+end_verse
+
+***** 3) img2video batch process
+
+To quickly convert every image in a directory into a video clip, use fd.
+
+Batch convert all PNG files in the current directory into 10-second video clips:
+
+Using Seconds: A simple numerical value (e.g., 10).
+
+#+begin_src sh
+fd -e png -x img2video -i {} -d 10
+#+end_src
+
+Batch convert all JPG files in the current directory into 10-second video clips:
+
+Using Sexagesimal: HOURS:MM:SS (e.g., 00:00:10).
+
+#+begin_src sh
+fd -e jpg -x img2video -i {} -d 00:00:10
+#+end_src
 
 ***** Script usage and help.
 
 #+BEGIN_SRC sh
-img2video -i input.(png|jpg|jpeg) -d (000) -o output.mp4
+img2video -i input.png -d (000) -o output.mp4
 #+END_SRC
 
 Run the script with the -h option to show the help.
@@ -3884,20 +3932,6 @@ Example:
   Dependencies:
   ffmpeg: https://www.ffmpeg.org/
 #+end_example
-
-***** img2video batch process
-
-Batch process files in the current working directory
-  
-Note we omit the -o option to use the default outfile name
-
-Batch convert png in the current directory into video clips with a 30 second duration
-
-#+BEGIN_SRC sh
-find . -type f -name "*.png" -exec sh -c \
-'img2video -i "${0}" -d 30' \
-"{}" \;
-#+END_SRC
 
 **** sexagesimal-time
 :PROPERTIES:
