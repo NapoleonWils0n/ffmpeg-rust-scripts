@@ -3360,12 +3360,47 @@ Dependencies:
 :CUSTOM_ID: waveform
 :END:
 
-create a waveform from an audio or video file and save as a png
+#+begin_verse
+The waveform script generates a static image representation of the audio levels from either a video or an audio file.
+#+end_verse
+
+#+begin_verse
+You can define the dimensions, colors, and image format.
+#+end_verse
+
+***** 1) Run the script
+
+Provide the input file and choose your desired color and format.
+
+#+begin_src sh
+waveform -i input.mp4 -c orange -j png -o output.png
+#+end_src
+
+#+begin_verse
+If the -o option is omitted,
+the script generates a default name based on the input file: input-waveform.jpg
+#+end_verse
+
+***** waveform batch process
+
+#+begin_verse
+If you have a directory of files and need to generate waveforms for all of them,
+you can use fd for high-speed batch processing.
+#+end_verse
+
+#+begin_src sh
+fd -e mp4 -x waveform -i {}
+#+end_src
+
+#+begin_verse
+This command finds every MP4 file and creates a corresponding JPG waveform
+using the default white color and 1280x420 dimensions.
+#+end_verse
 
 ***** Script usage and help.
 
 #+BEGIN_SRC sh
-waveform -i input.(mp4|mkv|mov|m4v|webm|aac|m4a|wav|mp3) -o output.png
+waveform -i input.mp4 -o output.jpg
 #+END_SRC
 
 Run the script with the -h option to show the help.
@@ -3399,20 +3434,6 @@ Colors: https://ffmpeg.org/ffmpeg-utils.html#Color
 Dependencies:
   ffmpeg: https://www.ffmpeg.org/
 #+end_example
-
-***** waveform batch process
-
-Batch process files in the current working directory
-  
-Note we omit the -o option to use the default outfile name
-
-Create waveform images from all the mp4 fies in the current directory
-
-#+BEGIN_SRC sh
-find . -type f -name "*.mp4" -exec sh -c \
-'waveform -i "${0}"' \
-"{}" \;
-#+END_SRC
 
 **** scopes
 :PROPERTIES:
