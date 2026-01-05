@@ -4013,12 +4013,50 @@ also works with milliseconds
 :CUSTOM_ID: vid2gif
 :END:
 
-create a gif animation from a video
+The vid2gif script converts a video file into a high-quality GIF animation.
+
+#+begin_verse
+To ensure the best visual quality, the script uses a two-stage FFmpeg process:
+
+it first generates a custom colour palette from the video and then applies that palette to create the final GIF.
+
+This prevents the "dithering" or colour-banding issues common in standard GIF conversions.
+#+end_verse
+
+***** 1) Run the script
+
+Convert a video to a GIF with a specific width and frame rate:
+
+#+begin_src sh
+vid2gif -i input.mp4 -w 480 -f 15 -o output.gif
+#+end_src
+
+#+begin_verse
+If the -o option is omitted, the script generates a default filename using the input file's name: input.gif.
+
+The default width is 320px and the default frame rate is 10 fps.
+#+end_verse
+
+***** 2) vid2gif batch process
+
+To quickly convert all MP4 files in a directory into GIF animations, use fd.
+
+Batch convert all MP4 files using default settings:
+
+#+begin_src sh
+fd -e mp4 -x vid2gif -i {}
+#+end_src
+
+Batch convert all MP4 files with a custom width of 480px and 15 fps:
+
+#+begin_src sh
+fd -e mp4 -x vid2gif -i {} -w 480 -f 15
+#+end_src
 
 ***** Script usage and help.
 
 #+BEGIN_SRC sh
-vid2gif -s 00:00:00.000 -i input.(mp4|mov|mkv|m4v) -t 00:00:00.000 -f [00] -w [0000] -o output.gif
+vid2gif -s 00:00:00.000 -i input.mp4 -t 00:00:00.000 -f 10 -w 320 -o output.gif
 #+END_SRC
 
 Run the script with the -h option to show the help.
