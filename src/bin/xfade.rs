@@ -37,7 +37,7 @@ struct Args {
     #[arg(short = 'd', required = true)]
     duration: String,
 
-    /// Transition type [default: fade]
+    /// Transition type
     #[arg(short = 't', default_value = "fade")]
     transition: String,
 
