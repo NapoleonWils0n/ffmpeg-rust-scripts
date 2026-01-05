@@ -3208,6 +3208,22 @@ If you omit the -o option, the script generates a descriptive name based on the 
 input-pan-left-[00:00:10].mp4
 #+end_verse
 
+***** 3) pan-scan batch process
+
+#+begin_verse
+If you have a directory of images that all need the same pan animation,
+you can batch process them using fd.
+#+end_verse
+
+#+begin_src sh
+fd -e jpg -x pan-scan -i {} -d 00:00:05 -p l
+#+end_src
+
+#+begin_verse
+This command finds every JPG and applies a 5-second left-to-right pan.
+We omit the -o option so the script uses the default naming convention: input-pan-left-[00:00:05].mp4.
+#+end_verse
+
 ***** Script usage and help.
 
 #+BEGIN_SRC sh
@@ -3249,6 +3265,26 @@ Dependencies:
 
 convert a image to video and apply the ken burns effect to the clip
 
+***** zoompan batch process
+
+Batch process files in the current working directory
+  
+#+begin_verse
+Note we omit the -o option to use the default outfile name,
+infile-name-zoompan-date-time
+#+end_verse
+
+#+begin_verse
+Batch process all the png files in the current working directory,
+apply the zoompan script with a 5 second duration, zoom in to the center of the image
+#+end_verse
+
+#+BEGIN_SRC sh
+find . -type f -name "*.png" -exec sh -c \
+'zoompan -i "${0}" -d 5 -z in -p c' \
+"{}" \;
+#+END_SRC
+
 ***** Script usage and help.
 
 #+BEGIN_SRC sh
@@ -3283,26 +3319,6 @@ Example:
 Dependencies:
   ffmpeg: https://www.ffmpeg.org/
 #+end_example
-
-***** zoompan batch process
-
-Batch process files in the current working directory
-  
-#+begin_verse
-Note we omit the -o option to use the default outfile name,
-infile-name-zoompan-date-time
-#+end_verse
-
-#+begin_verse
-Batch process all the png files in the current working directory,
-apply the zoompan script with a 5 second duration, zoom in to the center of the image
-#+end_verse
-
-#+BEGIN_SRC sh
-find . -type f -name "*.png" -exec sh -c \
-'zoompan -i "${0}" -d 5 -z in -p c' \
-"{}" \;
-#+END_SRC
 
 *** Visualization and Analysis
 **** waveform
