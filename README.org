@@ -3535,7 +3535,7 @@ helping you identify if your audio is too quiet or exceeding your limits.
 ***** 2) Run the script
 
 #+begin_verse
-To monitor the loudness of a file with a target of -16 LUFS (common for podcasts and streaming):
+To monitor the loudness of a file using the default target of -16 LUFS (standard for most streaming platforms):
 #+end_verse
 
 #+begin_src sh
