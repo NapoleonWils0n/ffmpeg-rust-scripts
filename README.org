@@ -3513,13 +3513,41 @@ Dependencies:
 :CUSTOM_ID: ebu-meter
 :END:
 
-ffplay ebu meter
+#+begin_verse
+The ebu-meter script provides a real-time visual representation of audio loudness levels
+according to the EBU R128 standard.
+#+end_verse
+
+#+begin_verse
+It is an essential tool for ensuring your audio meets broadcast or streaming loudness requirements
+by monitoring LUFS (Loudness Units relative to Full Scale).
+#+end_verse
+
+***** 1) Target Loudness
+
+#+begin_verse
+You can set a specific target loudness level (in LUFS) using the -t flag.
+
+The meter will visually calibrate itself to this reference point,
+helping you identify if your audio is too quiet or exceeding your limits.
+#+end_verse
+
+***** 2) Run the script
+
+#+begin_verse
+To monitor the loudness of a file with a target of -16 LUFS (common for podcasts and streaming):
+#+end_verse
+
+#+begin_src sh
+ebu-meter -i input.mp4
+#+end_src
+
+#+begin_verse
+Note: Because this script uses ffplay for real-time visualization,
+it opens an interactive playback window and does not generate an output file.
+#+end_verse
 
 ***** Script usage and help.
-
-#+BEGIN_SRC sh
-ebu-meter -i input.mp4 -t 16
-#+END_SRC
 
 Run the script with the -h option to show the help.
 
