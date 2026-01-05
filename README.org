@@ -80,14 +80,6 @@ including dependency management and environment path configuration.
 + [[#freebsd-install][Freebsd]]
 
 ** List of ffmpeg scripts
-*** Scene Detection
-
-+ [[#scene-detect-auto][scene-detect-auto]]
-+ [[#scene-detect][scene-detect]]
-+ [[#scene-cut][scene-cut]]
-+ [[#scene-time][scene-time]]
-+ [[#scene-images][scene-images]]
-
 *** Trimming and Clipping
 
 + [[#trim-clip][trim-clip]]
@@ -97,6 +89,13 @@ including dependency management and environment path configuration.
 + [[#clip-time][clip-time]]
 + [[#scene-cut-to][scene-cut-to]]
 + [[#combine-clips][combine-clips]]
+
+*** Visualization and Analysis
+
++ [[#waveform][waveform]]
++ [[#scopes][scopes]]
++ [[#ebu-meter][ebu-meter]]
++ [[#contact-sheet][contact-sheet]]
 
 *** Chapters and Metadata
 
@@ -114,23 +113,22 @@ including dependency management and environment path configuration.
 + [[#pan-scan][pan-scan]]
 + [[#zoompan][zoompan]]
 
-*** Visualization and Analysis
-
-+ [[#waveform][waveform]]
-+ [[#scopes][scopes]]
-+ [[#ebu-meter][ebu-meter]]
-+ [[#contact-sheet][contact-sheet]]
-
 *** Conversion and Extras
 
 + [[#audio-silence][audio-silence]]
 + [[#extract-frame][extract-frame]]
-+ [[#fade-normalize][fade-normalize]]
-+ [[#fade-title][fade-title]]
 + [[#img2video][img2video]]
 + [[#sexagesimal-time][sexagesimal-time]]
 + [[#vid2gif][vid2gif]]
 + [[#webp][webp]]
+
+*** Scene Detection
+
++ [[#scene-detect-auto][scene-detect-auto]]
++ [[#scene-detect][scene-detect]]
++ [[#scene-cut][scene-cut]]
++ [[#scene-time][scene-time]]
++ [[#scene-images][scene-images]]
 
 ** NixOS Build & Distribution
 
@@ -1262,559 +1260,6 @@ This is normal, but you only need the files that match the script names.
 #+end_verse
 
 ** ffmpeg scripts
-*** Scene Detection
-**** scene-detect-auto
-:PROPERTIES:
-:CUSTOM_ID: scene-detect-auto
-:END:
-
-Automated scene detection and video splitting.
-
-The scene-detect-auto script performs the functions of the following scripts automatically
-
-1) scene-detect (Identifies scene changes)
-
-2) scene-time (Converts timestamps to a cutlist)
-
-3) scene-cut (Splits the video into clips)
-
-#+begin_verse
-Because this script can generate a large number of video clips,
-it is best to create a dedicated directory for each video you want to process.
-#+end_verse
-
-***** 1) Create a directory
-
-#+begin_verse
-Create a directory for your project (e.g., "scene-detect").
-using the command line or your file manager
-#+end_verse
-
-On NixOS, Linux, Mac or Freebsd
-
-#+begin_src sh
-mkdir -p scene-detect
-#+end_src
-
-On Windows (PowerShell)
-
-#+begin_src sh
-New-Item -ItemType Directory -Path "scene-detect"
-#+end_src
-
-#+begin_verse
-Move the video to process into the scene-detect directory,
-where input.mp4 is the name of the video to process
-#+end_verse
-
-***** 2) Move your video into the directory
-
-Move the video file (e.g., input.mp4) into the folder you just created.
-
-On NixOS, Linux, Mac or Freebsd
-
-#+begin_src sh
-mv input.mp4 scene-detect/
-#+end_src
-
-On Windows (PowerShell):
-
-#+begin_src sh
-Move-Item -Path "input.mp4" -Destination "scene-detect"
-#+end_src
-
-***** 3) Change into the directory
-
-On all operating systems:
-
-#+begin_src sh
-cd scene-detect
-#+end_src
-
-***** 4) Run the script
-
-#+begin_verse
-Run the script with the -i option. By default, the detection threshold is 0.3.
-#+end_verse
-
-#+begin_src sh
-scene-detect-auto -i input.mp4
-#+end_src
-
-#+begin_verse
-Use the -t option to adjust the sensitivity.
-Lower values detect more scenes; higher values detect fewer.
-#+end_verse
-
-#+begin_src sh
-scene-detect-auto -i input.mp4 -t 0.5
-#+end_src
-
-***** Script usage and help.
-
-Script usage.
-
-#+begin_src sh
-scene-detect-auto -i <INPUT> -t <THRESHOLD>
-#+end_src
-
-Run the script with the -h option to show the help.
-
-#+begin_src sh
-scene-detect-auto -h
-#+end_src
-
-Help output.
-
-#+begin_example
-Automated scene detection and video splitting
-
-Usage: scene-detect-auto [OPTIONS] -i <INPUT>
-
-Options:
-  -i <INPUT>      input video file
-  -t <THRESHOLD>  detection threshold (0.0 to 1.0) [default: 0.3]
-  -h, --help      Print help
-  -v, --version   Print version
-
-Example:
-  scene-detect-auto -i input.mp4
-
-Dependencies:
-  ffmpeg, ffprobe: https://www.ffmpeg.org/
-
-Notes:
-  Creates detection.txt and cutlist.txt automatically.
-#+end_example
-
-Notes: Creates detection.txt and cutlist.txt automatically.
-
-**** scene-detect
-:PROPERTIES:
-:CUSTOM_ID: scene-detect
-:END:
-
-#+begin_verse
-scene-detect takes a video file and a threshold for the scene detection from 0.1 to 0.9
-you can also use the -s and -e options to set a range for the scene detection.
-
-If you dont specify a range scene detection will be perform on the whole video.
-#+end_verse
-
-Note: manual scene-detection uses 3 scripts that work together
-
-1) scene-detect (Identifies scene changes)
-
-2) scene-time (Converts timestamps to a cutlist)
-
-3) scene-cut (Splits the video into clips)
-
-#+begin_verse
-Because this script can generate a large number of video clips,
-it is best to create a dedicated directory for each video you want to process.
-#+end_verse
-
-***** 1) Create a directory
-
-#+begin_verse
-Create a directory for your project (e.g., "scene-detect").
-using the command line or your file manager
-#+end_verse
-
-On NixOS, Linux, Mac or Freebsd
-
-#+begin_src sh
-mkdir -p scene-detect
-#+end_src
-
-On Windows (PowerShell)
-
-#+begin_src sh
-New-Item -ItemType Directory -Path "scene-detect"
-#+end_src
-
-#+begin_verse
-Move the video to process into the scene-detect directory,
-where input.mp4 is the name of the video to process
-#+end_verse
-
-***** 2) Move your video into the directory
-
-Move the video file (e.g., input.mp4) into the folder you just created.
-
-On NixOS, Linux, Mac or Freebsd
-
-#+begin_src sh
-mv input.mp4 scene-detect/
-#+end_src
-
-On Windows (PowerShell):
-
-#+begin_src sh
-Move-Item -Path "input.mp4" -Destination "scene-detect"
-#+end_src
-
-***** 3) Change into the directory
-
-On all operating systems:
-
-#+begin_src sh
-cd scene-detect
-#+end_src
-
-***** 4) Run the script
-
-#+begin_verse
-Run the script with the -i option. By default, the detection threshold is 0.3.
-#+end_verse
-
-#+begin_src sh
-scene-detect -i input.mp4
-#+end_src
-
-#+begin_verse
-Use the -t option to adjust the sensitivity.
-Lower values detect more scenes; higher values detect fewer.
-#+end_verse
-
-#+begin_src sh
-scene-detect -i input.mp4 -t 0.5
-#+end_src
-
-#+begin_verse
-Note: this will create a text file called input-detection.txt (where "input" is the name of your video).
-
-Where input is the name of the video that has been processed.
-
-You use the input-detection.txt file with scene-time script in the next step.
-#+end_verse
-
-***** Script usage and help.
-
-#+BEGIN_SRC sh
-scene-detect -s 00:00:00 -i input -e 00:00:00 -t (0.1 - 0.9) -f sec -o output
-#+END_SRC
-
-Run the script with the -h option to show the help.
-
-#+begin_src sh
-scene-detect -h
-#+end_src
-
-Help output.
-
-#+begin_example
-Detect scene changes in a video
-
-Usage: scene-detect -i <INPUT> [OPTIONS]
-
-Options:
-  -i <INPUT>      Input video file
-  -s <START>      Start time (HH:MM:SS.mmm)
-  -e <END>        End time (HH:MM:SS.mmm)
-  -t <THRESHOLD>  Detection threshold (0.1 to 0.9) [default: 0.3]
-  -f <FORMAT>     Output format: "sec" for seconds, else HH:MM:SS.mmm
-  -o <OUTFILE>    Output filename (optional)
-  -h, --help      Print help
-  -v, --version   Print version
-
-Example:
-  scene-detect -i input.mp4 -t 0.4 -f sec
-
-Dependencies:
-  ffmpeg: https://www.ffmpeg.org/
-#+end_example
-
-**** scene-time
-:PROPERTIES:
-:CUSTOM_ID: scene-time
-:END:
-
-#+begin_verse
-The scene-time script is the second step in the manual scene-cutting process.
-It takes the list of timestamps generated by scene-detect and calculates the duration between each point.
-#+end_verse
-
-Note: manual scene-detection uses 3 scripts that work together
-
-1) scene-detect (Identifies scene changes)
-
-2) scene-time (Converts timestamps to a cutlist)
-
-3) scene-cut (Splits the video into clips)
-
-#+begin_verse
-This step is useful because it allows you to open the detection file in a text editor and manually add,
-remove, or adjust timestamps before generating the final cutlist.
-#+end_verse
-
-***** 1) Input format (detection file)
-
-#+begin_verse
-The script reads a text file containing timestamps (one per line).
-It supports both seconds and sexagesimal (HH:MM:SS) formats.
-#+end_verse
-
-#+begin_example
-0:00:00
-0:00:11.875000
-0:00:15.750000
-#+end_example
-
-***** 2) Output format (cutlist)
-
-#+begin_verse
-The script calculates the duration for each segment and creates a "cutlist".
-Each line contains the start time and the duration, separated by a comma
-#+end_verse
-
-#+begin_verse
-The script creates clips by subtracting the cut point from the start point
-and converts sexagesimal format and then creates a file with the start point
-a comma and then the duration of the clip
-#+end_verse
-
-***** 3) Run the script
-
-#+begin_verse
-Provide the detection file created in the previous step using the -i option.
-#+end_verse
-
-#+begin_src sh
-scene-time -i input-detection.txt
-#+end_src
-
-#+begin_verse
-This will create a file named input-detection-cutlist.txt.
-You will use this cutlist file with the scene-cut script in the final step.
-#+end_verse
-
-The output of the scene-time script is used with the scene-cut script to create the clips
-
-#+begin_example
-0,11.875
-11.875,3.875
-#+end_example
-
-***** Script usage and help.
-
-#+BEGIN_SRC sh
-scene-time -i input -o output
-#+END_SRC
-
-Run the script with the -h option to show the help.
-
-#+begin_src sh
-scene-time -h
-#+end_src
-
-Help output.
-
-#+begin_example
-Create ffmpeg cutlist from scene detection timestamps
-
-Usage: scene-time -i <INPUT> [OPTIONS]
-
-Options:
-  -i <INPUT>     Input file containing timestamps
-  -o <OUTFILE>   Output filename (optional)
-  -h, --help     Print help
-  -v, --version  Print version
-
-Example:
-  scene-time -i timestamps.txt -o cutlist.txt
-
-Dependencies:
-  ffmpeg: https://www.ffmpeg.org/
-#+end_example
-
-**** scene-cut
-:PROPERTIES:
-:CUSTOM_ID: scene-cut
-:END:
-
-#+begin_verse
-The scene-cut script is the third and final step in the manual scene-cutting process.
-It takes a video file and the cutlist generated by scene-time to split the video into individual clips.
-#+end_verse
-
-Note: manual scene-detection uses 3 scripts that work together
-
-1) scene-detect (Identifies scene changes)
-
-2) scene-time (Converts timestamps to a cutlist)
-
-3) scene-cut (Splits the video into clips)
-
-#+begin_verse
-The script uses FFmpeg to perform the cuts.
-It is designed for speed and accuracy, automatically naming each output clip based on the original filename and its scene number.
-#+end_verse
-
-***** 1) Input format (the cutlist)
-
-#+begin_verse
-FFmpeg requires a start point and a duration (not an end point) to cut accurately.
-The cutlist must be comma-separated values.
-#+end_verse
-
-Example using sexagesimal format (HH:MM:SS):
-
-#+begin_example
-00:00:00,00:00:30
-00:01:00,00:00:30
-#+end_example
-
-***** 2) Run the script
-
-#+begin_verse
-Provide the original video with the -i option and the cutlist file with the -c option.
-#+end_verse
-
-#+begin_src sh
-scene-cut -i input.mp4 -c input-detection-cutlist.txt
-#+end_src
-
-#+begin_verse
-The script will process the video and generate files named like this:
-input-scene-001-[00:00:00–00:00:30].mp4
-#+end_verse
-
-***** Script usage and help.
-
-#+BEGIN_SRC sh
-scene-cut -i input.mp4 -c cutfile.txt
-#+END_SRC
-
-Run the script with the -h option to show the help.
-
-#+begin_src sh
-scene-cut -h
-#+end_src
-
-Help output.
-
-#+begin_example
-Split a video into individual scenes based on a cutlist
-
-Usage: scene-cut -i <INPUT> -c <CUTLIST> [OPTIONS]
-
-Options:
-  -i <INPUT>     Input video file
-  -c <CUTLIST>   Cutlist file (comma-separated start,duration)
-  -h, --help     Print help
-  -v, --version  Print version
-
-Example:
-  scene-cut -i input.mp4 -c cutlist.txt
-
-Dependencies:
-  ffmpeg: https://www.ffmpeg.org/
-#+end_example
-
-ffmpeg requires a start point and a duration, not an end point
-
-#+begin_verse
-cut file - hours, minutes, seconds
-in this example we create 2 - 30 seconds clips
-#+end_verse
-
-#+begin_verse
-a 30 second clip that starts at 00:00:00
-and another 30 second clip that starts at 00:01:00
-#+end_verse
-
-#+begin_example
-00:00:00,00:00:30
-00:01:00,00:00:30
-#+end_example
-
-#+begin_verse
-cut file - seconds
-in this example we create 2 - 30 seconds clips
-#+end_verse
-
-#+begin_verse
-a 30 second clip that starts at 0
-and another 30 second clip that starts at 60
-#+end_verse
-
-#+begin_example
-0,30
-60,30
-#+end_example
-
-**** scene-images
-:PROPERTIES:
-:CUSTOM_ID: scene-images
-:END:
-
-#+begin_verse
-The scene-images script generates a thumbnail image for every cut point defined in your cutlist.
-This is so you can visually verify that your scene detection or manual timestamps are accurate.
-#+end_verse
-
-#+begin_verse
-The script supports both PNG and JPG formats,
-and allows you to specify custom widths or heights while maintaining the original aspect ratio of the video.
-#+end_verse
-
-***** 1) Image Resolution
-
-#+begin_verse
-You can specify the width (-x) or height (-y).
-If you only provide one, the script will automatically calculate the other to maintain the correct proportions.
-#+end_verse
-
-***** 2) Run the script
-
-#+begin_verse
-Provide the original video with the -i option and the cutlist file (generated by scene-time) with the -c option.
-#+end_verse
-
-#+begin_src sh
-scene-images -i input.mp4 -c input-detection-cutlist.txt -x 1280 -t jpg
-#+end_src
-
-#+begin_verse
-The script will generate images named after each scene: input-scene-001-[00:00:00].jpg
-#+end_verse
-
-***** Script usage and help.
-
-#+BEGIN_SRC sh
-scene-images -i input -c cutfile -t (png|jpg) -x width -y height
-#+END_SRC
-
-Run the script with the -h option to show the help.
-
-#+begin_src sh
-scene-images -h
-#+end_src
-
-Help output.
-
-#+begin_example
-Create thumbnails from scene detection timestamps
-
-Usage: scene-images -i <INPUT> -c <CUTLIST> [OPTIONS]
-
-Options:
-  -i <INPUT>     Input video file
-  -c <CUTLIST>   Cutlist file (comma-separated start,duration)
-  -t <FORMAT>    Image format (png or jpg) [default: jpg]
-  -x <WIDTH>     Width of the output image
-  -y <HEIGHT>    Height of the output image
-  -h, --help     Print help
-  -v, --version  Print version
-
-Example:
-  scene-images -i input.mp4 -c cutlist.txt -x 1280 -t jpg
-
-Dependencies:
-  ffmpeg: https://www.ffmpeg.org/
-#+end_example
-
 *** Trimming and Clipping
 **** trim-clip
 :PROPERTIES:
@@ -2512,6 +1957,328 @@ Options:
 
 Dependencies:
 ffmpeg, ffprobe: https://www.ffmpeg.org/
+#+end_example
+
+*** Visualization and Analysis
+**** waveform
+:PROPERTIES:
+:CUSTOM_ID: waveform
+:END:
+
+#+begin_verse
+The waveform script generates a static image representation of the audio levels from either a video or an audio file.
+#+end_verse
+
+#+begin_verse
+You can define the dimensions, colors, and image format.
+#+end_verse
+
+***** 1) Run the script
+
+Provide the input file and choose your desired color and format.
+
+#+begin_src sh
+waveform -i input.mp4 -c orange -j png -o output.png
+#+end_src
+
+#+begin_verse
+If the -o option is omitted,
+the script generates a default name based on the input file: input-waveform.jpg
+#+end_verse
+
+***** waveform batch process
+
+#+begin_verse
+If you have a directory of files and need to generate waveforms for all of them,
+you can use fd for high-speed batch processing.
+#+end_verse
+
+#+begin_src sh
+fd -e mp4 -x waveform -i {}
+#+end_src
+
+#+begin_verse
+This command finds every MP4 file and creates a corresponding JPG waveform
+using the default white color and 1280x420 dimensions.
+#+end_verse
+
+***** Script usage and help.
+
+#+BEGIN_SRC sh
+waveform -i input.mp4 -o output.jpg
+#+END_SRC
+
+Run the script with the -h option to show the help.
+
+#+begin_src sh
+waveform -h
+#+end_src
+
+Help output.
+
+#+begin_example
+create a waveform image from a video or audio file
+
+Usage: waveform [OPTIONS] -i <INPUT>
+
+Options:
+  -i <INPUT>     input file
+  -c <COLOR>     waveform color [default: white]
+  -w <WIDTH>     output width [default: 1280]
+  -e <HEIGHT>    output height [default: 420]
+  -j <FORMAT>    image format jpg or png [default: jpg]
+  -o <OUTFILE>   output file optional
+  -h, --help     Print help
+  -v, --version  Print version
+
+Example:
+  waveform -i input.mp4 -c orange -j jpg
+
+Colors: https://ffmpeg.org/ffmpeg-utils.html#Color
+
+Dependencies:
+  ffmpeg: https://www.ffmpeg.org/
+#+end_example
+
+**** scopes
+:PROPERTIES:
+:CUSTOM_ID: scopes
+:END:
+
+#+begin_verse
+The scopes script is a professional analysis tool that plays a video with technical scopes stacked vertically underneath.
+#+end_verse
+
+#+begin_verse
+It uses ffplay to provide a live playback window,
+and it automatically scales the scopes to match the width of your input video, ensuring a clean and consistent layout.
+#+end_verse
+
+#+begin_verse
+You can launch the playback with different analysis views using the following flags:
+
+-i: Displays a Histogram parade.
+-o: Displays an RGB Overlay waveform.
+-p: Displays an RGB Parade waveform.
+-s: Displays both the RGB Overlay and Parade stacked together.
+-w: Displays a standard Luma Waveform.
+-v: Displays a Vectorscope for color and saturation analysis.
+#+end_verse
+
+***** 2) Run the script
+
+To view your video with an RGB Parade, simply run:
+
+#+begin_src sh
+scopes -p input.mp4
+#+end_src
+
+#+begin_verse
+Note: Because this script uses ffplay for real-time visualization,
+it does not output a file; it opens an interactive playback window.
+#+end_verse
+
+***** Script usage and help.
+
+Run the script with the -h option to show the help.
+
+#+begin_src sh
+scopes -h
+#+end_src
+
+Help output.
+
+#+begin_example
+Display video with professional scopes stacked below
+
+Usage: scopes [OPTIONS] <INPUT>
+
+Arguments:
+  <INPUT>  Input file
+
+Options:
+  -i             Display Histogram
+  -o             Display RGB Overlay
+  -p             Display RGB Parade
+  -s             Display RGB Overlay and Parade
+  -w             Display Waveform
+  -v             Display Vectorscope
+  -h, --help     Print help
+  -V, --version  Print version
+
+Example:
+  scopes -w input.mp4
+
+Dependencies:
+  ffplay: https://www.ffmpeg.org/
+#+end_example
+
+**** ebu-meter
+:PROPERTIES:
+:CUSTOM_ID: ebu-meter
+:END:
+
+#+begin_verse
+The ebu-meter script provides a real-time visual representation of audio loudness levels
+according to the EBU R128 standard.
+#+end_verse
+
+#+begin_verse
+It is an essential tool for ensuring your audio meets broadcast or streaming loudness requirements
+by monitoring LUFS (Loudness Units relative to Full Scale).
+#+end_verse
+
+***** 1) Target Loudness
+
+#+begin_verse
+You can set a specific target loudness level (in LUFS) using the -t flag.
+
+The meter will visually calibrate itself to this reference point,
+helping you identify if your audio is too quiet or exceeding your limits.
+#+end_verse
+
+***** 2) Run the script
+
+#+begin_verse
+To monitor the loudness of a file using the default target of -16 LUFS (standard for most streaming platforms):
+#+end_verse
+
+#+begin_src sh
+ebu-meter -i input.mp4
+#+end_src
+
+#+begin_verse
+Note: Because this script uses ffplay for real-time visualization,
+it opens an interactive playback window and does not generate an output file.
+#+end_verse
+
+***** Script usage and help.
+
+Run the script with the -h option to show the help.
+
+#+begin_src sh
+ebu-meter -h
+#+end_src
+
+Help output.
+
+#+begin_example
+display EBU R128 audio loudness meter
+
+Usage: ebu-meter [OPTIONS] -i <INFILE>
+
+Options:
+  -i <INFILE>    input file
+  -t <TARGET>    audio target level [default: -16]
+  -h, --help     Print help
+  -v, --version  Print version
+
+Example:
+  ebu-meter -i input.mp4 -t -16
+
+Dependencies:
+  ffplay: https://www.ffmpeg.org/
+#+end_example
+
+**** contact-sheet
+:PROPERTIES:
+:CUSTOM_ID: contact-sheet
+:END:
+
+#+begin_verse
+The contact-sheet script generates a tiled image of thumbnails representing the entire duration of a video.
+#+end_verse
+
+#+begin_verse
+It is ideal for getting a quick visual overview of a clip's content,
+allowing you to customize the grid layout, thumbnail size, and background colors.
+#+end_verse
+
+***** 1) Time Formats
+
+#+begin_verse
+When using the -s (seek) option, you can specify the start time in two different formats:
+
+Sexagesimal: HOURS:MM:SS.MILLISECONDS (e.g., 00:02:30.5).
+
+Seconds: A simple numerical value (e.g., 150.5).
+
+Note: In sexagesimal format,
+fractions are interpreted as fractions of a second (e.g., .5 is half a second), not as frame counts.
+#+end_verse
+
+***** 2) Run the script
+
+Generate a high-density 8x8 contact sheet with timestamps enabled:
+
+#+begin_src sh
+contact-sheet -i input.mp4 -s 00:00:00 -w 320 -t 8x8 -x on -o output.png
+#+end_src
+
+#+begin_verse
+The default start time is 00:00:05 to exclude black frame with videos that fade up from black,
+this can be overriden by using the -s option with 00:00:00
+#+end_verse
+
+#+begin_verse
+If the -o option is omitted,
+the script generates a filename containing the time range: input-contact-[00:00:05–00:10:00].jpg
+#+end_verse
+
+***** 3) contact-sheet batch process
+
+#+begin_verse
+To quickly generate contact sheets for every MP4 in a directory, use fd.
+This example creates a 4x4 grid with white padding for each video.
+#+end_verse
+
+#+begin_src sh
+fd -e mp4 -x contact-sheet -i {} -s 00:00:10 -w 200 -t 4x4 -p 7 -m 2 -c white
+#+end_src
+
+***** Script usage and help.
+
+#+BEGIN_SRC sh
+contact-sheet -i input -s 00:00:00 -w 320 -t 8x8 -x on -o output.png
+#+END_SRC
+
+Run the script with the -h option to show the help.
+
+#+begin_src sh
+contact-sheet -h
+#+end_src
+
+Help output.
+
+#+begin_example
+create an image with thumbnails from a video
+
+Usage: contact-sheet [OPTIONS] -i <INFILE>
+
+Options:
+  -i <INFILE>
+  -s <SEEK>        [default: 00:00:05]
+  -w <WIDTH>       [default: 160]
+  -t <LAYOUT>      [default: 4x3]
+  -p <PADDING>     [default: 7]
+  -m <MARGIN>      [default: 2]
+  -c <COLOR>       [default: black]
+  -f <FONTCOLOR>   [default: white]
+  -b <BOXCOLOR>    [default: black]
+  -x <TIMESTAMPS>  [default: off]
+  -j <FORMAT>      image format (jpg or png) [default: jpg]
+  -o <OUTFILE>
+  -h, --help
+  -v, --version
+
+Example:
+  contact-sheet -i input.mp4 -s 00:00:00.000 -w 160 -t 4x3 -j png
+
+Dependencies:
+  ffmpeg, ffprobe: https://www.ffmpeg.org/
+
+Notes:
+  -x on enables timestamps. -j sets image format (jpg/png).
 #+end_example
 
 *** Chapters and Metadata
@@ -3354,328 +3121,6 @@ Dependencies:
   ffmpeg: https://www.ffmpeg.org/
 #+end_example
 
-*** Visualization and Analysis
-**** waveform
-:PROPERTIES:
-:CUSTOM_ID: waveform
-:END:
-
-#+begin_verse
-The waveform script generates a static image representation of the audio levels from either a video or an audio file.
-#+end_verse
-
-#+begin_verse
-You can define the dimensions, colors, and image format.
-#+end_verse
-
-***** 1) Run the script
-
-Provide the input file and choose your desired color and format.
-
-#+begin_src sh
-waveform -i input.mp4 -c orange -j png -o output.png
-#+end_src
-
-#+begin_verse
-If the -o option is omitted,
-the script generates a default name based on the input file: input-waveform.jpg
-#+end_verse
-
-***** waveform batch process
-
-#+begin_verse
-If you have a directory of files and need to generate waveforms for all of them,
-you can use fd for high-speed batch processing.
-#+end_verse
-
-#+begin_src sh
-fd -e mp4 -x waveform -i {}
-#+end_src
-
-#+begin_verse
-This command finds every MP4 file and creates a corresponding JPG waveform
-using the default white color and 1280x420 dimensions.
-#+end_verse
-
-***** Script usage and help.
-
-#+BEGIN_SRC sh
-waveform -i input.mp4 -o output.jpg
-#+END_SRC
-
-Run the script with the -h option to show the help.
-
-#+begin_src sh
-waveform -h
-#+end_src
-
-Help output.
-
-#+begin_example
-create a waveform image from a video or audio file
-
-Usage: waveform [OPTIONS] -i <INPUT>
-
-Options:
-  -i <INPUT>     input file
-  -c <COLOR>     waveform color [default: white]
-  -w <WIDTH>     output width [default: 1280]
-  -e <HEIGHT>    output height [default: 420]
-  -j <FORMAT>    image format jpg or png [default: jpg]
-  -o <OUTFILE>   output file optional
-  -h, --help     Print help
-  -v, --version  Print version
-
-Example:
-  waveform -i input.mp4 -c orange -j jpg
-
-Colors: https://ffmpeg.org/ffmpeg-utils.html#Color
-
-Dependencies:
-  ffmpeg: https://www.ffmpeg.org/
-#+end_example
-
-**** scopes
-:PROPERTIES:
-:CUSTOM_ID: scopes
-:END:
-
-#+begin_verse
-The scopes script is a professional analysis tool that plays a video with technical scopes stacked vertically underneath.
-#+end_verse
-
-#+begin_verse
-It uses ffplay to provide a live playback window,
-and it automatically scales the scopes to match the width of your input video, ensuring a clean and consistent layout.
-#+end_verse
-
-#+begin_verse
-You can launch the playback with different analysis views using the following flags:
-
--i: Displays a Histogram parade.
--o: Displays an RGB Overlay waveform.
--p: Displays an RGB Parade waveform.
--s: Displays both the RGB Overlay and Parade stacked together.
--w: Displays a standard Luma Waveform.
--v: Displays a Vectorscope for color and saturation analysis.
-#+end_verse
-
-***** 2) Run the script
-
-To view your video with an RGB Parade, simply run:
-
-#+begin_src sh
-scopes -p input.mp4
-#+end_src
-
-#+begin_verse
-Note: Because this script uses ffplay for real-time visualization,
-it does not output a file; it opens an interactive playback window.
-#+end_verse
-
-***** Script usage and help.
-
-Run the script with the -h option to show the help.
-
-#+begin_src sh
-scopes -h
-#+end_src
-
-Help output.
-
-#+begin_example
-Display video with professional scopes stacked below
-
-Usage: scopes [OPTIONS] <INPUT>
-
-Arguments:
-  <INPUT>  Input file
-
-Options:
-  -i             Display Histogram
-  -o             Display RGB Overlay
-  -p             Display RGB Parade
-  -s             Display RGB Overlay and Parade
-  -w             Display Waveform
-  -v             Display Vectorscope
-  -h, --help     Print help
-  -V, --version  Print version
-
-Example:
-  scopes -w input.mp4
-
-Dependencies:
-  ffplay: https://www.ffmpeg.org/
-#+end_example
-
-**** ebu-meter
-:PROPERTIES:
-:CUSTOM_ID: ebu-meter
-:END:
-
-#+begin_verse
-The ebu-meter script provides a real-time visual representation of audio loudness levels
-according to the EBU R128 standard.
-#+end_verse
-
-#+begin_verse
-It is an essential tool for ensuring your audio meets broadcast or streaming loudness requirements
-by monitoring LUFS (Loudness Units relative to Full Scale).
-#+end_verse
-
-***** 1) Target Loudness
-
-#+begin_verse
-You can set a specific target loudness level (in LUFS) using the -t flag.
-
-The meter will visually calibrate itself to this reference point,
-helping you identify if your audio is too quiet or exceeding your limits.
-#+end_verse
-
-***** 2) Run the script
-
-#+begin_verse
-To monitor the loudness of a file using the default target of -16 LUFS (standard for most streaming platforms):
-#+end_verse
-
-#+begin_src sh
-ebu-meter -i input.mp4
-#+end_src
-
-#+begin_verse
-Note: Because this script uses ffplay for real-time visualization,
-it opens an interactive playback window and does not generate an output file.
-#+end_verse
-
-***** Script usage and help.
-
-Run the script with the -h option to show the help.
-
-#+begin_src sh
-ebu-meter -h
-#+end_src
-
-Help output.
-
-#+begin_example
-display EBU R128 audio loudness meter
-
-Usage: ebu-meter [OPTIONS] -i <INFILE>
-
-Options:
-  -i <INFILE>    input file
-  -t <TARGET>    audio target level [default: -16]
-  -h, --help     Print help
-  -v, --version  Print version
-
-Example:
-  ebu-meter -i input.mp4 -t -16
-
-Dependencies:
-  ffplay: https://www.ffmpeg.org/
-#+end_example
-
-**** contact-sheet
-:PROPERTIES:
-:CUSTOM_ID: contact-sheet
-:END:
-
-#+begin_verse
-The contact-sheet script generates a tiled image of thumbnails representing the entire duration of a video.
-#+end_verse
-
-#+begin_verse
-It is ideal for getting a quick visual overview of a clip's content,
-allowing you to customize the grid layout, thumbnail size, and background colors.
-#+end_verse
-
-***** 1) Time Formats
-
-#+begin_verse
-When using the -s (seek) option, you can specify the start time in two different formats:
-
-Sexagesimal: HOURS:MM:SS.MILLISECONDS (e.g., 00:02:30.5).
-
-Seconds: A simple numerical value (e.g., 150.5).
-
-Note: In sexagesimal format,
-fractions are interpreted as fractions of a second (e.g., .5 is half a second), not as frame counts.
-#+end_verse
-
-***** 2) Run the script
-
-Generate a high-density 8x8 contact sheet with timestamps enabled:
-
-#+begin_src sh
-contact-sheet -i input.mp4 -s 00:00:00 -w 320 -t 8x8 -x on -o output.png
-#+end_src
-
-#+begin_verse
-The default start time is 00:00:05 to exclude black frame with videos that fade up from black,
-this can be overriden by using the -s option with 00:00:00
-#+end_verse
-
-#+begin_verse
-If the -o option is omitted,
-the script generates a filename containing the time range: input-contact-[00:00:05–00:10:00].jpg
-#+end_verse
-
-***** 3) contact-sheet batch process
-
-#+begin_verse
-To quickly generate contact sheets for every MP4 in a directory, use fd.
-This example creates a 4x4 grid with white padding for each video.
-#+end_verse
-
-#+begin_src sh
-fd -e mp4 -x contact-sheet -i {} -s 00:00:10 -w 200 -t 4x4 -p 7 -m 2 -c white
-#+end_src
-
-***** Script usage and help.
-
-#+BEGIN_SRC sh
-contact-sheet -i input -s 00:00:00 -w 320 -t 8x8 -x on -o output.png
-#+END_SRC
-
-Run the script with the -h option to show the help.
-
-#+begin_src sh
-contact-sheet -h
-#+end_src
-
-Help output.
-
-#+begin_example
-create an image with thumbnails from a video
-
-Usage: contact-sheet [OPTIONS] -i <INFILE>
-
-Options:
-  -i <INFILE>
-  -s <SEEK>        [default: 00:00:05]
-  -w <WIDTH>       [default: 160]
-  -t <LAYOUT>      [default: 4x3]
-  -p <PADDING>     [default: 7]
-  -m <MARGIN>      [default: 2]
-  -c <COLOR>       [default: black]
-  -f <FONTCOLOR>   [default: white]
-  -b <BOXCOLOR>    [default: black]
-  -x <TIMESTAMPS>  [default: off]
-  -j <FORMAT>      image format (jpg or png) [default: jpg]
-  -o <OUTFILE>
-  -h, --help
-  -v, --version
-
-Example:
-  contact-sheet -i input.mp4 -s 00:00:00.000 -w 160 -t 4x3 -j png
-
-Dependencies:
-  ffmpeg, ffprobe: https://www.ffmpeg.org/
-
-Notes:
-  -x on enables timestamps. -j sets image format (jpg/png).
-#+end_example
-
 *** Conversion and Extras
 **** audio-silence
 :PROPERTIES:
@@ -4161,5 +3606,558 @@ Example:
 
 Dependencies:
   ffmpeg, ffprobe: https://www.ffmpeg.org/
+#+end_example
+
+*** Scene Detection
+**** scene-detect-auto
+:PROPERTIES:
+:CUSTOM_ID: scene-detect-auto
+:END:
+
+Automated scene detection and video splitting.
+
+The scene-detect-auto script performs the functions of the following scripts automatically
+
+1) scene-detect (Identifies scene changes)
+
+2) scene-time (Converts timestamps to a cutlist)
+
+3) scene-cut (Splits the video into clips)
+
+#+begin_verse
+Because this script can generate a large number of video clips,
+it is best to create a dedicated directory for each video you want to process.
+#+end_verse
+
+***** 1) Create a directory
+
+#+begin_verse
+Create a directory for your project (e.g., "scene-detect").
+using the command line or your file manager
+#+end_verse
+
+On NixOS, Linux, Mac or Freebsd
+
+#+begin_src sh
+mkdir -p scene-detect
+#+end_src
+
+On Windows (PowerShell)
+
+#+begin_src sh
+New-Item -ItemType Directory -Path "scene-detect"
+#+end_src
+
+#+begin_verse
+Move the video to process into the scene-detect directory,
+where input.mp4 is the name of the video to process
+#+end_verse
+
+***** 2) Move your video into the directory
+
+Move the video file (e.g., input.mp4) into the folder you just created.
+
+On NixOS, Linux, Mac or Freebsd
+
+#+begin_src sh
+mv input.mp4 scene-detect/
+#+end_src
+
+On Windows (PowerShell):
+
+#+begin_src sh
+Move-Item -Path "input.mp4" -Destination "scene-detect"
+#+end_src
+
+***** 3) Change into the directory
+
+On all operating systems:
+
+#+begin_src sh
+cd scene-detect
+#+end_src
+
+***** 4) Run the script
+
+#+begin_verse
+Run the script with the -i option. By default, the detection threshold is 0.3.
+#+end_verse
+
+#+begin_src sh
+scene-detect-auto -i input.mp4
+#+end_src
+
+#+begin_verse
+Use the -t option to adjust the sensitivity.
+Lower values detect more scenes; higher values detect fewer.
+#+end_verse
+
+#+begin_src sh
+scene-detect-auto -i input.mp4 -t 0.5
+#+end_src
+
+***** Script usage and help.
+
+Script usage.
+
+#+begin_src sh
+scene-detect-auto -i <INPUT> -t <THRESHOLD>
+#+end_src
+
+Run the script with the -h option to show the help.
+
+#+begin_src sh
+scene-detect-auto -h
+#+end_src
+
+Help output.
+
+#+begin_example
+Automated scene detection and video splitting
+
+Usage: scene-detect-auto [OPTIONS] -i <INPUT>
+
+Options:
+  -i <INPUT>      input video file
+  -t <THRESHOLD>  detection threshold (0.0 to 1.0) [default: 0.3]
+  -h, --help      Print help
+  -v, --version   Print version
+
+Example:
+  scene-detect-auto -i input.mp4
+
+Dependencies:
+  ffmpeg, ffprobe: https://www.ffmpeg.org/
+
+Notes:
+  Creates detection.txt and cutlist.txt automatically.
+#+end_example
+
+Notes: Creates detection.txt and cutlist.txt automatically.
+
+**** scene-detect
+:PROPERTIES:
+:CUSTOM_ID: scene-detect
+:END:
+
+#+begin_verse
+scene-detect takes a video file and a threshold for the scene detection from 0.1 to 0.9
+you can also use the -s and -e options to set a range for the scene detection.
+
+If you dont specify a range scene detection will be perform on the whole video.
+#+end_verse
+
+Note: manual scene-detection uses 3 scripts that work together
+
+1) scene-detect (Identifies scene changes)
+
+2) scene-time (Converts timestamps to a cutlist)
+
+3) scene-cut (Splits the video into clips)
+
+#+begin_verse
+Because this script can generate a large number of video clips,
+it is best to create a dedicated directory for each video you want to process.
+#+end_verse
+
+***** 1) Create a directory
+
+#+begin_verse
+Create a directory for your project (e.g., "scene-detect").
+using the command line or your file manager
+#+end_verse
+
+On NixOS, Linux, Mac or Freebsd
+
+#+begin_src sh
+mkdir -p scene-detect
+#+end_src
+
+On Windows (PowerShell)
+
+#+begin_src sh
+New-Item -ItemType Directory -Path "scene-detect"
+#+end_src
+
+#+begin_verse
+Move the video to process into the scene-detect directory,
+where input.mp4 is the name of the video to process
+#+end_verse
+
+***** 2) Move your video into the directory
+
+Move the video file (e.g., input.mp4) into the folder you just created.
+
+On NixOS, Linux, Mac or Freebsd
+
+#+begin_src sh
+mv input.mp4 scene-detect/
+#+end_src
+
+On Windows (PowerShell):
+
+#+begin_src sh
+Move-Item -Path "input.mp4" -Destination "scene-detect"
+#+end_src
+
+***** 3) Change into the directory
+
+On all operating systems:
+
+#+begin_src sh
+cd scene-detect
+#+end_src
+
+***** 4) Run the script
+
+#+begin_verse
+Run the script with the -i option. By default, the detection threshold is 0.3.
+#+end_verse
+
+#+begin_src sh
+scene-detect -i input.mp4
+#+end_src
+
+#+begin_verse
+Use the -t option to adjust the sensitivity.
+Lower values detect more scenes; higher values detect fewer.
+#+end_verse
+
+#+begin_src sh
+scene-detect -i input.mp4 -t 0.5
+#+end_src
+
+#+begin_verse
+Note: this will create a text file called input-detection.txt (where "input" is the name of your video).
+
+Where input is the name of the video that has been processed.
+
+You use the input-detection.txt file with scene-time script in the next step.
+#+end_verse
+
+***** Script usage and help.
+
+#+BEGIN_SRC sh
+scene-detect -s 00:00:00 -i input -e 00:00:00 -t (0.1 - 0.9) -f sec -o output
+#+END_SRC
+
+Run the script with the -h option to show the help.
+
+#+begin_src sh
+scene-detect -h
+#+end_src
+
+Help output.
+
+#+begin_example
+Detect scene changes in a video
+
+Usage: scene-detect -i <INPUT> [OPTIONS]
+
+Options:
+  -i <INPUT>      Input video file
+  -s <START>      Start time (HH:MM:SS.mmm)
+  -e <END>        End time (HH:MM:SS.mmm)
+  -t <THRESHOLD>  Detection threshold (0.1 to 0.9) [default: 0.3]
+  -f <FORMAT>     Output format: "sec" for seconds, else HH:MM:SS.mmm
+  -o <OUTFILE>    Output filename (optional)
+  -h, --help      Print help
+  -v, --version   Print version
+
+Example:
+  scene-detect -i input.mp4 -t 0.4 -f sec
+
+Dependencies:
+  ffmpeg: https://www.ffmpeg.org/
+#+end_example
+
+**** scene-time
+:PROPERTIES:
+:CUSTOM_ID: scene-time
+:END:
+
+#+begin_verse
+The scene-time script is the second step in the manual scene-cutting process.
+It takes the list of timestamps generated by scene-detect and calculates the duration between each point.
+#+end_verse
+
+Note: manual scene-detection uses 3 scripts that work together
+
+1) scene-detect (Identifies scene changes)
+
+2) scene-time (Converts timestamps to a cutlist)
+
+3) scene-cut (Splits the video into clips)
+
+#+begin_verse
+This step is useful because it allows you to open the detection file in a text editor and manually add,
+remove, or adjust timestamps before generating the final cutlist.
+#+end_verse
+
+***** 1) Input format (detection file)
+
+#+begin_verse
+The script reads a text file containing timestamps (one per line).
+It supports both seconds and sexagesimal (HH:MM:SS) formats.
+#+end_verse
+
+#+begin_example
+0:00:00
+0:00:11.875000
+0:00:15.750000
+#+end_example
+
+***** 2) Output format (cutlist)
+
+#+begin_verse
+The script calculates the duration for each segment and creates a "cutlist".
+Each line contains the start time and the duration, separated by a comma
+#+end_verse
+
+#+begin_verse
+The script creates clips by subtracting the cut point from the start point
+and converts sexagesimal format and then creates a file with the start point
+a comma and then the duration of the clip
+#+end_verse
+
+***** 3) Run the script
+
+#+begin_verse
+Provide the detection file created in the previous step using the -i option.
+#+end_verse
+
+#+begin_src sh
+scene-time -i input-detection.txt
+#+end_src
+
+#+begin_verse
+This will create a file named input-detection-cutlist.txt.
+You will use this cutlist file with the scene-cut script in the final step.
+#+end_verse
+
+The output of the scene-time script is used with the scene-cut script to create the clips
+
+#+begin_example
+0,11.875
+11.875,3.875
+#+end_example
+
+***** Script usage and help.
+
+#+BEGIN_SRC sh
+scene-time -i input -o output
+#+END_SRC
+
+Run the script with the -h option to show the help.
+
+#+begin_src sh
+scene-time -h
+#+end_src
+
+Help output.
+
+#+begin_example
+Create ffmpeg cutlist from scene detection timestamps
+
+Usage: scene-time -i <INPUT> [OPTIONS]
+
+Options:
+  -i <INPUT>     Input file containing timestamps
+  -o <OUTFILE>   Output filename (optional)
+  -h, --help     Print help
+  -v, --version  Print version
+
+Example:
+  scene-time -i timestamps.txt -o cutlist.txt
+
+Dependencies:
+  ffmpeg: https://www.ffmpeg.org/
+#+end_example
+
+**** scene-cut
+:PROPERTIES:
+:CUSTOM_ID: scene-cut
+:END:
+
+#+begin_verse
+The scene-cut script is the third and final step in the manual scene-cutting process.
+It takes a video file and the cutlist generated by scene-time to split the video into individual clips.
+#+end_verse
+
+Note: manual scene-detection uses 3 scripts that work together
+
+1) scene-detect (Identifies scene changes)
+
+2) scene-time (Converts timestamps to a cutlist)
+
+3) scene-cut (Splits the video into clips)
+
+#+begin_verse
+The script uses FFmpeg to perform the cuts.
+It is designed for speed and accuracy, automatically naming each output clip based on the original filename and its scene number.
+#+end_verse
+
+***** 1) Input format (the cutlist)
+
+#+begin_verse
+FFmpeg requires a start point and a duration (not an end point) to cut accurately.
+The cutlist must be comma-separated values.
+#+end_verse
+
+Example using sexagesimal format (HH:MM:SS):
+
+#+begin_example
+00:00:00,00:00:30
+00:01:00,00:00:30
+#+end_example
+
+***** 2) Run the script
+
+#+begin_verse
+Provide the original video with the -i option and the cutlist file with the -c option.
+#+end_verse
+
+#+begin_src sh
+scene-cut -i input.mp4 -c input-detection-cutlist.txt
+#+end_src
+
+#+begin_verse
+The script will process the video and generate files named like this:
+input-scene-001-[00:00:00–00:00:30].mp4
+#+end_verse
+
+***** Script usage and help.
+
+#+BEGIN_SRC sh
+scene-cut -i input.mp4 -c cutfile.txt
+#+END_SRC
+
+Run the script with the -h option to show the help.
+
+#+begin_src sh
+scene-cut -h
+#+end_src
+
+Help output.
+
+#+begin_example
+Split a video into individual scenes based on a cutlist
+
+Usage: scene-cut -i <INPUT> -c <CUTLIST> [OPTIONS]
+
+Options:
+  -i <INPUT>     Input video file
+  -c <CUTLIST>   Cutlist file (comma-separated start,duration)
+  -h, --help     Print help
+  -v, --version  Print version
+
+Example:
+  scene-cut -i input.mp4 -c cutlist.txt
+
+Dependencies:
+  ffmpeg: https://www.ffmpeg.org/
+#+end_example
+
+ffmpeg requires a start point and a duration, not an end point
+
+#+begin_verse
+cut file - hours, minutes, seconds
+in this example we create 2 - 30 seconds clips
+#+end_verse
+
+#+begin_verse
+a 30 second clip that starts at 00:00:00
+and another 30 second clip that starts at 00:01:00
+#+end_verse
+
+#+begin_example
+00:00:00,00:00:30
+00:01:00,00:00:30
+#+end_example
+
+#+begin_verse
+cut file - seconds
+in this example we create 2 - 30 seconds clips
+#+end_verse
+
+#+begin_verse
+a 30 second clip that starts at 0
+and another 30 second clip that starts at 60
+#+end_verse
+
+#+begin_example
+0,30
+60,30
+#+end_example
+
+**** scene-images
+:PROPERTIES:
+:CUSTOM_ID: scene-images
+:END:
+
+#+begin_verse
+The scene-images script generates a thumbnail image for every cut point defined in your cutlist.
+This is so you can visually verify that your scene detection or manual timestamps are accurate.
+#+end_verse
+
+#+begin_verse
+The script supports both PNG and JPG formats,
+and allows you to specify custom widths or heights while maintaining the original aspect ratio of the video.
+#+end_verse
+
+***** 1) Image Resolution
+
+#+begin_verse
+You can specify the width (-x) or height (-y).
+If you only provide one, the script will automatically calculate the other to maintain the correct proportions.
+#+end_verse
+
+***** 2) Run the script
+
+#+begin_verse
+Provide the original video with the -i option and the cutlist file (generated by scene-time) with the -c option.
+#+end_verse
+
+#+begin_src sh
+scene-images -i input.mp4 -c input-detection-cutlist.txt -x 1280 -t jpg
+#+end_src
+
+#+begin_verse
+The script will generate images named after each scene: input-scene-001-[00:00:00].jpg
+#+end_verse
+
+***** Script usage and help.
+
+#+BEGIN_SRC sh
+scene-images -i input -c cutfile -t (png|jpg) -x width -y height
+#+END_SRC
+
+Run the script with the -h option to show the help.
+
+#+begin_src sh
+scene-images -h
+#+end_src
+
+Help output.
+
+#+begin_example
+Create thumbnails from scene detection timestamps
+
+Usage: scene-images -i <INPUT> -c <CUTLIST> [OPTIONS]
+
+Options:
+  -i <INPUT>     Input video file
+  -c <CUTLIST>   Cutlist file (comma-separated start,duration)
+  -t <FORMAT>    Image format (png or jpg) [default: jpg]
+  -x <WIDTH>     Width of the output image
+  -y <HEIGHT>    Height of the output image
+  -h, --help     Print help
+  -v, --version  Print version
+
+Example:
+  scene-images -i input.mp4 -c cutlist.txt -x 1280 -t jpg
+
+Dependencies:
+  ffmpeg: https://www.ffmpeg.org/
 #+end_example
 
