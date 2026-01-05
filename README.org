@@ -3759,21 +3759,56 @@ Example:
 :CUSTOM_ID: extract-frame
 :END:
 
-extract a frame from a video and save as a png image
-
-[[https://trac.ffmpeg.org/wiki/Seeking][ffmpeg wiki seeking]]
+The extract-frame script saves a single frame from a video as a png or jpg image.
 
 #+begin_verse
-Note that you can use two different time unit formats: sexagesimal (HOURS:MM:SS.MILLISECONDS, as in 01:23:45.678), or in seconds.
-If a fraction is used, such as 02:30.05, this is interpreted as "5 100ths of a second", not as frame 5. 
+Note that you can use two different time unit formats for the -s option:
 
-For instance, 02:30.5 would be 2 minutes, 30 seconds, and a half a second, which would be the same as using 150.5 in seconds. 
+sexagesimal (HOURS:MM:SS.MILLISECONDS, as in 01:23:45.678), or in seconds.
+
+If a fraction is used, such as 02:30.05, this is interpreted as "5 100ths of a second", not as frame 5.
+
+For instance, 02:30.5 would be 2 minutes, 30 seconds, and a half a second,
+which would be the same as using 150.5 in seconds.
 #+end_verse
+
+***** 1) Run the script
+
+Extract a frame at 15 seconds, scaled to 1280px width, saved as a jpg which is the default.
+
+#+begin_src sh
+extract-frame -s 00:00:15 -i input.mp4 -x 1280
+#+end_src
+
+#+begin_verse
+If the -o option is omitted, the script generates a default name including the timestamp: input-frame-[00:00:15].jpg
+
+If width (-x) or height (-y) is omitted, the original video dimensions are used.
+
+If only one dimension is specified (either -x or -y),
+the other value is automatically calculated to preserve the aspect ratio.
+#+end_verse
+
+***** 2) extract-frame batch process
+
+To quickly extract frames from every MP4 file in a directory, use fd.
+
+Extract a frame from the very beginning (00:00:00) of every video:
+
+#+begin_src sh
+fd -e mp4 -x extract-frame -i {} -s 00:00:00
+#+end_src
+
+Extract a frame at the 30-second mark from every video:
+
+#+begin_src sh
+fd -e mp4 -x extract-frame -i {} -s 00:00:30
+#+end_src
 
 ***** Script usage and help.
 
 #+BEGIN_SRC sh
-extract-frame -i input.(mp4|mov|mkv|m4v|webm) -s 00:00:00.000 -t (png|jpg) -x width -y height -o output.(png|jpg)
+extract-frame -i input.mp4 -s 00:00:00.000 -t (png|jpg) -x width -y height -o output.(png|jpg)
 #+END_SRC
 
 Run the script with the -h option to show the help.
@@ -3809,28 +3844,6 @@ Notes:
   If width/height is omitted, original size is used.
   If -o is not provided, defaults to: input-frame-[timestamp].ext
 #+end_example
-
-***** extract-frame batch process
-
-Batch process files in the current working directory
-  
-Note we omit the -o option to use the default outfile name
-
-extract frame with default option of 00:00:00
-
-#+BEGIN_SRC sh
-find . -type f -name "*.mp4" -exec sh -c \
-'extract-frame -i "${0}"' \
-"{}" \;
-#+END_SRC
-
-extract frame at 30 seconds into the video
-
-#+BEGIN_SRC sh
-find . -type f -name "*.mp4" -exec sh -c \
-'extract-frame -i "${0}" -s 00:00:30' \
-"{}" \;
-#+END_SRC
 
 **** img2video
 :PROPERTIES:
