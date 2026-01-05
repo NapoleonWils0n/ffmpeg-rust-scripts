@@ -3938,7 +3938,32 @@ Example:
 :CUSTOM_ID: sexagesimal-time
 :END:
 
-calculate sexagesimal duration by subtracting the end time from start time for trimming files with ffmpeg
+#+begin_verse
+The sexagesimal-time script calculates a precise duration by subtracting a start timecode from an end timecode.
+
+This is designed to help determine the exact length needed for trimming video or audio files with FFmpeg.
+#+end_verse
+
+#+begin_verse
+The script handles standard sexagesimal formats (HOURS:MM:SS)
+and also works with milliseconds (HOURS:MM:SS.mmm) for high-precision calculations.
+#+end_verse
+
+***** 1) Run the script
+
+#+begin_verse
+Calculate the duration between 1 minute and 1 minute 45.5 seconds:
+#+end_verse
+
+#+begin_src sh
+sexagesimal-time -s 00:01:00 -e 00:01:45.500
+#+end_src
+
+Output:
+
+#+begin_example
+00:00:45.500
+#+end_example
 
 ***** Script usage and help.
 
