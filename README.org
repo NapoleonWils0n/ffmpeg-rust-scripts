@@ -3580,19 +3580,61 @@ Dependencies:
 :CUSTOM_ID: contact-sheet
 :END:
 
-create a contact-sheet from a video
+#+begin_verse
+The contact-sheet script generates a tiled image of thumbnails representing the entire duration of a video.
+#+end_verse
 
 #+begin_verse
-Note that you can use two different time unit formats: sexagesimal (HOURS:MM:SS.MILLISECONDS, as in 01:23:45.678), or in seconds.
-If a fraction is used, such as 02:30.05, this is interpreted as "5 100ths of a second", not as frame 5. 
-
-For instance, 02:30.5 would be 2 minutes, 30 seconds, and a half a second, which would be the same as using 150.5 in seconds.
+It is ideal for getting a quick visual overview of a clip's content,
+allowing you to customize the grid layout, thumbnail size, and background colors.
 #+end_verse
+
+***** 1) Time Formats
+
+#+begin_verse
+When using the -s (seek) option, you can specify the start time in two different formats:
+
+Sexagesimal: HOURS:MM:SS.MILLISECONDS (e.g., 00:02:30.5).
+
+Seconds: A simple numerical value (e.g., 150.5).
+
+Note: In sexagesimal format,
+fractions are interpreted as fractions of a second (e.g., .5 is half a second), not as frame counts.
+#+end_verse
+
+***** 2) Run the script
+
+Generate a high-density 8x8 contact sheet with timestamps enabled:
+
+#+begin_src sh
+contact-sheet -i input.mp4 -s 00:00:00 -w 320 -t 8x8 -x on -o output.png
+#+end_src
+
+#+begin_verse
+The default start time is 00:00:05 to exclude black frame with videos that up from black,
+this can be overriden by using the -s option with 00:00:00
+#+end_verse
+
+#+begin_verse
+If the -o option is omitted,
+the script generates a filename containing the time range: input-contact-[00:00:05–00:10:00].jpg
+#+end_verse
+
+***** 3) contact-sheet batch process
+
+#+begin_verse
+To quickly generate contact sheets for every MP4 in a directory, use fd.
+This example creates a 4x4 grid with white padding for each video.
+#+end_verse
+
+#+begin_src sh
+fd -e mp4 -x contact-sheet -i {} -s 00:00:10 -w 200 -t 4x4 -p 7 -m 2 -c white
+#+end_src
 
 ***** Script usage and help.
 
 #+BEGIN_SRC sh
-contact-sheet -i input -s 00:00:00.000 -w 000 -t 0x0 -p 00 -m 00 -c color -f fontcolor -b boxcolor -x on -o output.png
+contact-sheet -i input -s 00:00:00 -w 320 -t 8x8 -x on -o output.png
 #+END_SRC
 
 Run the script with the -h option to show the help.
@@ -3633,16 +3675,6 @@ Dependencies:
 Notes:
   -x on enables timestamps. -j sets image format (jpg/png).
 #+end_example
-
-***** contact-sheet batch process
-
-batch process videos and create a contact sheet
-
-#+BEGIN_SRC sh
-find . -type f -name "*.mp4" -exec sh -c \
-'contact-sheet -i "${0}" -s 00:00:10 -w 200 -t 4x4 -p 7 -m 2 -c white' \
-"{}" \;
-#+END_SRC
 
 *** Conversion and Extras
 **** audio-silence
