@@ -14,7 +14,7 @@ use ffmpeg_scripts_rust::{get_media_info, parse_to_seconds, format_seconds_ms};
     author, 
     version, 
     about = "Overlay one video clip on top of another video clip",
-    after_help = "Example:\n  overlay-clip -a background.mp4 -b logo.mp4 -p 00:00:05\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/",
+    after_help = "Example:\n  overlay-clip -a bottom-video.mp4 -b overlay.mp4 -p 00:00:05\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/",
     override_usage = "overlay-clip -a <INPUT> -b <OVERLAY> -p <POSITION> [OPTIONS]"
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]

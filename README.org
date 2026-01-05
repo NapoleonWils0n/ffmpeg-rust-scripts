@@ -2886,12 +2886,42 @@ Example:
 :CUSTOM_ID: overlay-clip
 :END:
 
-overlay one video clip on top of another video clip
+#+begin_verse
+The overlay-clip script is designed for B-roll insertion.
+
+It overlays a video clip on top of your main footage at a specific time,
+while keeping the original background audio playing.
+#+end_verse
+
+***** 1) B-Roll Logic
+
+#+begin_verse
+Video: The overlay clip -b completely covers the background video -a for the duration of the overlay clip.
+
+Audio: The background clip's audio continues to play. The overlay clip's audio is ignored.
+
+Duration: Once the overlay clip ends, the background video automatically becomes visible again
+#+end_verse
+
+***** 2) Run the script
+
+Provide the background video, the B-roll overlay clip, and the start time.
+
+#+begin_src sh
+overlay-clip -a bottom-video.mp4 -b overlay.mp4 -p 00:00:15 -o output.mp4
+#+end_src
+
+The overlay duration is depends on the length of the overlay clip
+
+#+begin_verse
+If you omit the -o option,
+the script generates a descriptive name: input-overlay-[00:00:15].mp4
+#+end_verse
 
 ***** Script usage and help.
 
 #+BEGIN_SRC sh
-overlay-clip -a background.mp4 -b logo.mp4 -p 00:00:05
+overlay-clip -a bottom-video.mp4 -b overlay.mp4 -p 00:00:05
 #+END_SRC
 
 Run the script with the -h option to show the help.
@@ -2916,7 +2946,7 @@ Options:
   -v, --version  Print version
 
 Example:
-  overlay-clip -a background.mp4 -b logo.mp4 -p 00:00:05
+  overlay-clip -a bottom-video.mp4 -b overlay.mp4 -p 00:00:05
 
 Dependencies:
   ffmpeg: https://www.ffmpeg.org/
