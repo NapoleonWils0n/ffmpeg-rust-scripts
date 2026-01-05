@@ -4092,13 +4092,48 @@ Dependencies:
 :CUSTOM_ID: webp
 :END:
 
-create a animated webp image from a video with ffmpeg
+The webp script converts a video into an animated WebP image using FFmpeg.
+
+#+begin_verse
+Animated WebP files often provide better compression than GIFs while supporting a full range of colours and transparency,
+making them ideal for high-quality web animations.
+#+end_verse
+
+***** 1) Run the script
+
+Convert a video to an animated WebP with a custom width and frame rate:
+
+#+begin_src sh
+webp -i input.mp4 -w 480 -f 15 -o output.webp
+#+end_src
+
+#+begin_verse
+If the -o option is omitted, the script generates a default filename based on the input file's name: input.webp
+
+The default settings are 320px width and 10 fps. The resulting file is set to loop infinitely.
+#+end_verse
+
+***** 2) webp batch process
+
+To quickly convert multiple MP4 files in a directory into animated WebP images, use fd.
+
+Batch convert all MP4 files in the current directory using default settings:
+
+#+begin_src sh
+fd -e mp4 -x webp -i {}
+#+end_src
+
+Batch convert all MP4 files with a custom width of 600px and 15 fps:
+
+#+begin_src sh
+fd -e mp4 -x webp -i {} -w 600 -f 15
+#+end_src
 
 ***** Script usage and help.
 
-#+BEGIN_SRC sh
-webp -i input -c 0-6 -q 0-100 -f 15 -w 600 -p none -o output.webp
-#+END_SRC
+#+begin_src sh
+webp -i input.mp4 -w 320 -f 10 -o output.webp
+#+end_src
 
 Run the script with the -h option to show the help.
 
@@ -4127,12 +4162,4 @@ Example:
 Dependencies:
   ffmpeg, ffprobe: https://www.ffmpeg.org/
 #+end_example
-
-***** webp batch process
-
-Batch process files in the current working directory
-
-#+BEGIN_SRC sh
-find . -type f -name "*.mp4" -exec sh -c 'webp -i "${0}"' "{}" \;
-#+END_SRC
 
