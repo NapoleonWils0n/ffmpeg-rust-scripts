@@ -268,6 +268,18 @@ for other linux distros see the documentation for your package manager
 sudo apt install ffmpeg
 #+END_SRC
 
+**** fd install
+
+Install fd for batch processing
+
+#+begin_src sh
+sudo apt install fd-find
+#+end_src
+
+Note: On Debian and Ubuntu
+
+In the batch processing examples provided in this README, you will need to replace fd with fdfind
+
 **** yt-dlp install
 
 yt-dlp needed for trim-remote-clip
