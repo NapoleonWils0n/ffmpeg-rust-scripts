@@ -4281,7 +4281,7 @@ rm -i nixos-ffmpeg-rust-scripts-v1/ffmpeg_rust_scripts
 Windows
 
 #+begin_src sh
-rm -i windows-ffmpeg-rust-scripts-v1/ffmpeg_rust_scripts
+rm -i windows-ffmpeg-rust-scripts-v1/ffmpeg_rust_scripts.exe
 #+end_src
 
 **** compress the releases
