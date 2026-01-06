@@ -1,5 +1,5 @@
 fn main() {
-    println!("NapoleonWils0n FFmpeg Rust Tools");
+    println!("FFmpeg Rust Scripts");
     println!("===============================");
     println!("A collection of Rust-based utilities for automated video and audio processing.");
     println!("\nUsage: cargo run --bin <name> -- [args]");

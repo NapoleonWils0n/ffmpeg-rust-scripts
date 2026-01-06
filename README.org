@@ -1,6 +1,6 @@
 #+STARTUP: show2levels
 #+OPTIONS: num:nil author:nil
-* ffmpeg Scripts Rust
+* FFmpeg Rust Scripts
 ** Project overview
 
 #+begin_verse
@@ -130,356 +130,6 @@ including dependency management and environment path configuration.
 + [[#scene-time][scene-time]]
 + [[#scene-images][scene-images]]
 
-** NixOS Build & Distribution
-
-#+begin_verse
-This section covers how to compile the scripts for different platforms using Nix.
-We use three distinct targets to ensure maximum compatibility.
-#+end_verse
-
-*** Setup Build Workspace
-
-First, create a structured directory on your Desktop to collect the finished binaries.
-
-Create directories for each target platform
-
-#+begin_src sh
-mkdir -p ~/Desktop/build/{nixos,linux,windows}
-#+end_src
-
-Optional: Clean existing binaries if doing a fresh release
-
-#+begin_src sh
-rm -f ~/Desktop/build/{nixos,linux,windows}/*
-#+end_src
-
-*** flake.nix
-**** create the project directory
-
-#+begin_src sh
-mkdir -p ~/git/projects/ffmpeg-scripts-rust
-#+end_src
-
-change directory into the project directory
-
-#+begin_src sh
-cd ~/git/projects/ffmpeg-scripts-rust
-#+end_src
-
-**** create the flake.nix
-
-#+begin_src sh
-vi flake.nix
-#+end_src
-
-flake.nix
-
-#+begin_src nix
-{
-  description = "rust flake";
-
-  inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
-    naersk.url = "github:nix-community/naersk";
-    rust-overlay = {
-      url = "github:oxalica/rust-overlay";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    flake-utils.url = "github:numtide/flake-utils";
-  };
-
-  outputs = { self, nixpkgs, naersk, rust-overlay, flake-utils }: 
-    flake-utils.lib.eachDefaultSystem (system:
-    let
-      # system is already provided by eachDefaultSystem, so we don't define it here
-      overlays = [ (import rust-overlay) ];
-      pkgs = import nixpkgs { inherit system overlays; };
-
-      rustToolchain = pkgs.rust-bin.stable.latest.default.override {
-        extensions = [ "rust-src" "rust-analyzer" ];
-        targets = [ "x86_64-unknown-linux-musl" "x86_64-pc-windows-gnu" ]; 
-      };
-
-      naerskLib = (naersk.lib.${system}.override {
-        cargo = rustToolchain;
-        rustc = rustToolchain;
-      });
-    in {
-      devShells.default = pkgs.mkShell {
-        # ADD MINGW TO THE SHELL FOR LINKING
-        buildInputs = [ 
-          rustToolchain 
-          pkgs.pkgsCross.mingwW64.stdenv.cc 
-        ];
-
-
-        # Tell Cargo which linker to use for Windows
-        # Add these lines to help the linker find pthreads
-        shellHook = ''
-          export RUST_SRC_PATH="${rustToolchain}/lib/rustlib/src/rust/library"
-          export NIX_CROSS_LDFLAGS="-L${pkgs.pkgsCross.mingwW64.windows.pthreads}/lib"
-          export NIX_CROSS_CFLAGS_COMPILE="-I${pkgs.pkgsCross.mingwW64.windows.pthreads}/include"
-          export CARGO_TARGET_X86_64_PC_WINDOWS_GNU_LINKER="x86_64-w64-mingw32-gcc"
-          export CARGO_TARGET_X86_64_PC_WINDOWS_GNU_RUSTFLAGS="-L ${pkgs.pkgsCross.mingwW64.windows.pthreads}/lib"
-        '';
-      };
-
-      packages.default = naerskLib.buildPackage {
-        src = ./.;
-      };
-    } 
-  ); # This closes eachDefaultSystem
-}    # This closes outputs
-
-#+end_src
-
-**** run nix develop
-
-run nix develop which will set up the rust environment
-
-#+begin_src sh
-nix develop
-#+end_src
-
-**** gitignore
-
-a .gitignore file will be created
-
-#+begin_example
-.gitignore
-#+end_example
-
-with the following content
-
-#+begin_src sh
-/target
-#+end_src
-
-we need to edit the .gitignore 
-
-#+begin_src sh
-vi .gitignore
-#+end_src
-
-and a new line to exclude the results symlink
-
-#+begin_src sh
-/target
-/result*
-#+end_src
-
-check the git status
-
-#+begin_src sh
-git status
-#+end_src
-
-and then commit the changes
-
-#+begin_src sh
-git add .gitignore
-#+end_src
-
-and add a commit message
-
-#+begin_src sh
-git commit -m "update .gitignore to exclude build results"
-#+end_src
-
-*** NixOS build
-
-note you do not need to be inside the nix develop shell to run nix build
-
-run nix build to build the binaries for NixOS
-
-#+begin_src sh
-nix build
-#+end_src
-
-#+begin_verse
-This will place your binaries in ./result/bin/ instead of target/release/.
-Building this way ensures the build is 100% reproducible and isolated from your local system state.
-Instead of a simple mv, which might fail if the source is the read-only Nix store, you should copy the binaries.
-#+end_verse
-
-#+begin_verse
-When you copy a binary out of the Nix store, it keeps its "rpath."
-This means it still knows exactly where to find its library dependencies in the nix store, so it will continue to work perfectly.
-#+end_verse
-
-Create the bin directory in your home if you dont have one
-
-#+begin_src sh
-mkdir -p ~/bin
-#+end_src
-
-Run this command to copy all 32 binaries at once to the bin directory in your home
-
-#+begin_src sh
-cp ./result/bin/* ~/bin/
-#+end_src
-
-copy the scripts to the build directory on the desktop for github
-
-#+begin_src sh
-cp ./result/bin/* ~/Desktop/build/nixos/
-#+end_src
-
-A Note on Updates
-
-#+begin_verse
-Keep in mind that if you change your Rust code and run nix build again, the binaries in ~/bin will not update automatically.
-You'll just need to run that cp command again to "deploy" your latest versions.
-#+end_verse
-
-*** Linux build (static)
-
-#+begin_verse
-To build portable binaries that run on any Linux distribution, we use the musl target.
-This statically links all libraries so the binary is self-contained.
-#+end_verse
-
-You must be inside the nix develop shell to run this command.
-
-#+begin_src sh
-nix develop
-#+end_src
-
-Build the binaries using the musl target
-
-#+begin_src sh
-cargo build --release --target x86_64-unknown-linux-musl
-#+end_src
-
-The binaries will be located in target/x86_64-unknown-linux-musl/release/.
-
-list the binaries
-
-#+begin_src sh
-ls -l target/x86_64-unknown-linux-musl/release/
-#+end_src
-
-#+begin_verse
-How to verify they are truly "Static"
-One of the main reasons to use musl is to ensure the binary has no external dependencies.
-#+end_verse
-
-You can verify this by running the ldd command on one of the new binaries:
-
-#+begin_src sh
-ldd target/x86_64-unknown-linux-musl/release/scene-detect-auto
-#+end_src
-
-Expected Output: It should say statically linked or not a dynamic executable.
-
-#+begin_verse
-This confirms that a user on Ubuntu, Debian,
-or Arch can just download that file and run it immediately (provided they have ffmpeg installed).
-#+end_verse
-
-Copy the binaries to the build directory on the desktop
-
-#+begin_src sh
-fd -t f -d 1 -E "*.*" . target/x86_64-unknown-linux-musl/release/ -x cp {} ~/Desktop/build/linux/
-#+end_src
-
-explaination of the fd command
-
-#+begin_example
--t f: Look for files only.
-
--d 1: Depth 1 (don't go into subfolders like deps or build).
-
--E "*.*": Exclude any file with a dot in the name (skips .d, .rlib, etc.).
-
-.: The search pattern (matches everything not excluded).
-
-target/.../release/: The directory to search in.
-
--x cp {} ...: Execute the copy command for every search result.
-#+end_example
-
-The ! -name "*.*" logic in standard find can sometimes be finicky depending on the shell, but fd's -E (exclude) flag is very robust.
-
-This will cleanly grab your 32 binaries and ignore all the compiler junk.
-
-*** Windows build (static)
-
-#+begin_verse
-To build binaries for Windows, we use the MinGW-w64 toolchain.
-You must be inside the nix develop shell to run this command.
-#+end_verse
-
-This ensures the environment variables for the linker and library paths are correctly set.
-
-#+begin_src sh
-nix develop
-#+end_src
-
-Build the binaries using the gnu target
-
-#+begin_src sh
-cargo build --release --target x86_64-pc-windows-gnu
-#+end_src
-
-The binaries will be located in target/x86_64-pc-windows-gnu/release/.
-
-list the binaries
-
-#+begin_src sh
-ls -l target/x86_64-pc-windows-gnu/release/*.exe 
-#+end_src
-
-Copy the binaries to the build directory on the desktop
-
-#+begin_src sh
-fd -t f -e exe --max-depth 1 . target/x86_64-pc-windows-gnu/release/ -x cp {} ~/Desktop/build/windows/
-#+end_src
-
-**** Troubleshooting the Windows Build
-
-#+begin_verse
-If the build fails with an error stating it cannot find -l:libpthread.a,
-ensure your flake.nix includes the CARGO_TARGET_X86_64_PC_WINDOWS_GNU_RUSTFLAGS variable in the shellHook.
-#+end_verse
-
-#+begin_verse
-If you have recently modified the flake.nix,
-you may need to exit the shell and run nix develop again to refresh the environment.
-#+end_verse
-
-Running a cargo clean before rebuilding can also help resolve linking conflicts.
-
-#+begin_src sh
-cargo clean
-#+end_src
-
-*** ffmpeg_scripts_rust
-
-Remove the ffmpeg_scripts_rust file from the NixOS, Linux and Windows build directories
-
-*** Remove old scripts before rebuilding.
-
-To remove the old scripts before rebuilding
-
-**** nixos
-
-Remove the result symlink which points to the previous Nix store build.
-
-**** linux and windows
-
-Run nix develop to enter the development environment with all necessary dependencies
-
-#+begin_src sh
-nix develop
-#+end_src
-
-Remove the old compiled binaries and build artifacts (for both Linux and Windows targets) by running cargo clean.
-
-#+begin_src sh
-cargo clean
-#+end_src
-
 ** Scripts install
 *** NixOS install
 :PROPERTIES:
@@ -591,7 +241,22 @@ source ~/.bashrc
 
 **** Release download
 
-Download the latest NixOS release archive and follow these steps to install the binaries.
+#+begin_verse
+Download the latest NixOS release archive and sha256sum check sum
+and then follow these steps to install the binaries.
+#+end_verse
+
+***** check the sha256sum check sum
+
+Open your terminal and run the following command:
+
+#+begin_src sh
+sha256sum -c nixos-ffmpeg-rust-scripts-v1.tar.gz.sha256
+#+end_src
+
+#+begin_verse
+Expected Output: nixos-ffmpeg-rust-scripts-v1.tar.gz: OK
+#+end_verse
 
 ***** Extract the archive
 
@@ -751,7 +416,22 @@ source ~/.bashrc
 
 **** Release download
 
-Download the latest Linux release archive and follow these steps to install the binaries.
+#+begin_verse
+Download the latest Linux release archive and sha256sum check sum
+and then follow these steps to install the binaries.
+#+end_verse
+
+***** check the sha256sum check sum
+
+Open your terminal and run the following command:
+
+#+begin_src sh
+sha256sum -c linux-ffmpeg-rust-scripts-v1.tar.gz.sha256
+#+end_src
+
+#+begin_verse
+Expected Output: linux-ffmpeg-rust-scripts-v1.tar.gz: OK
+#+end_verse
 
 ***** Extract the archive
 
@@ -859,7 +539,34 @@ If you prefer to manage your folders manually, follow these steps:
 
 **** Release Download
 
-Download the Windows release zip file.
+#+begin_verse
+Download the latest Windows release archive and sha256sum check sum
+and then follow these steps to install the binaries.
+#+end_verse
+
+***** check the sha256sum check sum
+
+Open PowerShell and run the following commands to compare the hash:
+
+1. View the expected hash
+
+#+begin_src sh
+cat .\windows-ffmpeg-rust-scripts-v1.zip.sha256
+#+end_src
+
+2. Calculate the actual hash
+
+#+begin_src sh
+Get-FileHash .\windows-ffmpeg-rust-scripts-v1.zip -Algorithm SHA256
+#+end_src
+
+Note: Ensure the strings match.
+
+Alternatively, if you have Git Bash installed on Windows, you can use the
+
+#+begin_src sh
+sha256sum -c windows-ffmpeg-rust-scripts-v1.tar.gz.sha256
+#+end_src
 
 ***** Extract and Install
 
@@ -1008,10 +715,10 @@ Change into the git directory in your home.
 cd ~/git
 #+end_src
 
-Run the following command in the terminal to clone the ffmpeg-scripts-rust git repository.
+Run the following command in the terminal to clone the ffmpeg-rust-scripts git repository.
 
 #+begin_src sh
-git clone https://github.com/NapoleonWils0n/ffmpeg-scripts-rust
+git clone https://github.com/NapoleonWils0n/ffmpeg-rust-scripts
 #+end_src
 
 ***** Build the project using Cargo.
@@ -1019,7 +726,7 @@ git clone https://github.com/NapoleonWils0n/ffmpeg-scripts-rust
 Change directory into the ffmpeg-scripts-rust git repository.
 
 #+begin_src sh
-cd ffmpeg-scripts-rust
+cd ffmpeg-rust-scripts
 #+end_src
 
 Build the project with Cargo.
@@ -1252,7 +959,7 @@ cd ~/git
 Run the following command in the terminal to clone the ffmpeg-scripts-rust git repository.
 
 #+begin_src sh
-git clone https://github.com/NapoleonWils0n/ffmpeg-scripts-rust
+git clone https://github.com/NapoleonWils0n/ffmpeg-rust-scripts
 #+end_src
 
 ***** Build the project using Cargo.
@@ -1260,7 +967,7 @@ git clone https://github.com/NapoleonWils0n/ffmpeg-scripts-rust
 Change directory into the ffmpeg-scripts-rust git repository.
 
 #+begin_src sh
-cd ffmpeg-scripts-rust
+cd ffmpeg-rust-scripts
 #+end_src
 
 Build the project with Cargo.
@@ -4186,4 +3893,475 @@ Example:
 Dependencies:
   ffmpeg: https://www.ffmpeg.org/
 #+end_example
+
+** NixOS Build and Distribution
+
+#+begin_verse
+This section covers how to compile the scripts for different platforms using Nix.
+We use three distinct targets to ensure maximum compatibility.
+#+end_verse
+
+*** Setup Build Workspace
+
+First, create a structured directory on your Desktop to collect the finished binaries.
+
+Create directories for each target platform
+
+#+begin_src sh
+mkdir -p ~/Desktop/build/{nixos,linux,windows}
+#+end_src
+
+Optional: Clean existing binaries if doing a fresh release
+
+#+begin_src sh
+rm -f ~/Desktop/build/{nixos,linux,windows}/*
+#+end_src
+
+*** flake.nix
+**** create the project directory
+
+#+begin_src sh
+mkdir -p ~/git/projects/ffmpeg-scripts-rust
+#+end_src
+
+change directory into the project directory
+
+#+begin_src sh
+cd ~/git/projects/ffmpeg-scripts-rust
+#+end_src
+
+**** create the flake.nix
+
+#+begin_src sh
+vi flake.nix
+#+end_src
+
+flake.nix
+
+#+begin_src nix
+{
+  description = "rust flake";
+
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    naersk.url = "github:nix-community/naersk";
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    flake-utils.url = "github:numtide/flake-utils";
+  };
+
+  outputs = { self, nixpkgs, naersk, rust-overlay, flake-utils }: 
+    flake-utils.lib.eachDefaultSystem (system:
+    let
+      # system is already provided by eachDefaultSystem, so we don't define it here
+      overlays = [ (import rust-overlay) ];
+      pkgs = import nixpkgs { inherit system overlays; };
+
+      rustToolchain = pkgs.rust-bin.stable.latest.default.override {
+        extensions = [ "rust-src" "rust-analyzer" ];
+        targets = [ "x86_64-unknown-linux-musl" "x86_64-pc-windows-gnu" ]; 
+      };
+
+      naerskLib = (naersk.lib.${system}.override {
+        cargo = rustToolchain;
+        rustc = rustToolchain;
+      });
+    in {
+      devShells.default = pkgs.mkShell {
+        # ADD MINGW TO THE SHELL FOR LINKING
+        buildInputs = [ 
+          rustToolchain 
+          pkgs.pkgsCross.mingwW64.stdenv.cc 
+        ];
+
+
+        # Tell Cargo which linker to use for Windows
+        # Add these lines to help the linker find pthreads
+        shellHook = ''
+          export RUST_SRC_PATH="${rustToolchain}/lib/rustlib/src/rust/library"
+          export NIX_CROSS_LDFLAGS="-L${pkgs.pkgsCross.mingwW64.windows.pthreads}/lib"
+          export NIX_CROSS_CFLAGS_COMPILE="-I${pkgs.pkgsCross.mingwW64.windows.pthreads}/include"
+          export CARGO_TARGET_X86_64_PC_WINDOWS_GNU_LINKER="x86_64-w64-mingw32-gcc"
+          export CARGO_TARGET_X86_64_PC_WINDOWS_GNU_RUSTFLAGS="-L ${pkgs.pkgsCross.mingwW64.windows.pthreads}/lib"
+        '';
+      };
+
+      packages.default = naerskLib.buildPackage {
+        src = ./.;
+      };
+    } 
+  ); # This closes eachDefaultSystem
+}    # This closes outputs
+
+#+end_src
+
+**** run nix develop
+
+run nix develop which will set up the rust environment
+
+#+begin_src sh
+nix develop
+#+end_src
+
+**** gitignore
+
+a .gitignore file will be created
+
+#+begin_example
+.gitignore
+#+end_example
+
+with the following content
+
+#+begin_src sh
+/target
+#+end_src
+
+we need to edit the .gitignore 
+
+#+begin_src sh
+vi .gitignore
+#+end_src
+
+and a new line to exclude the results symlink
+
+#+begin_src sh
+/target
+/result*
+#+end_src
+
+check the git status
+
+#+begin_src sh
+git status
+#+end_src
+
+and then commit the changes
+
+#+begin_src sh
+git add .gitignore
+#+end_src
+
+and add a commit message
+
+#+begin_src sh
+git commit -m "update .gitignore to exclude build results"
+#+end_src
+
+*** NixOS build
+
+note you do not need to be inside the nix develop shell to run nix build
+
+run nix build to build the binaries for NixOS
+
+#+begin_src sh
+nix build
+#+end_src
+
+#+begin_verse
+This will place your binaries in ./result/bin/ instead of target/release/.
+Building this way ensures the build is 100% reproducible and isolated from your local system state.
+Instead of a simple mv, which might fail if the source is the read-only Nix store, you should copy the binaries.
+#+end_verse
+
+#+begin_verse
+When you copy a binary out of the Nix store, it keeps its "rpath."
+This means it still knows exactly where to find its library dependencies in the nix store, so it will continue to work perfectly.
+#+end_verse
+
+Create the bin directory in your home if you dont have one
+
+#+begin_src sh
+mkdir -p ~/bin
+#+end_src
+
+Run this command to copy all 32 binaries at once to the bin directory in your home
+
+#+begin_src sh
+cp ./result/bin/* ~/bin/
+#+end_src
+
+copy the scripts to the build directory on the desktop for github
+
+#+begin_src sh
+cp ./result/bin/* ~/Desktop/build/nixos/
+#+end_src
+
+A Note on Updates
+
+#+begin_verse
+Keep in mind that if you change your Rust code and run nix build again, the binaries in ~/bin will not update automatically.
+You'll just need to run that cp command again to "deploy" your latest versions.
+#+end_verse
+
+*** Linux build (static)
+
+#+begin_verse
+To build portable binaries that run on any Linux distribution, we use the musl target.
+This statically links all libraries so the binary is self-contained.
+#+end_verse
+
+You must be inside the nix develop shell to run this command.
+
+#+begin_src sh
+nix develop
+#+end_src
+
+Build the binaries using the musl target
+
+#+begin_src sh
+cargo build --release --target x86_64-unknown-linux-musl
+#+end_src
+
+The binaries will be located in target/x86_64-unknown-linux-musl/release/.
+
+list the binaries
+
+#+begin_src sh
+ls -l target/x86_64-unknown-linux-musl/release/
+#+end_src
+
+#+begin_verse
+How to verify they are truly "Static"
+One of the main reasons to use musl is to ensure the binary has no external dependencies.
+#+end_verse
+
+You can verify this by running the ldd command on one of the new binaries:
+
+#+begin_src sh
+ldd target/x86_64-unknown-linux-musl/release/scene-detect-auto
+#+end_src
+
+Expected Output: It should say statically linked or not a dynamic executable.
+
+#+begin_verse
+This confirms that a user on Ubuntu, Debian,
+or Arch can just download that file and run it immediately (provided they have ffmpeg installed).
+#+end_verse
+
+Copy the binaries to the build directory on the desktop
+
+#+begin_src sh
+fd -t f -d 1 -E "*.*" . target/x86_64-unknown-linux-musl/release/ -x cp {} ~/Desktop/build/linux/
+#+end_src
+
+explaination of the fd command
+
+#+begin_example
+-t f: Look for files only.
+
+-d 1: Depth 1 (don't go into subfolders like deps or build).
+
+-E "*.*": Exclude any file with a dot in the name (skips .d, .rlib, etc.).
+
+.: The search pattern (matches everything not excluded).
+
+target/.../release/: The directory to search in.
+
+-x cp {} ...: Execute the copy command for every search result.
+#+end_example
+
+The ! -name "*.*" logic in standard find can sometimes be finicky depending on the shell, but fd's -E (exclude) flag is very robust.
+
+This will cleanly grab your 32 binaries and ignore all the compiler junk.
+
+*** Windows build (static)
+
+#+begin_verse
+To build binaries for Windows, we use the MinGW-w64 toolchain.
+You must be inside the nix develop shell to run this command.
+#+end_verse
+
+This ensures the environment variables for the linker and library paths are correctly set.
+
+#+begin_src sh
+nix develop
+#+end_src
+
+Build the binaries using the gnu target
+
+#+begin_src sh
+cargo build --release --target x86_64-pc-windows-gnu
+#+end_src
+
+The binaries will be located in target/x86_64-pc-windows-gnu/release/.
+
+list the binaries
+
+#+begin_src sh
+ls -l target/x86_64-pc-windows-gnu/release/*.exe 
+#+end_src
+
+Copy the binaries to the build directory on the desktop
+
+#+begin_src sh
+fd -t f -e exe --max-depth 1 . target/x86_64-pc-windows-gnu/release/ -x cp {} ~/Desktop/build/windows/
+#+end_src
+
+**** Troubleshooting the Windows Build
+
+#+begin_verse
+If the build fails with an error stating it cannot find -l:libpthread.a,
+ensure your flake.nix includes the CARGO_TARGET_X86_64_PC_WINDOWS_GNU_RUSTFLAGS variable in the shellHook.
+#+end_verse
+
+#+begin_verse
+If you have recently modified the flake.nix,
+you may need to exit the shell and run nix develop again to refresh the environment.
+#+end_verse
+
+Running a cargo clean before rebuilding can also help resolve linking conflicts.
+
+#+begin_src sh
+cargo clean
+#+end_src
+
+*** Create the release
+**** rename the build directory on the desktop
+
+#+begin_src sh
+cd ~/Desktop
+#+end_src
+
+Note: replace v1 with the release number in the examples below.
+
+#+begin_src sh
+mv build ffmpeg-rust-scripts-build-v1
+#+end_src
+
+Change into the ffmpeg-rust-scripts-build-v1 directory
+
+#+begin_src sh
+cd ffmpeg-rust-scripts-build-v1
+#+end_src
+
+**** rename the build directories for nixos, linux and windows
+
+linux
+
+#+begin_src sh
+mv linux linux-ffmpeg-rust-scripts-v1
+#+end_src
+
+nixos
+
+#+begin_src sh
+mv nixos nixos-ffmpeg-rust-scripts-v1
+#+end_src
+
+windows
+
+#+begin_src sh
+mv windows windows-ffmpeg-rust-scripts-v1
+#+end_src
+
+**** remove the ffmpeg_rust_scripts file
+
+#+begin_verse
+The ffmpeg_rust_scripts file is build from the main.rs which is a list of all the scripts,
+and is not needed so we can remove it.
+#+end_verse
+
+Remove the ffmpeg_rust_scripts file from the Linux, NixOS and Windows build directories
+
+Linux
+
+#+begin_src sh
+rm -i linux-ffmpeg-rust-scripts-v1/ffmpeg_rust_scripts
+#+end_src
+
+NixOS
+
+#+begin_src sh
+rm -i nixos-ffmpeg-rust-scripts-v1/ffmpeg_rust_scripts
+#+end_src
+
+Windows
+
+#+begin_src sh
+rm -i windows-ffmpeg-rust-scripts-v1/ffmpeg_rust_scripts
+#+end_src
+
+**** compress the releases
+***** linux
+
+#+begin_src sh
+tar -czvf linux-ffmpeg-rust-scripts-v1.tar.gz linux-ffmpeg-rust-scripts-v1 
+#+end_src
+
+***** nixos
+
+#+begin_src sh
+tar -czvf nixos-ffmpeg-rust-scripts-v1.tar.gz nixos-ffmpeg-rust-scripts-v1
+#+end_src
+
+***** windows
+
+#+begin_src sh
+zip -r windows-ffmpeg-rust-scripts-v1.zip windows-ffmpeg-rust-scripts-v1
+#+end_src
+
+**** create release-files directory
+
+#+begin_src sh
+mkdir -p release-files-v1
+#+end_src
+
+move the tar files and zip into the release-files directory
+
+#+begin_src sh
+mv *-ffmpeg-rust-scripts-v[0-9]*{.tar.gz,.zip} release-files-v1/
+#+end_src
+
+**** create checksums for the archives
+
+change directory into the release-files-v1 directory
+
+#+begin_src sh
+cd release-files-v1
+#+end_src
+
+create the checksums
+
+***** linux 
+
+#+begin_src sh
+sha256sum linux-ffmpeg-rust-scripts-v1.tar.gz > linux-ffmpeg-rust-scripts-v1.tar.gz.sha256
+#+end_src
+
+***** nixos
+
+#+begin_src sh
+sha256sum nixos-ffmpeg-rust-scripts-v1.tar.gz > nixos-ffmpeg-rust-scripts-v1.tar.gz.sha256
+#+end_src
+
+***** windows
+
+#+begin_src sh
+sha256sum windows-ffmpeg-rust-scripts-v1.zip > windows-ffmpeg-rust-scripts-v1.zip.sha256
+#+end_src
+
+*** Remove old scripts before rebuilding.
+
+To remove the old scripts before rebuilding
+
+**** nixos
+
+Remove the result symlink which points to the previous Nix store build.
+
+**** linux and windows
+
+Run nix develop to enter the development environment with all necessary dependencies
+
+#+begin_src sh
+nix develop
+#+end_src
+
+Remove the old compiled binaries and build artifacts (for both Linux and Windows targets) by running cargo clean.
+
+#+begin_src sh
+cargo clean
+#+end_src
 
