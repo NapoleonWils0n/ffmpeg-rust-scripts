@@ -8,7 +8,7 @@ use clap::Parser;
 use std::process::Command;
 use std::path::Path;
 use std::env;
-use ffmpeg_scripts_rust::{get_media_info, parse_to_seconds, format_seconds_ms, format_time_for_filename};
+use ffmpeg_rust_scripts::{get_media_info, parse_to_seconds, format_seconds_ms, format_time_for_filename};
 
 #[derive(Parser, Debug)]
 #[command(

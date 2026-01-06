@@ -6,7 +6,7 @@
 
 use clap::Parser;
 // [LIB-07] and [LIB-05] are directly called in main()
-use ffmpeg_scripts_rust::{calculate_duration, format_seconds};
+use ffmpeg_rust_scripts::{calculate_duration, format_seconds};
 
 #[derive(Parser, Debug)]
 #[command(

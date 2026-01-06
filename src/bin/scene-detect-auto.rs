@@ -9,7 +9,7 @@ use std::process::{Command, Stdio};
 use std::path::Path;
 use std::fs::{File, write};
 use std::io::{BufRead, BufReader};
-use ffmpeg_scripts_rust::{get_media_info, parse_to_seconds, format_seconds_ms};
+use ffmpeg_rust_scripts::{get_media_info, parse_to_seconds, format_seconds_ms};
 
 #[derive(Parser, Debug)]
 #[command(

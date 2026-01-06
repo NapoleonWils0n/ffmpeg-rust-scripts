@@ -9,7 +9,7 @@ use std::process::Command;
 // [LIB-01] Path import used for file existence check
 use std::path::Path;
 // [LIB-03] Shared logic for extracting file stems and extensions
-use ffmpeg_scripts_rust::get_media_info;
+use ffmpeg_rust_scripts::get_media_info;
 
 #[derive(Parser, Debug)]
 #[command(
