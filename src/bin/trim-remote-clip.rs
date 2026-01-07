@@ -14,8 +14,11 @@ use ffmpeg_rust_scripts::format_time_for_filename;
     author,
     version,
     about = "Trim remote video clips with millisecond accuracy",
-    after_help = "Example:\n  trim-remote-clip -s 00:01:00 -e 00:01:30 -i 'URL' -o clip.mp4",
+    after_help = "Example:\n  trim-remote-clip -s 00:01:00 -e 00:01:30 -i 'URL' -o clip.mp4\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/\n  yt-dlp: https://github.com/yt-dlp/yt-dlp\n  deno: https://deno.com/",
 )]
+// disable_version_flag allows lowercase -v
+// disable_help_flag prevents the naming conflict with the manual 'help' field
+#[clap(disable_version_flag = true, disable_help_flag = true)]
 struct Args {
     /// Start time (HH:MM:SS.mmm)
     #[arg(short = 's', required = true)]
@@ -32,6 +35,14 @@ struct Args {
     /// Output filename (optional, defaults to Title-[start-end].mp4)
     #[arg(short = 'o')]
     outfile: Option<String>,
+
+    /// Print version
+    #[arg(short = 'v', long = "version", action = clap::ArgAction::Version)]
+    version: Option<bool>,
+
+    /// Print help
+    #[arg(short = 'h', long = "help", action = clap::ArgAction::Help)]
+    help: Option<bool>,
 }
 
 fn main() {
