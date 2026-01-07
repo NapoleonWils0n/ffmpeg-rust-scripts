@@ -8,7 +8,7 @@ use clap::Parser;
 use std::process::Command;
 use std::path::Path;
 use std::env;
-use ffmpeg_rust_scripts::{get_media_info, parse_to_seconds, format_seconds_ms};
+use ffmpeg_rust_scripts::{get_media_info, parse_to_seconds, format_seconds_ms, format_time_for_filename};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -74,13 +74,16 @@ fn main() {
     let start_ts_raw = format_seconds_ms(start_sec).split('.').next().unwrap_or("00:00:00").to_string();
     let end_ts_raw = format_seconds_ms(end_sec).split('.').next().unwrap_or("00:00:00").to_string();
     
-    // Check if -x was explicitly passed in the arguments
+    // The library now decides based on the OS:
+    let start_ts = format_time_for_filename(&start_ts_raw);
+    let end_ts = format_time_for_filename(&end_ts_raw);
+
     let x_was_specified = env::args().any(|arg| arg == "-x");
 
-    // Logic: Use start_ts_raw and end_ts_raw directly to keep the colons
-    let mut name_suffix = format!("-short-[{}-{}]", start_ts_raw, end_ts_raw);
+    // Use the processed start_ts and end_ts variables here
+    let mut name_suffix = format!("-short-[{}-{}]", start_ts, end_ts);
     if args.x_pos != "50" || x_was_specified {
-        name_suffix = format!("-x-{}-short-[{}-{}]", args.x_pos, start_ts_raw, end_ts_raw);
+        name_suffix = format!("-x-{}-short-[{}-{}]", args.x_pos, start_ts, end_ts);
     }
 
     let final_output = args.outfile.unwrap_or_else(|| {

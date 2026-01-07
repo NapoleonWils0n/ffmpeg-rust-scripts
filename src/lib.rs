@@ -231,6 +231,13 @@ pub fn format_seconds_ms(total_sec: f64) -> String {
 // - scene-detect-auto
 // - scene-images
 // - trim-short
-pub fn format_time_for_filename(time_str: &str) -> String {
-    time_str.replace(':', "-")
+/// Automatically keeps colons for Linux/Unix and uses dashes for Windows.
+pub fn format_time_for_filename(time: &str) -> String {
+    if cfg!(target_os = "windows") {
+        // Windows compatibility: replace ":" with "-"
+        time.replace(':', "-")
+    } else {
+        // Linux, NixOS, macOS, FreeBSD: keep the ":"
+        time.to_string()
+    }
 }
