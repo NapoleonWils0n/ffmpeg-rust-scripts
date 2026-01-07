@@ -1,13 +1,13 @@
 //==============================================================================
 // zoompan
 // Description: Ken Burns style zoom in/out with real-time progress
-// References: [LIB-01], [LIB-03], [LIB-04], [LIB-09]
+// References: [LIB-01], [LIB-03], [LIB-04], [LIB-09], [LIB-10]
 //==============================================================================
 
 use clap::Parser;
 use std::process::Command;
 use std::path::Path;
-use ffmpeg_rust_scripts::{get_media_info, format_seconds_ms, parse_to_seconds};
+use ffmpeg_rust_scripts::{get_media_info, format_seconds_ms, parse_to_seconds, format_time_for_filename};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -86,10 +86,18 @@ fn main() {
         _    => ("iw/2-(iw/zoom/2)", "ih/2-(ih/zoom/2)"),
     };
 
+    // 1. Get media info
     let info = get_media_info(&args.infile);
-    let timestamp = format_seconds_ms(dur).split('.').next().unwrap_or("0").to_string();
+
+    // 2. Format the duration (strip milliseconds for filename)
+    let full_ts = format_seconds_ms(dur);
+    let timestamp_raw = full_ts.split('.').next().unwrap_or("00:00:00");
+    
+    // 3. LIB-10: Convert colons to dashes for Windows compatibility
+    let timestamp_fs = format_time_for_filename(timestamp_raw);
+
     let final_output = args.outfile.unwrap_or_else(|| {
-        format!("{}-zoom-{}-{}-[{}].mp4", info.stem, args.zoom, args.position, timestamp)
+        format!("{}-zoom-{}-{}-[{}].mp4", info.stem, args.zoom, args.position, timestamp_fs)
     });
 
     // High-res scaling to prevent jitter
