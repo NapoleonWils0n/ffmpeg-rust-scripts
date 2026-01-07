@@ -1,13 +1,13 @@
 //==============================================================================
 // combine-clips
 // Description: Combine an audio file and video together (remux)
-// References: [LIB-01], [LIB-03], [LIB-08], [LIB-09]
+// References: [LIB-01], [LIB-03], [LIB-08], [LIB-09], [LIB-10]
 //==============================================================================
 
 use clap::Parser;
 use std::process::Command;
 use std::path::Path;
-use ffmpeg_rust_scripts::{get_media_info, get_video_duration, format_seconds_ms};
+use ffmpeg_rust_scripts::{get_media_info, get_video_duration, format_seconds_ms, format_time_for_filename};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -53,7 +53,12 @@ fn main() {
     let info = get_media_info(&args.input);
     let duration_secs = get_video_duration(&args.input);
     let full_ts = format_seconds_ms(duration_secs);
-    let timestamp = full_ts.split('.').next().unwrap_or("00:00:00");
+
+    // Needed for LIB-10 OS check
+    let timestamp_raw = full_ts.split('.').next().unwrap_or("00:00:00");
+    
+    // Apply the LIB-10 OS check
+    let timestamp = format_time_for_filename(timestamp_raw);
 
     // Default output filename: video-stem-combined-[duration].mp4 
     let final_output = args.outfile.unwrap_or_else(|| {
