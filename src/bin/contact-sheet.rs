@@ -1,13 +1,13 @@
 //==============================================================================
 // contact-sheet
 // Description: Create a tiled contact sheet covering the video duration
-// References: [LIB-01], [LIB-03], [LIB-04], [LIB-05], [LIB-08]
+// References: [LIB-01], [LIB-03], [LIB-04], [LIB-05], [LIB-08], [LIB-10]
 //==============================================================================
 
 use clap::Parser;
 use std::process::Command;
 use std::path::Path;
-use ffmpeg_rust_scripts::{get_media_info, parse_to_seconds, get_video_duration, format_seconds}; 
+use ffmpeg_rust_scripts::{get_media_info, parse_to_seconds, get_video_duration, format_seconds, format_time_for_filename}; 
 
 #[derive(Parser, Debug)]
 #[command(
@@ -73,12 +73,16 @@ fn main() {
     let info = get_media_info(&args.infile);
     let seek_seconds = parse_to_seconds(&args.seek);
     let duration = get_video_duration(&args.infile);
-    let end_time_str = format_seconds(duration);
+
+    // Apply LIB-10 OS check to both timestamps
+    let end_time_raw = format_seconds(duration);
+    let start_ts = format_time_for_filename(&args.seek);
+    let end_ts = format_time_for_filename(&end_time_raw);
     
     // Generate output filename with time range: input-[start-end].ext
     let ext = args.format.to_lowercase();
     let out = args.outfile.clone().unwrap_or_else(|| {
-        format!("{}-contact-[{}–{}].{}", info.stem, args.seek, end_time_str, ext)
+        format!("{}-contact-[{}-{}].{}", info.stem, start_ts, end_ts, ext)
     });
     
     let remaining_duration = duration - seek_seconds;

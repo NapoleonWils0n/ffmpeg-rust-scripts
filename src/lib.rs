@@ -226,6 +226,8 @@ pub fn format_seconds_ms(total_sec: f64) -> String {
 
 /// [LIB-10] Formats a time string for use in a filename by replacing colons with dashes.
 // used by: 
+// - combine-clips
+// - contact-sheet
 // - scene-cut
 // - scene-detect
 // - scene-detect-auto
