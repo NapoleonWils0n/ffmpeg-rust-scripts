@@ -1,23 +1,20 @@
 //==============================================================================
 // trim-remote-clip
 // Description: Trim a remote video clip using yt-dlp and ffmpeg with -to end time
-// References: [LIB-01] std::process::Command for external tool execution
+// References: [LIB-01], [LIB-10]
 //==============================================================================
 
 use clap::Parser;
 use std::process::Command;
+// Import the filename formatter from your library
+use ffmpeg_rust_scripts::format_time_for_filename;
 
 #[derive(Parser, Debug)]
 #[command(
     author,
     version,
     about = "Trim remote video clips with millisecond accuracy",
-    after_help = "Example:\n  \
-                  trim-remote-clip -s 00:01:00 -e 00:01:30 -i 'https://www.youtube.com/watch?v=...' -o clip.mp4\n\n  \
-                  This will create a 30 second clip starting at one minute and ending at one minute 30 seconds.\n\n\
-                  Dependencies:\n  \
-                  ffmpeg, ffplay: https://www.ffmpeg.org/\n\n  \
-                  yt-dlp: https://github.com/yt-dlp/yt-dlp",
+    after_help = "Example:\n  trim-remote-clip -s 00:01:00 -e 00:01:30 -i 'URL' -o clip.mp4",
 )]
 struct Args {
     /// Start time (HH:MM:SS.mmm)
@@ -40,89 +37,79 @@ struct Args {
 fn main() {
     let args = Args::parse();
 
-    // 1. Call yt-dlp to get the title and high-quality stream URLs
-    // [FIX]: Using -f "bv+ba/b" to ensure we get 1080p/4K streams when available
-    let output = Command::new("yt-dlp")
-        .args([
-            "-i",
-            "-f", "bv+ba/b",
-            "-g",
-            "--no-playlist",
-            "--print", "%(title)s",
-            &args.input,
-        ])
+    // 1. Fetch the remote title using yt-dlp
+    let title_output = Command::new("yt-dlp")
+        .args(["--get-title", "--default-search", "ytsearch", &args.input])
         .output()
-        .expect("Failed to execute yt-dlp");
+        .expect("Failed to execute yt-dlp to get title");
 
-    if !output.status.success() {
-        eprintln!("Error: yt-dlp failed to fetch stream information.");
-        std::process::exit(1);
-    }
-
-    let results: Vec<String> = String::from_utf8_lossy(&output.stdout)
-        .lines()
-        .map(|s| s.to_string())
-        .collect();
-
-    if results.len() < 2 {
-        eprintln!("Error: Could not retrieve title or stream URLs.");
-        std::process::exit(1);
-    }
-
-    let video_title = &results[0];
-    let stream_urls: Vec<&String> = results.iter().skip(1).collect();
+    let raw_title = String::from_utf8_lossy(&title_output.stdout).trim().to_string();
     
-    // 2. Determine output filename with compact timestamp format
-    let final_output = args.outfile.unwrap_or_else(|| {
-        format!("{}-[{} - {}].mp4", video_title, args.start, args.end)
-            .replace(" - ", "-") // Result: Title-[00:00:08-00:00:14].mp4
-            .replace("/", "_")   // Sanitize title
+    // 2. Generate the cross-platform output path
+    let out_path = args.outfile.unwrap_or_else(|| {
+        // Strip milliseconds for the filename
+        let start_clean = args.start.split('.').next().unwrap_or("00:00:00");
+        let end_clean = args.end.split('.').next().unwrap_or("00:00:00");
+
+        // LIB-10: Replace colons with dashes for Windows compatibility
+        let start_fs = format_time_for_filename(start_clean);
+        let end_fs = format_time_for_filename(end_clean);
+
+        // Sanitize title: remove slashes and colons which are illegal in Windows filenames
+        let safe_title = raw_title.replace(['/', ':'], "_");
+
+        format!("{}-[{}–{}].mp4", safe_title, start_fs, end_fs)
     });
 
-    // 3. Construct FFmpeg command
-    let mut ffmpeg = Command::new("ffmpeg");
-    ffmpeg.arg("-hide_banner")
-          .arg("-stats")
-          .arg("-v").arg("fatal");
+    // 3. Get stream URLs
+    let url_output = Command::new("yt-dlp")
+        .args(["-g", "--default-search", "ytsearch", &args.input])
+        .output()
+        .expect("Failed to execute yt-dlp to get stream URLs");
 
-    // [FIX]: Synchronized trimming for remote streams
-    // We apply -ss and -to to EACH input separately. 
-    // This ensures both audio and video streams reach EOF at the exact same time.
-    if stream_urls.len() == 1 {
-        ffmpeg.arg("-ss").arg(&args.start)
-              .arg("-to").arg(&args.end)
-              .arg("-i").arg(stream_urls[0]);
-    } else {
-        // Video Input
-        ffmpeg.arg("-ss").arg(&args.start)
-              .arg("-to").arg(&args.end)
-              .arg("-i").arg(stream_urls[0]);
-        
-        // Audio Input 
-        ffmpeg.arg("-ss").arg(&args.start)
-              .arg("-to").arg(&args.end)
-              .arg("-i").arg(stream_urls[1]);
+    // FIX: Convert the output to an owned String so the Vec<&str> has a valid reference to borrow from
+    let url_string = String::from_utf8_lossy(&url_output.stdout);
+    let stream_urls: Vec<&str> = url_string
+        .trim()
+        .lines()
+        .collect();
 
-        ffmpeg.arg("-map").arg("0:v:0")
-              .arg("-map").arg("1:a:0");
+    if stream_urls.is_empty() {
+        eprintln!("Error: Could not retrieve stream URLs.");
+        std::process::exit(1);
     }
 
-    // 4. Encoding parameters for high quality mp4
+    // 4. Construct FFmpeg command (Output Seeking)
+    let mut ffmpeg = Command::new("ffmpeg");
+    ffmpeg.args(["-hide_banner", "-stats", "-v", "error"]);
+
+    // Apply -ss and -to to input(s) for synchronized trimming
+    if stream_urls.len() == 1 {
+        ffmpeg.args(["-ss", &args.start, "-to", &args.end, "-i", stream_urls[0]]);
+    } else {
+        // Video Input
+        ffmpeg.args(["-ss", &args.start, "-to", &args.end, "-i", stream_urls[0]]);
+        // Audio Input 
+        ffmpeg.args(["-ss", &args.start, "-to", &args.end, "-i", stream_urls[1]]);
+        // Map streams correctly
+        ffmpeg.args(["-map", "0:v:0", "-map", "1:a:0"]);
+    }
+
     ffmpeg.args([
         "-c:v", "libx264",
         "-profile:v", "high",
         "-pix_fmt", "yuv420p",
         "-c:a", "aac",
         "-movflags", "+faststart",
-        "-f", "mp4",
-        "-y", 
-        &final_output,
+        "-y", // Overwrite output
+        &out_path
     ]);
 
-    let status = ffmpeg.status().expect("Failed to execute ffmpeg");
+    let status = ffmpeg.status().expect("Failed to execute FFmpeg");
 
     if !status.success() {
-        eprintln!("Error: ffmpeg process exited with an error.");
+        eprintln!("\nFFmpeg failed to process the remote stream.");
         std::process::exit(1);
     }
+
 }
