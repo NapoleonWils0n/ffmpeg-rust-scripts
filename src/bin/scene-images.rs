@@ -10,7 +10,7 @@ use std::process::Command;
 use std::path::Path;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
-use ffmpeg_rust_scripts::{get_media_info, parse_to_seconds, format_seconds_ms};
+use ffmpeg_rust_scripts::{get_media_info, parse_to_seconds, format_seconds_ms, format_time_for_filename};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -91,11 +91,15 @@ fn main() {
             let start_raw = l.split(',').next().unwrap_or("00:00:00").trim();
             let start_sec = parse_to_seconds(start_raw);
             
-            let time_fs = format_seconds_ms(start_sec)
+            // 1. Get HH:MM:SS without milliseconds
+            let time_raw = format_seconds_ms(start_sec)
                 .split('.')
                 .next()
                 .unwrap_or("00:00:00")
                 .to_string();
+
+            // 2. Apply LIB-10 OS check for the filename
+            let time_fs = format_time_for_filename(&time_raw);
 
             // Inject the width/height suffix into the name
             let output_name = format!("{}-scene-{:03}{}-[{}].{}", 
