@@ -239,6 +239,7 @@ pub fn format_seconds_ms(total_sec: f64) -> String {
 // - scene-detect
 // - scene-detect-auto
 // - scene-images
+// - trim-clip
 // - trim-short
 /// Automatically keeps colons for Linux/Unix and uses dashes for Windows.
 pub fn format_time_for_filename(time: &str) -> String {
