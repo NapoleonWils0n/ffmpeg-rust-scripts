@@ -9,7 +9,7 @@ use std::process::Command;
 use std::path::Path;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
-use ffmpeg_rust_scripts::{get_media_info, parse_to_seconds, format_seconds_ms};
+use ffmpeg_rust_scripts::{get_media_info, parse_to_seconds, format_seconds_ms, format_time_for_filename};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -67,12 +67,16 @@ fn main() {
             let end_sec = start_sec + duration_sec;
 
             // Extract HH:MM:SS with colons
-            let start_ts = format_seconds_ms(start_sec).split('.').next().unwrap_or("00:00:00").to_string();
-            let end_ts = format_seconds_ms(end_sec).split('.').next().unwrap_or("00:00:00").to_string();
+            let start_filename_raw = format_seconds_ms(start_sec).split('.').next().unwrap_or("00:00:00").to_string();
+            let end_filename_raw = format_seconds_ms(end_sec).split('.').next().unwrap_or("00:00:00").to_string();
+
+            // Apply LIB-10 OS check to replace colons with dashes if on Windows
+            let start_ts = format_time_for_filename(&start_filename_raw);
+            let end_ts = format_time_for_filename(&end_filename_raw);
 
             // FIXED: Single dash between timestamps
-            let output_name = format!("{}-scene-{:03}-[{}-{}].{}", 
-                info.stem, index + 1, start_ts, end_ts, info.extension);
+            let output_name = format!("{}-scene-{:03}-[{}-{}].mp4", 
+                info.stem, index + 1, start_ts, end_ts);
 
             println!("Processing Scene {}: {} -> {}", index + 1, start_raw, format_seconds_ms(end_sec));
 
@@ -82,9 +86,12 @@ fn main() {
                     "-ss", start_raw,
                     "-t", duration_raw,
                     "-i", &args.input,
-                    "-c", "copy",
-                    "-map", "0",
-                    "-avoid_negative_ts", "make_zero",
+                    "-c:v", "libx264",      // re-encode video
+                    "-profile:v", "high",   // high profile
+                    "-pix_fmt", "yuv420p",  // pixel format
+                    "-c:a", "aac",          // re-encode audio
+                    "-movflags", "+faststart", // faststart for web
+                    "-f", "mp4",            // force mp4 format
                     &output_name
                 ])
                 .status()
