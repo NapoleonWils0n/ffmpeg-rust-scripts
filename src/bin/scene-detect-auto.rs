@@ -9,7 +9,7 @@ use std::process::{Command, Stdio};
 use std::path::Path;
 use std::fs::{File, write};
 use std::io::{BufRead, BufReader};
-use ffmpeg_rust_scripts::{get_media_info, parse_to_seconds, format_seconds_ms};
+use ffmpeg_rust_scripts::{get_media_info, parse_to_seconds, format_seconds_ms, format_time_for_filename};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -109,11 +109,19 @@ fn main() {
 
             let start_sec = parse_to_seconds(start_raw);
             let duration_sec = parse_to_seconds(dur_raw);
-            let end_ts = format_seconds_ms(start_sec + duration_sec);
+            let end_sec = start_sec + duration_sec;
+
+            // 1. Get HH:MM:SS strings (strip milliseconds) for filename
+            let start_clean = format_seconds_ms(start_sec).split('.').next().unwrap_or("00:00:00").to_string();
+            let end_clean = format_seconds_ms(end_sec).split('.').next().unwrap_or("00:00:00").to_string();
+
+            // 2. Apply LIB-10 OS check
+            let start_fs = format_time_for_filename(&start_clean);
+            let end_fs = format_time_for_filename(&end_clean);
 
             let output_name = format!(
                 "{}-scene-{:03}-[{}–{}].mp4",
-                info.stem, index + 1, start_raw, end_ts
+                info.stem, index + 1, start_fs, end_fs
             );
 
             // Using Input Seeking (-ss and -t BEFORE -i) for speed
