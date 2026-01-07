@@ -1,13 +1,13 @@
 //==============================================================================
 // extract-frame
 // Description: Extract a single frame with custom scaling and format options
-// References: [LIB-01], [LIB-02], [LIB-03]
+// References: [LIB-01], [LIB-02], [LIB-03], [LIB-10]
 //==============================================================================
 
 use clap::Parser;
 use std::process::Command;
 use std::path::Path;
-use ffmpeg_rust_scripts::get_media_info; 
+use ffmpeg_rust_scripts::{get_media_info, format_time_for_filename};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -62,10 +62,13 @@ fn main() {
 
     let info = get_media_info(&args.infile);
     let ext = args.format.to_lowercase();
-    
+
+    // Apply LIB-10 OS check to the timestamp
+    let safe_ts = format_time_for_filename(&args.start);
+
     // Updated naming convention: input-[00:00:05].jpg
     let out = args.outfile.clone().unwrap_or_else(|| {
-        format!("{}-frame-[{}].{}", info.stem, args.start, ext)
+        format!("{}-frame-[{}].{}", info.stem, safe_ts, ext)
     });
 
     // Fix for FFmpeg protocol handling of colons in filenames

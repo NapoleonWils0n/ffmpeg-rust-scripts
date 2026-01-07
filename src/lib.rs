@@ -228,6 +228,7 @@ pub fn format_seconds_ms(total_sec: f64) -> String {
 // used by: 
 // - combine-clips
 // - contact-sheet
+// - extract-frame
 // - scene-cut
 // - scene-detect
 // - scene-detect-auto
