@@ -1,21 +1,22 @@
 //==============================================================================
 // trim-clip-to
-// Description: Trim video or audio clips by specifying start and end timestamps
-// References: [LIB-01], [LIB-02], [LIB-03], [LIB-06]
+// Description: Trim video/audio using start and end timestamps (Output Seeking)
+// References: [LIB-01] through [LIB-06], [LIB-10]
 //==============================================================================
 
 use clap::Parser;
 use std::process::Command;
-// [LIB-01] Path import used for file existence check
 use std::path::Path; 
-use ffmpeg_rust_scripts::{get_media_info, has_encoder}; 
+// Removed unused imports to fix compiler warnings
+use ffmpeg_rust_scripts::{get_media_info, has_encoder, format_time_for_filename};
 
 #[derive(Parser, Debug)]
 #[command(
-    author, 
-    version, 
-    about = "trim video or audio clips by specifying start and end timestamps\nhttps://trac.ffmpeg.org/wiki/Seeking",
-    after_help = "Example:\n  trim-clip-to -s 00:00:30 -i input -t 00:01:00 -o output\n\n  This will create a 30 second clip starting at 30 seconds and ending at 60 seconds.\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/\n\nNotes:\n  If -o is not provided, defaults to: input-name-[start–end].(mp4|webm|aac|mp3|wav|ogg)",
+    author,
+    version,
+    about = "trim video or audio clips using start and end timestamps",
+    after_help = "Example:\n  trim-clip-to -s 00:00:45 -i input.mkv -t 00:01:30\n\n  This creates a 45s clip starting at 45s and ending at 1m 30s.\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/",
+    override_usage = "trim-clip-to [OPTIONS] -s <START> -i <INFILE> -t <END>"
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
 struct Args {
@@ -31,7 +32,7 @@ struct Args {
     #[arg(short = 't', help = "end time")]
     end: String,
 
-    /// optional output file
+    /// optional argument: output file
     #[arg(short = 'o', help = "optional output file")]
     outfile: Option<String>,
 
@@ -47,82 +48,105 @@ struct Args {
 fn main() {
     let args = Args::parse();
 
-    // Check if input file exists [LIB-01]
     if !Path::new(&args.infile).exists() {
         eprintln!("! Error: Input file '{}' does not exist.", args.infile);
         std::process::exit(1);
     }
 
-    // Get file name and extension [LIB-03]
     let info = get_media_info(&args.infile);
 
-    // Check available AAC encoders [LIB-06]
-    let aac_codec = if has_encoder("libfdk_aac") { "libfdk_aac" } else { "aac" };
+    // 1. Generate the cross-platform output path
+    let out_path = match args.outfile {
+        Some(ref path) => path.clone(),
+        None => {
+            // Get clean HH:MM:SS for the filename (strip milliseconds)
+            let start_clean = args.start.split('.').next().unwrap_or("00:00:00");
+            let end_clean = args.end.split('.').next().unwrap_or("00:00:00");
 
-    // Decision logic for file extensions
-    let out_ext = match info.extension.as_str() {
-        "mp4" | "mov" | "mkv" | "m4v" => "mp4",
-        "webm" => "webm",
-        "aac" | "m4a" => "m4a",
-        "mp3" => "mp3",
-        "wav" => "wav",
-        "ogg" => "ogg",
-        _ => &info.extension,
+            // LIB-10: OS check for Windows safety (replaces : with -)
+            let start_fs = format_time_for_filename(start_clean);
+            let end_fs = format_time_for_filename(end_clean);
+
+            format!("{}-[{}–{}].{}", info.stem, start_fs, end_fs, info.extension)
+        }
     };
 
-    // Format final filename string [Uses LIB-02 / MediaInfo fields]
-    let out = args.outfile.clone().unwrap_or_else(|| {
-        format!("{}-trimmed-to-[{}–{}].{}", info.stem, args.start, args.end, out_ext)
-    });
+    let ffmpeg_output_path = format!("./{}", out_path);
 
-    // Use ./ prefix to ensure FFmpeg doesn't treat colons in the filename as a protocol
-    let ffmpeg_output_path = format!("./{}", out);
-
-    // Match extension to trigger the right FFmpeg command
-    match out_ext {
-        "mp4" => run_ffmpeg_video(&args, &ffmpeg_output_path, aac_codec),
+    // 2. Select runner based on extension (Case-insensitive)
+    match info.extension.to_lowercase().as_str() {
+        "mp4" | "m4v" | "mov" | "mkv" => {
+            let aac_encoder = if has_encoder("libfdk_aac") { "libfdk_aac" } else { "aac" };
+            run_ffmpeg_video(&args, &ffmpeg_output_path, aac_encoder, &info.extension);
+        },
         "webm" => run_ffmpeg_webm(&args, &ffmpeg_output_path),
-        "m4a" => run_ffmpeg_audio(&args, &ffmpeg_output_path, aac_codec, "mp4"),
+        "m4a" | "aac" => {
+            let aac_encoder = if has_encoder("libfdk_aac") { "libfdk_aac" } else { "aac" };
+            run_ffmpeg_audio(&args, &ffmpeg_output_path, aac_encoder, "adts"); 
+        },
         "mp3" => run_ffmpeg_audio(&args, &ffmpeg_output_path, "libmp3lame", "mp3"),
         "wav" => run_ffmpeg_audio(&args, &ffmpeg_output_path, "pcm_s16le", "wav"),
         "ogg" => run_ffmpeg_audio(&args, &ffmpeg_output_path, "libopus", "ogg"),
-        _ => eprintln!("! {} is not a recognized media file", args.infile),
+        _ => run_ffmpeg_fallback(&args, &ffmpeg_output_path),
     }
 }
 
-/// FFmpeg command for MP4 video
-/// Encoders: Video = libx264, Audio = libfdk_aac or aac
-fn run_ffmpeg_video(args: &Args, out_path: &str, aac: &str) {
-    Command::new("ffmpeg")
-        .args([
-            "-hide_banner", "-stats", "-v", "panic",
-            "-ss", &args.start, "-to", &args.end, "-i", &args.infile,
-            "-c:a", aac, "-c:v", "libx264", "-profile:v", "high",
-            "-pix_fmt", "yuv420p", "-movflags", "+faststart", "-f", "mp4", out_path
-        ])
-        .status().expect("Failed to execute FFmpeg");
+/// Video Runner (Output Seeking: -i before -ss/-to)
+fn run_ffmpeg_video(args: &Args, out_path: &str, aac: &str, ext: &str) {
+    let mut cmd = Command::new("ffmpeg");
+    cmd.args([
+        "-hide_banner", "-stats", "-v", "error",
+        "-i", &args.infile, 
+        "-ss", &args.start, 
+        "-to", &args.end,
+        "-c:a", aac, "-c:v", "libx264", "-profile:v", "high",
+        "-pix_fmt", "yuv420p", "-movflags", "+faststart",
+    ]);
+    
+    // Explicitly set format except for MKV
+    if ext.to_lowercase() != "mkv" {
+        cmd.args(["-f", ext]);
+    }
+    
+    cmd.arg(out_path);
+    cmd.status().expect("Failed to execute FFmpeg");
 }
 
-/// FFmpeg command for WebM video
-/// Encoders: Video = vp9, Audio = libopus
+/// WebM Runner (Output Seeking)
 fn run_ffmpeg_webm(args: &Args, out_path: &str) {
     Command::new("ffmpeg")
         .args([
-            "-hide_banner", "-stats", "-v", "panic",
-            "-ss", &args.start, "-to", &args.end, "-i", &args.infile,
+            "-hide_banner", "-stats", "-v", "error",
+            "-i", &args.infile, 
+            "-ss", &args.start, 
+            "-to", &args.end,
             "-c:a", "libopus", "-c:v", "vp9", "-f", "webm", out_path
         ])
         .status().expect("Failed to execute FFmpeg");
 }
 
-/// FFmpeg command for Audio-only files
-/// Encoders: M4A = aac, MP3 = libmp3lame, WAV = pcm_s16le, OGG = libopus
+/// Audio Runner (Output Seeking)
 fn run_ffmpeg_audio(args: &Args, out_path: &str, codec: &str, format: &str) {
     Command::new("ffmpeg")
         .args([
-            "-hide_banner", "-stats", "-v", "panic",
-            "-ss", &args.start, "-to", &args.end, "-i", &args.infile,
+            "-hide_banner", "-stats", "-v", "error",
+            "-i", &args.infile, 
+            "-ss", &args.start, 
+            "-to", &args.end,
             "-c:a", codec, "-f", format, out_path
+        ])
+        .status().expect("Failed to execute FFmpeg");
+}
+
+/// Fallback Stream Copy (Output Seeking)
+fn run_ffmpeg_fallback(args: &Args, out_path: &str) {
+    Command::new("ffmpeg")
+        .args([
+            "-hide_banner", "-stats", "-v", "error",
+            "-i", &args.infile, 
+            "-ss", &args.start, 
+            "-to", &args.end,
+            "-c", "copy", out_path
         ])
         .status().expect("Failed to execute FFmpeg");
 }
