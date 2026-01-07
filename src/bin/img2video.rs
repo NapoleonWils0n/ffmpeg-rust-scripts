@@ -3,12 +3,13 @@
 // Description: Convert a static image (png, jpg, jpeg) to a video file
 // References: [LIB-01] Path validation, [LIB-03] get_media_info, 
 //             [LIB-04] parse_to_seconds, [LIB-09] format_seconds_ms
+//             [LIB-10]
 //==============================================================================
 
 use clap::Parser;
 use std::process::{Command, Stdio};
 use std::path::Path;
-use ffmpeg_rust_scripts::{get_media_info, format_seconds_ms, parse_to_seconds};
+use ffmpeg_rust_scripts::{get_media_info, format_seconds_ms, parse_to_seconds, format_time_for_filename};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -62,7 +63,10 @@ fn main() {
     
     // Format duration to HH:MM:SS for the filename [LIB-09]
     let full_ts = format_seconds_ms(duration_secs);
-    let timestamp = full_ts.split('.').next().unwrap_or("00:00:00");
+    let timestamp_raw = full_ts.split('.').next().unwrap_or("00:00:00");
+
+    // Apply LIB-10 OS check
+    let timestamp = format_time_for_filename(timestamp_raw);
     
     let final_output = args.outfile.unwrap_or_else(|| {
         format!("{}-[{}].mp4", info.stem, timestamp)
