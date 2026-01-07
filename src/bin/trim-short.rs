@@ -73,17 +73,13 @@ fn main() {
     let info = get_media_info(&args.infile);
     let start_ts_raw = format_seconds_ms(start_sec).split('.').next().unwrap_or("00:00:00").to_string();
     let end_ts_raw = format_seconds_ms(end_sec).split('.').next().unwrap_or("00:00:00").to_string();
-    
-    let start_ts = format_time_for_filename(&start_ts_raw);
-    let end_ts = format_time_for_filename(&end_ts_raw);
-    
-    // Check if -x was explicitly passed in the arguments
+
+    // Use the raw strings (start_ts_raw / end_ts_raw) to keep the colons
     let x_was_specified = env::args().any(|arg| arg == "-x");
 
-    // Logic: Append -x- value if it's NOT 50 OR if the user explicitly requested -x 50
-    let mut name_suffix = format!("-short-[{}-{}]", start_ts, end_ts);
+    let mut name_suffix = format!("-short-[{}-{}]", start_ts_raw, end_ts_raw);
     if args.x_pos != "50" || x_was_specified {
-        name_suffix = format!("-x-{}-short-[{}-{}]", args.x_pos, start_ts, end_ts);
+        name_suffix = format!("-x-{}-short-[{}-{}]", args.x_pos, start_ts_raw, end_ts_raw);
     }
 
     let final_output = args.outfile.unwrap_or_else(|| {
