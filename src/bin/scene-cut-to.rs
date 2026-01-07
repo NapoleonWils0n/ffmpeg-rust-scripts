@@ -1,7 +1,7 @@
 //==============================================================================
 // scene-cut-to
 // Description: Split video into clips using start time and duration (End-point seeking)
-// References: [LIB-01], [LIB-03], [LIB-06]
+// References: [LIB-01], [LIB-03], [LIB-06], [LIB-10]
 //==============================================================================
 
 use clap::Parser;
@@ -9,7 +9,7 @@ use std::process::Command;
 use std::path::Path;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
-use ffmpeg_rust_scripts::{get_media_info, parse_to_seconds, format_seconds_ms};
+use ffmpeg_rust_scripts::{get_media_info, parse_to_seconds, format_seconds_ms, format_time_for_filename};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -58,19 +58,27 @@ fn main() {
             let start_raw = parts[0].trim();
             let duration_raw = parts[1].trim();
 
-            // Calculate the actual end timestamp: Start + Duration
+            // 1. Prepare raw timestamps for calculation
             let start_sec = parse_to_seconds(start_raw);
             let duration_sec = parse_to_seconds(duration_raw);
             let end_sec = start_sec + duration_sec;
-            let end_ts = format_seconds_ms(end_sec);
+
+            // 2. Get HH:MM:SS strings (without milliseconds) for the filename
+            let end_ts_raw = format_seconds_ms(end_sec);
+            let start_clean = start_raw.split('.').next().unwrap_or("00:00:00");
+            let end_clean = end_ts_raw.split('.').next().unwrap_or("00:00:00");
+
+            // 3. Apply LIB-10 OS check for the filename
+            let start_filename = format_time_for_filename(start_clean);
+            let end_filename = format_time_for_filename(end_clean);
 
             // Filename with original colons preserved
             let output_name = format!(
-                "{}-scene-{:03}-[{}–{}].mp4",
+                "{}-scene-{:03}-[{}-{}].mp4",
                 info.stem,
                 index + 1,
-                start_raw,
-                end_ts
+                start_filename,
+                end_filename
             );
 
             // Output seeking: -i FIRST, then -ss and -to (using calculated end_ts)
@@ -81,7 +89,7 @@ fn main() {
                     "-stats",
                     "-i", &args.input,
                     "-ss", start_raw,
-                    "-to", &end_ts,
+                    "-to", &end_ts_raw,
                     "-c:a", "aac",
                     "-c:v", "libx264",
                     "-profile:v", "high",
