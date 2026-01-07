@@ -1,13 +1,13 @@
 //==============================================================================
 // overlay-pip
 // Description: Advanced PiP with position, margin, border, and fade options
-// References: [LIB-01], [LIB-03], [LIB-04], [LIB-09]
+// References: [LIB-01], [LIB-03], [LIB-04], [LIB-09], [LIB-10]
 //==============================================================================
 
 use clap::Parser;
 use std::process::Command;
 use std::path::Path;
-use ffmpeg_rust_scripts::{get_media_info, parse_to_seconds, format_seconds_ms};
+use ffmpeg_rust_scripts::{get_media_info, parse_to_seconds, format_seconds_ms, format_time_for_filename};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -91,9 +91,12 @@ fn main() {
     let start_secs = parse_to_seconds(&args.position);
     let info = get_media_info(&args.input);
     let fg_info = get_media_info(&args.overlay);
-    
     let full_ts = format_seconds_ms(start_secs);
-    let timestamp = full_ts.split('.').next().unwrap_or("00:00:00");
+
+    let timestamp_raw = full_ts.split('.').next().unwrap_or("00:00:00");
+
+    // Apply LIB-10 OS check
+    let timestamp = format_time_for_filename(timestamp_raw);
     
     // 2. FILENAME LOGIC (Updated to use p- instead of pos-)
     let mut name_parts = format!("{}-pip-{}-p-[{}]", info.stem, fg_info.stem, timestamp);
