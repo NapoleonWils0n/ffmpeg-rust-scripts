@@ -1,14 +1,14 @@
 //==============================================================================
 // scene-detect
 // Description: Detect scene changes in a video and output timestamps
-// References: [LIB-01], [LIB-03], [LIB-08], [LIB-09]
+// References: [LIB-01], [LIB-03], [LIB-08], [LIB-09], [LIB-10]
 //==============================================================================
 
 use clap::Parser;
 use std::process::Command;
 use std::path::Path;
 use std::io::Write;
-use ffmpeg_rust_scripts::{get_media_info, get_video_duration, format_seconds_ms, parse_to_seconds};
+use ffmpeg_rust_scripts::{get_media_info, get_video_duration, format_seconds_ms, parse_to_seconds, format_time_for_filename};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -61,20 +61,23 @@ fn main() {
         std::process::exit(1);
     }
 
-    // 1. GATHER METADATA & DURATION
-    let info = get_media_info(&args.input);
+    // duration
     let total_duration = get_video_duration(&args.input);
-    
-    // Logic: Use video duration with colons for the filename
-    let duration_stamp = format_seconds_ms(total_duration)
-        .split('.')
-        .next()
-        .unwrap_or("00:00:00")
-        .to_string();
 
-    // 2. TIMING CALCULATIONS
+    // 1. TIMING CALCULATIONS
     let start_sec = args.start.as_ref().map(|s| parse_to_seconds(s)).unwrap_or(0.0);
     let end_sec = args.end.as_ref().map(|e| parse_to_seconds(e)).unwrap_or(total_duration);
+
+    // 2. GATHER METADATA & DURATION
+    let info = get_media_info(&args.input);
+    
+    // Create the raw timestamp string using end_sec (the video duration)
+    let duration_stamp_raw = format_seconds_ms(end_sec);
+    let duration_stamp_trimmed = duration_stamp_raw.split('.').next().unwrap_or("00:00:00");
+
+    // Apply LIB-10 OS check
+    let duration_stamp = format_time_for_filename(duration_stamp_trimmed);
+
 
     // 3. FFMPEG DETECTION
     let filter = if args.start.is_some() && args.end.is_some() {
