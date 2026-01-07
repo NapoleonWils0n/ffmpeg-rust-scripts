@@ -243,6 +243,7 @@ pub fn format_seconds_ms(total_sec: f64) -> String {
 // - trim-clip-to
 // - trim-remote-clip
 // - trim-short
+// - xfade
 /// Automatically keeps colons for Linux/Unix and uses dashes for Windows.
 pub fn format_time_for_filename(time: &str) -> String {
     if cfg!(target_os = "windows") {

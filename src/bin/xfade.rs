@@ -1,13 +1,13 @@
 //==============================================================================
 // xfade
 // Description: Add a transition effect between two clips using filter_complex
-// References: [LIB-01], [LIB-03], [LIB-04], [LIB-08], [LIB-09]
+// References: [LIB-01], [LIB-03], [LIB-04], [LIB-08], [LIB-09], [LIB-10]
 //==============================================================================
 
 use clap::Parser;
 use std::process::Command;
 use std::path::Path;
-use ffmpeg_rust_scripts::{get_media_info, get_video_duration, format_seconds_ms, parse_to_seconds};
+use ffmpeg_rust_scripts::{get_media_info, get_video_duration, format_seconds_ms, parse_to_seconds, format_time_for_filename};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -85,12 +85,18 @@ fn main() {
         std::process::exit(1);
     }
 
+    // 1. Get media info for the file stem
     let info = get_media_info(&args.input1);
+
+    // 2. Format the duration of the effect (strip milliseconds for filename)
     let full_ts = format_seconds_ms(fade_dur);
-    let timestamp = full_ts.split('.').next().unwrap_or("00:00:00");
+    let timestamp_raw = full_ts.split('.').next().unwrap_or("00:00:00");
+
+    // 3. LIB-10: Convert colons to dashes for Windows compatibility
+    let timestamp_fs = format_time_for_filename(timestamp_raw);
     
     let final_output = args.outfile.unwrap_or_else(|| {
-        format!("{}-xfade-{}-[{}].mp4", info.stem, args.transition, timestamp)
+        format!("{}-xfade-{}-[{}].mp4", info.stem, args.transition, timestamp_fs)
     });
 
     // Correct Filter Complex Logic:
