@@ -1,13 +1,13 @@
 //==============================================================================
 // fade-in
 // Description: Apply a fade-in effect to both video and audio with timestamped output
-// References: [LIB-01], [LIB-03], [LIB-04], [LIB-09]
+// References: [LIB-01], [LIB-03], [LIB-04], [LIB-09], [LIB-10]
 //==============================================================================
 
 use clap::Parser;
 use std::process::Command;
 use std::path::Path;
-use ffmpeg_rust_scripts::{get_media_info, format_seconds_ms, parse_to_seconds};
+use ffmpeg_rust_scripts::{get_media_info, format_seconds_ms, parse_to_seconds, format_time_for_filename};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -53,7 +53,11 @@ fn main() {
     
     // Format the duration for the filename (e.g., 00:00:02)
     let full_ts = format_seconds_ms(dur_secs);
-    let timestamp = full_ts.split('.').next().unwrap_or("00:00:00");
+
+    let timestamp_raw = full_ts.split('.').next().unwrap_or("00:00:00");
+
+    // Apply LIB-10 OS check
+    let timestamp = format_time_for_filename(timestamp_raw);
     
     let final_output = args.outfile.unwrap_or_else(|| {
         format!("{}-faded-in-[{}].mp4", info.stem, timestamp)

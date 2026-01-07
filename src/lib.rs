@@ -229,6 +229,7 @@ pub fn format_seconds_ms(total_sec: f64) -> String {
 // - combine-clips
 // - contact-sheet
 // - extract-frame
+// - fade-clip
 // - scene-cut
 // - scene-detect
 // - scene-detect-auto
