@@ -231,6 +231,7 @@ pub fn format_seconds_ms(total_sec: f64) -> String {
 // - extract-frame
 // - fade-clip
 // - img2video
+// - overlay-clip
 // - scene-cut
 // - scene-detect
 // - scene-detect-auto
