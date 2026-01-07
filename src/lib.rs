@@ -233,6 +233,7 @@ pub fn format_seconds_ms(total_sec: f64) -> String {
 // - img2video
 // - overlay-clip
 // - overlay-pip
+// - pan-scan
 // - scene-cut
 // - scene-detect
 // - scene-detect-auto

@@ -3,12 +3,13 @@
 // Description: Create a pan animation using scale and crop math from shell script
 // References: [LIB-01] Path validation, [LIB-03] get_media_info, 
 //             [LIB-04] parse_to_seconds, [LIB-09] format_seconds_ms
+//             [LIB-10]
 //==============================================================================
 
 use clap::Parser;
 use std::process::Command;
 use std::path::Path;
-use ffmpeg_rust_scripts::{get_media_info, format_seconds_ms, parse_to_seconds};
+use ffmpeg_rust_scripts::{get_media_info, format_seconds_ms, parse_to_seconds, format_time_for_filename};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -74,7 +75,11 @@ fn main() {
     let dur = parse_to_seconds(&args.duration);
     
     let info = get_media_info(&args.infile);
-    let timestamp = format_seconds_ms(dur).split('.').next().unwrap_or("00:00:00").to_string();
+    let full_ts = format_seconds_ms(dur);
+    let timestamp_raw = full_ts.split('.').next().unwrap_or("00:00:00");
+
+    // Apply LIB-10 OS check
+    let timestamp = format_time_for_filename(timestamp_raw);
     
     let pos_full = match args.position.as_str() {
         "l" => "left", "r" => "right", "u" => "up", "d" => "down",
