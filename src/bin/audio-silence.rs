@@ -16,7 +16,7 @@ use ffmpeg_rust_scripts::get_media_info;
     about = "Replaces or adds a silent audio track to a video file",
     after_help = "Example:\n  audio-silence -i input.mp4 -c stereo -r 48000 -o output.mp4\n\n  \
                   Dependencies:\n  \
-                  ffmpeg: https://www.ffmpeg.org/\n\n",
+                  ffmpeg: https://www.ffmpeg.org/",
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
 struct Args {

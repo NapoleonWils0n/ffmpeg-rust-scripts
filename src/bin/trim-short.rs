@@ -15,7 +15,7 @@ use ffmpeg_rust_scripts::{get_media_info, parse_to_seconds, format_seconds_ms, f
     author, 
     version, 
     about = "Create a 9:16 vertical clip for YouTube Shorts or TikTok",
-    after_help = "Example:\n  trim-short -i input.mp4 -s 00:00:10 -x 75\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/\n\n",
+    after_help = "Example:\n  trim-short -i input.mp4 -s 00:00:10 -x 75\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/",
     override_usage = "trim-short -i <INPUT> -s <START> [OPTIONS]"
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]

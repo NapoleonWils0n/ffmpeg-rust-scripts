@@ -16,7 +16,7 @@ use ffmpeg_rust_scripts::{get_media_info, format_seconds_ms, parse_to_seconds, f
     author, 
     version, 
     about = "Pan scan over an image using scale/crop math",
-    after_help = "Example:\n  pan-scan -i photo.jpg -d 00:00:10 -p l\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/\n\n",
+    after_help = "Example:\n  pan-scan -i photo.jpg -d 00:00:10 -p l\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/",
     override_usage = "pan-scan [OPTIONS] -i <INFILE> -d <DURATION> -p <POSITION>"
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]

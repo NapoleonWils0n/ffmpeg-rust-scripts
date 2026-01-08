@@ -15,7 +15,7 @@ use ffmpeg_rust_scripts::{parse_to_seconds, format_seconds_ms};
     author, 
     version, 
     about = "Create ffmpeg cutlist from scene detection timestamps",
-    after_help = "Example:\n  scene-time -i timestamps.txt -o cutlist.txt\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/\n\n",
+    after_help = "Example:\n  scene-time -i timestamps.txt -o cutlist.txt\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/",
     override_usage = "scene-time -i <INPUT> [OPTIONS]"
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]

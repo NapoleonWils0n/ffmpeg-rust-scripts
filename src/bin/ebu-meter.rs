@@ -14,7 +14,7 @@ use std::path::Path;
     author, 
     version, 
     about = "display EBU R128 audio loudness meter",
-    after_help = "Example:\n  ebu-meter -i input.mp4 -t -16\n\nDependencies:\n  ffplay: https://www.ffmpeg.org/\n\n",
+    after_help = "Example:\n  ebu-meter -i input.mp4 -t -16\n\nDependencies:\n  ffplay: https://www.ffmpeg.org/",
     override_usage = "ebu-meter [OPTIONS] -i <INFILE>"
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]

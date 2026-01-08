@@ -17,7 +17,7 @@ use ffmpeg_rust_scripts::{get_media_info, parse_to_seconds, format_seconds_ms, f
     author, 
     version, 
     about = "Create thumbnails from scene detection timestamps",
-    after_help = "Example:\n  scene-images -i input.mp4 -c cutlist.txt -x 1280 -t jpg\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/\n\n",
+    after_help = "Example:\n  scene-images -i input.mp4 -c cutlist.txt -x 1280 -t jpg\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/",
     override_usage = "scene-images -i <INPUT> -c <CUTLIST> [OPTIONS]"
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]

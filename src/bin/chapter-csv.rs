@@ -17,7 +17,7 @@ use ffmpeg_rust_scripts::{parse_to_seconds, get_media_info};
     about = "Convert a chapter CSV (Time, Title) to FFmpeg metadata format",
     after_help = "Example:\n  chapter-csv -i chapters.csv -o chapters-metadata.txt\n\n  \
                   Dependencies:\n  \
-                  ffmpeg: https://www.ffmpeg.org/\n\n",
+                  ffmpeg: https://www.ffmpeg.org/",
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
 struct Args {

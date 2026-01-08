@@ -16,7 +16,7 @@ use ffmpeg_rust_scripts::get_media_info;
     about = "Mux FFmpeg metadata chapters into a video or audio file without re-encoding",
     after_help = "Example:\n  chapter-add -i input.mp4 -m metadata.txt -o output.mp4\n\n  \
                   Dependencies:\n  \
-                  ffmpeg: https://www.ffmpeg.org/\n\n",
+                  ffmpeg: https://www.ffmpeg.org/",
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
 struct Args {

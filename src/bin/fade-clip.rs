@@ -14,7 +14,7 @@ use ffmpeg_rust_scripts::{get_media_info, format_seconds_ms, parse_to_seconds, f
     author, 
     version, 
     about = "Fade in a video and audio clip",
-    after_help = "Example:\n  fade-clip -i input.mp4 -d 00:00:02\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/\n\n",
+    after_help = "Example:\n  fade-clip -i input.mp4 -d 00:00:02\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/",
     override_usage = "fade-clip [OPTIONS] -i <INFILE>"
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]

@@ -14,7 +14,7 @@ use ffmpeg_rust_scripts::{get_media_info, format_seconds_ms, parse_to_seconds, f
     author, 
     version, 
     about = "Ken Burns style zoom animation",
-    after_help = "Example:\n  zoompan -i image.jpg -d 10 -z in -p c\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/\n\n",
+    after_help = "Example:\n  zoompan -i image.jpg -d 10 -z in -p c\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/",
     override_usage = "zoompan [OPTIONS] -i <INPUT> -d <DURATION>"
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]

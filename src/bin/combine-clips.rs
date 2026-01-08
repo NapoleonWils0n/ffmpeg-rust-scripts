@@ -14,7 +14,7 @@ use ffmpeg_rust_scripts::{get_media_info, get_video_duration, format_seconds_ms,
     author, 
     version, 
     about = "Combine audio and video files",
-    after_help = "Dependencies:\nffmpeg, ffprobe: https://www.ffmpeg.org/\n\n",
+    after_help = "Dependencies:\nffmpeg, ffprobe: https://www.ffmpeg.org/",
     override_usage = "combine-clips -i <INPUT> -a <AUDIO> [OPTIONS]"
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]

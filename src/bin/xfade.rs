@@ -22,7 +22,7 @@ use ffmpeg_rust_scripts::{get_media_info, get_video_duration, format_seconds_ms,
                   smoothright, smoothup, squeezeh, squeezev, vdslice, vertclose, \n\
                   vertopen, vuslice, wipebl, wipebr, wipedown, wipeleft, wiperight, \n\
                   wipetl, wipetr, wipeup\n\n\
-                  Dependencies:\n  ffmpeg: https://www.ffmpeg.org/\n\n"
+                  Dependencies:\n  ffmpeg: https://www.ffmpeg.org/"
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
 struct Args {
