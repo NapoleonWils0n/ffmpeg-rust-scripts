@@ -1026,7 +1026,7 @@ Dependencies:
   ffmpeg: https://www.ffmpeg.org/
 
 Notes:
-  If -o is not provided, defaults to: input-name-[start-end].(mp4|webm|aac|mp3|wav|ogg)
+  If -o is not provided, defaults to: input-name-[start-end].ext
 #+end_example
 
 **** trim-clip-to
@@ -1101,8 +1101,7 @@ trim-clip-to -h
 Help output.
 
 #+begin_example
-trim video or audio clips by specifying start and end timestamps
-https://trac.ffmpeg.org/wiki/Seeking
+trim video or audio clips using start and end timestamps
 
 Usage: trim-clip-to [OPTIONS] -s <START> -i <INFILE> -t <END>
 
@@ -1115,15 +1114,12 @@ Options:
   -v, --version  Print version
 
 Example:
-  trim-clip-to -s 00:00:30 -i input -t 00:01:00 -o output
+  trim-clip-to -s 00:00:45 -i input.mkv -t 00:01:30
 
-  This will create a 30 second clip starting at 30 seconds and ending at 60 seconds.
+  This creates a 45s clip starting at 45s and ending at 1m 30s.
 
 Dependencies:
   ffmpeg: https://www.ffmpeg.org/
-
-Notes:
-  If -o is not provided, defaults to: input-name-[start–end].(mp4|webm|aac|mp3|wav|ogg)
 #+end_example
 
 **** trim-remote-clip
@@ -1179,18 +1175,16 @@ Options:
   -e <END>       End time (HH:MM:SS.mmm)
   -i <INPUT>     Input URL (YouTube, Vimeo, etc.)
   -o <OUTFILE>   Output filename (optional, defaults to Title-[start-end].mp4)
+  -v, --version  Print version
   -h, --help     Print help
-  -V, --version  Print version
 
 Example:
-  trim-remote-clip -s 00:01:00 -e 00:01:30 -i 'https://www.youtube.com/watch?v=...' -o clip.mp4
-
-  This will create a 30 second clip starting at one minute and ending at one minute 30 seconds.
+  trim-remote-clip -s 00:01:00 -e 00:01:30 -i 'URL' -o clip.mp4
 
 Dependencies:
-  ffmpeg, ffplay: https://www.ffmpeg.org/
-
+  ffmpeg: https://www.ffmpeg.org/
   yt-dlp: https://github.com/yt-dlp/yt-dlp
+  deno: https://deno.com/
 #+end_example
 
 **** trim-short
@@ -1299,8 +1293,8 @@ Options:
   -i <INFILE>    Input file
   -s <START>     Start time (HH:MM:SS.mmm)
   -t <END>       End time (optional, defaults to +60s)
-  -x <X_POS>     X-position percentage (0, 25, 50, 75, 100) [default: 50] [default: 50]
-  -o <OUTFILE>   Output file (optional)
+  -x <X_POS>     X-position percentage (0, 25, 50, 75, 100) [default: 50]
+  -o <OUTFILE>   Optional output file
   -h, --help     Print help
   -v, --version  Print version
 
@@ -1386,6 +1380,10 @@ Input format:
   00:00:00
   00:00:10
   (Pairs represent start and end of a clip)
+
+
+Dependencies:
+  ffmpeg: https://www.ffmpeg.org/
 #+end_example
 
 **** scene-cut-to
@@ -1888,7 +1886,7 @@ chapter-csv -h
 Help output.
 
 #+begin_example
-Convert a chapter CSV (Start, End, Title) to FFmpeg metadata format
+Convert a chapter CSV (Time, Title) to FFmpeg metadata format
 
 Usage: chapter-csv [OPTIONS] -i <INFILE>
 
@@ -2410,8 +2408,8 @@ Options:
   -t <TRANSITION>  Transition type [default: fade]
   -f <OFFSET>      Offset (start time of transition). Calculated automatically if not provided
   -o <OUTFILE>     Output file (optional)
-  -v, --version    Print version
   -h, --help       Print help
+  -v, --version    Print version
 
 TRANSITIONS:
 circleclose, circlecrop, circleopen, diagbl, diagbr, diagtl, diagtr,
@@ -2421,6 +2419,9 @@ slidedown, slideleft, slideright, slideup, smoothdown, smoothleft,
 smoothright, smoothup, squeezeh, squeezev, vdslice, vertclose,
 vertopen, vuslice, wipebl, wipebr, wipedown, wipeleft, wiperight,
 wipetl, wipetr, wipeup
+
+Dependencies:
+  ffmpeg: https://www.ffmpeg.org/
 #+end_example
 
 **** pan-scan
