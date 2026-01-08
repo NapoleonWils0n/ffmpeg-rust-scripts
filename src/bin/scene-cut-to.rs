@@ -16,7 +16,7 @@ use ffmpeg_rust_scripts::{get_media_info, parse_to_seconds, format_seconds_ms, f
     author,
     version,
     about = "split video into clips using a start,duration cutlist by calculating end-point",
-    after_help = "Example:\n  scene-cut-to -i input.mp4 -c cutlist.txt\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/",
+    after_help = "Example:\n  scene-cut-to -i input.mp4 -c cutlist.txt\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/\n\n",
     override_usage = "scene-cut-to -i <INPUT> -c <CUTLIST> [OPTIONS]"
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]

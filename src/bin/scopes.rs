@@ -13,7 +13,7 @@ use std::path::Path;
     author, 
     version, 
     about = "Display video with professional scopes stacked below",
-    after_help = "Example:\n  scopes -w input.mp4\n\nDependencies:\n  ffplay: https://www.ffmpeg.org/",
+    after_help = "Example:\n  scopes -w input.mp4\n\nDependencies:\n  ffplay: https://www.ffmpeg.org/\n\n",
     override_usage = "scopes [OPTIONS] <INPUT>"
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]

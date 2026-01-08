@@ -14,7 +14,7 @@ use ffmpeg_rust_scripts::{get_media_info, format_time_for_filename};
     author,
     version,
     about = "extract a single frame from a video",
-    after_help = "Example:\n  extract-frame -s 00:00:15 -i input.mp4 -x 1280 -f jpg\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/\n\nNotes:\n  If width/height is omitted, original size is used.\n  If -o is not provided, defaults to: input-frame-[timestamp].ext",
+    after_help = "Example:\n  extract-frame -s 00:00:15 -i input.mp4 -x 1280 -f jpg\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/\n\nNotes:\n  If width/height is omitted, original size is used.\n  If -o is not provided, defaults to: input-frame-[timestamp].ext\n\n",
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
 struct Args {

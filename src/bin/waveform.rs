@@ -14,7 +14,7 @@ use ffmpeg_rust_scripts::get_media_info;
     author,
     version,
     about = "create a waveform image from a video or audio file",
-    after_help = "Example:\n  waveform -i input.mp4 -c orange -j jpg\n\nColors: https://ffmpeg.org/ffmpeg-utils.html#Color\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/",
+    after_help = "Example:\n  waveform -i input.mp4 -c orange -j jpg\n\nColors: https://ffmpeg.org/ffmpeg-utils.html#Color\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/\n\n",
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
 struct Args {

@@ -14,7 +14,7 @@ use ffmpeg_rust_scripts::{get_media_info, parse_to_seconds, format_seconds_ms, h
     author,
     version,
     about = "trim video or audio clips with millisecond accuracy\nhttps://trac.ffmpeg.org/wiki/Seeking",
-    after_help = "Example:\n  trim-clip -s 00:00:30 -i input -t 00:00:30 -o output\n\n  This will create a 30 second clip starting at 30 seconds and ending at 60 seconds.\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/\n\nNotes:\n  If -o is not provided, defaults to: input-name-[start-end].ext",
+    after_help = "Example:\n  trim-clip -s 00:00:30 -i input -t 00:00:30 -o output\n\n  This will create a 30 second clip starting at 30 seconds and ending at 60 seconds.\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/\n\nNotes:\n  If -o is not provided, defaults to: input-name-[start-end].ext\n\n",
     override_usage = "trim-clip [OPTIONS] -s <START> -i <INFILE> -t <DURATION>"
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]

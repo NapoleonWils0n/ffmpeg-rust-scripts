@@ -14,7 +14,7 @@ use ffmpeg_rust_scripts::{get_media_info, parse_to_seconds, format_seconds_ms, f
     author, 
     version, 
     about = "Create a Picture-in-Picture (PiP) overlay",
-    after_help = "Example:\n  overlay-pip -a background.mp4 -b pip.mp4 -p 00:00:05 -x br -m 30 -k 4 -c white\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/",
+    after_help = "Example:\n  overlay-pip -a background.mp4 -b pip.mp4 -p 00:00:05 -x br -m 30 -k 4 -c white\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/\n\n",
     override_usage = "overlay-pip -a <INPUT> -b <PIP_VIDEO> -p <POSITION> [OPTIONS]"
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]

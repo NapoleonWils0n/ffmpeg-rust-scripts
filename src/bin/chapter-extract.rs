@@ -19,7 +19,7 @@ use ffmpeg_rust_scripts::{format_seconds_ms, get_media_info};
     after_help = "Example:\n  chapter-extract -i input.mkv -o chapters.csv\n\n  \
                   This creates a CSV with: Time, Title\n\n\
                   Dependencies:\n  \
-                  ffmpeg, ffprobe: https://www.ffmpeg.org/",
+                  ffmpeg, ffprobe: https://www.ffmpeg.org/\n\n",
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
 struct Args {

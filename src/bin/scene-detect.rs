@@ -15,7 +15,7 @@ use ffmpeg_rust_scripts::{get_media_info, get_video_duration, format_seconds_ms,
     author, 
     version, 
     about = "Detect scene changes in a video",
-    after_help = "Example:\n  scene-detect -i input.mp4 -t 0.4 -f sec\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/",
+    after_help = "Example:\n  scene-detect -i input.mp4 -t 0.4 -f sec\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/\n\n",
     override_usage = "scene-detect -i <INPUT> [OPTIONS]"
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]

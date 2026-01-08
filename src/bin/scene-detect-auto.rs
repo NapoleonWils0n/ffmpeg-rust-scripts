@@ -16,7 +16,7 @@ use ffmpeg_rust_scripts::{get_media_info, parse_to_seconds, format_seconds_ms, f
     author, 
     version,
     about = "Automated scene detection and video splitting",
-    after_help = "Example:\n  scene-detect-auto -i input.mp4\n\nDependencies:\n  ffmpeg, ffprobe: https://www.ffmpeg.org/\n\nNotes:\n  Creates detection.txt and cutlist.txt automatically.",
+    after_help = "Example:\n  scene-detect-auto -i input.mp4\n\nDependencies:\n  ffmpeg, ffprobe: https://www.ffmpeg.org/\n\nNotes:\n  Creates detection.txt and cutlist.txt automatically.\n\n",
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
 struct Args {

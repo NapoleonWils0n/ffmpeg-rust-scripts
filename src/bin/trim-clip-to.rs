@@ -15,7 +15,7 @@ use ffmpeg_rust_scripts::{get_media_info, has_encoder, format_time_for_filename}
     author,
     version,
     about = "trim video or audio clips using start and end timestamps",
-    after_help = "Example:\n  trim-clip-to -s 00:00:45 -i input.mkv -t 00:01:30\n\n  This creates a 45s clip starting at 45s and ending at 1m 30s.\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/",
+    after_help = "Example:\n  trim-clip-to -s 00:00:45 -i input.mkv -t 00:01:30\n\n  This creates a 45s clip starting at 45s and ending at 1m 30s.\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/\n\n",
     override_usage = "trim-clip-to [OPTIONS] -s <START> -i <INFILE> -t <END>"
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]

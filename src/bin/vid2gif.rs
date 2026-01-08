@@ -16,7 +16,7 @@ use ffmpeg_rust_scripts::get_media_info;
     author,
     version,
     about = "convert video to high quality gif",
-    after_help = "Example:\n  vid2gif -i input.mp4 -w 480 -f 15 -o animation.gif\n\nDependencies:\n  ffmpeg, ffprobe: https://www.ffmpeg.org/",
+    after_help = "Example:\n  vid2gif -i input.mp4 -w 480 -f 15 -o animation.gif\n\nDependencies:\n  ffmpeg, ffprobe: https://www.ffmpeg.org/\n\n",
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
 struct Args {
