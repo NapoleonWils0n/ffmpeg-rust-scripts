@@ -1142,10 +1142,10 @@ you should specify your preferred format options in your yt-dlp configuration fi
 
 ***** Run the script
 
-Provide the start time -s, the url -i, and the end time -e.
+Provide the start time -s, the url -i, and the end time -t.
 
 #+begin_src sh
-trim-remote-clip -s 00:00:30 -i url -e 00:01:30 -o clip.mp4
+trim-remote-clip -s 00:00:30 -i url -t 00:01:30 -o clip.mp4
 #+end_src
 
 This example creates a 1 minute clip starting at the 30-second mark and ending at 1 minute 30 seconds.
@@ -1154,7 +1154,7 @@ If you omit the output -o option, the script will automatically name the file: T
 ***** Script usage and help.
 
 #+BEGIN_SRC sh
-trim-remote-clip -s 00:00:00.000 -i url -e 00:00:00.000 -o output
+trim-remote-clip -s 00:00:00.000 -i url -t 00:00:00.000 -o output
 #+END_SRC
 
 Run the script with the -h option to show the help.
@@ -1168,18 +1168,18 @@ Help output.
 #+begin_example
 Trim remote video clips with millisecond accuracy
 
-Usage: trim-remote-clip [OPTIONS] -s <START> -e <END> -i <INPUT>
+Usage: trim-remote-clip [OPTIONS] -s <START> -t <END> -i <INPUT>
 
 Options:
   -s <START>     Start time (HH:MM:SS.mmm)
-  -e <END>       End time (HH:MM:SS.mmm)
+  -t <END>       End time (HH:MM:SS.mmm)
   -i <INPUT>     Input URL (YouTube, Vimeo, etc.)
   -o <OUTFILE>   Output filename (optional, defaults to Title-[start-end].mp4)
-  -v, --version  Print version
   -h, --help     Print help
+  -v, --version  Print version
 
 Example:
-  trim-remote-clip -s 00:01:00 -e 00:01:30 -i 'URL' -o clip.mp4
+  trim-remote-clip -s 00:01:00 -t 00:01:30 -i 'URL' -o clip.mp4
 
 Dependencies:
   ffmpeg: https://www.ffmpeg.org/
