@@ -520,6 +520,21 @@ If you prefer to manage your folders manually, follow these steps:
 
 6) Click OK on all windows to save.
 
+***** Add Windows Defender Exclusion
+
+Because these scripts are unsigned and perform system-level tasks (like calling FFmpeg), Windows Defender may flag them as a False Positive threat.
+
+To prevent the scripts from being quarantined or deleted, add your bin folder as an exclusion.
+
+1) Open the Start Menu and type Windows Security, then press Enter.
+2) Go to Virus and threat protection.
+3) Under Virus and threat protection settings, click Manage settings.
+4) Scroll down to Exclusions and click Add or remove exclusions.
+5) Click Add an exclusion and select Folder.
+6) Browse to and select the bin folder you created for these scripts.
+
+This tells Windows Defender to trust all binaries within that specific directory.
+
 **** Release Download
 
 Download the latest Windows release archive and sha256sum check sum
@@ -551,11 +566,27 @@ Alternatively, if you have Git Bash installed on Windows, you can use the
 sha256sum -c windows-ffmpeg-rust-scripts-v1.zip.sha256
 #+end_src
 
+***** Unblock the Zip File
+
+Before extracting the scripts, you must unblock the downloaded file.
+
+Windows often restricts files downloaded from the internet, which can cause the scripts to fail or be deleted immediately upon extraction.
+
+Note: In the steps below, replace "v1" with the specific version number of the release you downloaded (e.g., v1.1.0).
+
+1) Right-click the downloaded windows-ffmpeg-rust-scripts-v1.zip.
+2) Select Properties.
+3) At the bottom of the General tab, look for the Security section.
+4) Check the box labeled Unblock.
+5) Click Apply and then OK.
+
 ***** Extract and Install
 
-Extract the windows-ffmpeg-scripts-rust-version-1.0.zip file.
+Use the Windows File Manager (Explorer) to extract the zip file to ensure all permissions are handled correctly.
 
-Move all the .exe files from the extracted folder into the bin directory you created in the previous step.
+1) Right-click the windows-ffmpeg-rust-scripts-v1.zip file and select Extract All.
+2) Follow the prompts to finish the extraction.
+3) Move all the .exe files from the extracted folder into the bin directory you created in the previous step.
 
 ***** Verify Installation
 
