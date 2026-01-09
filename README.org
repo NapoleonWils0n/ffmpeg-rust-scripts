@@ -244,7 +244,7 @@ Expected Output: nixos-ffmpeg-rust-scripts-v1.tar.gz: OK
 Note: Replace version-1.0 with the actual version number you downloaded.
 
 #+begin_src sh
-tar -xf nixos-ffmpeg-scripts-rust-version-1.0.tar.gz
+tar -xf nixos-ffmpeg-rust-scripts-v1.tar.gz
 #+end_src
 
 ***** Deploy the scripts
@@ -252,7 +252,7 @@ tar -xf nixos-ffmpeg-scripts-rust-version-1.0.tar.gz
 Move the extracted binaries into your local ~/bin directory.
 
 #+begin_src sh
-mv nixos-ffmpeg-scripts-rust-version-1.0/* ~/bin/
+mv nixos-ffmpeg-rust-scripts-v1/* ~/bin/
 #+end_src
 
 *** Linux install
@@ -423,7 +423,7 @@ Expected Output: linux-ffmpeg-rust-scripts-v1.tar.gz: OK
 Note: Replace version-1.0 with the actual version number you downloaded.
 
 #+begin_src sh
-tar -xf linux-ffmpeg-scripts-rust-version-1.0.tar.gz
+tar -xf linux-ffmpeg-rust-scripts-v1.tar.gz
 #+end_src
 
 ***** Deploy the scripts
@@ -431,7 +431,7 @@ tar -xf linux-ffmpeg-scripts-rust-version-1.0.tar.gz
 Move the extracted binaries into your local ~/bin directory.
 
 #+begin_src sh
-mv linux-ffmpeg-scripts-rust-version-1.0/* ~/bin/
+mv linux-ffmpeg-rust-scripts-v1/* ~/bin/
 #+end_src
 
 *** Windows install
@@ -542,7 +542,7 @@ Note: Ensure the strings match.
 Alternatively, if you have Git Bash installed on Windows, you can use the
 
 #+begin_src sh
-sha256sum -c windows-ffmpeg-rust-scripts-v1.tar.gz.sha256
+sha256sum -c windows-ffmpeg-rust-scripts-v1.zip.sha256
 #+end_src
 
 ***** Extract and Install
