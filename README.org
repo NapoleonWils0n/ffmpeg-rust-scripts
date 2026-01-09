@@ -565,7 +565,7 @@ Open a new PowerShell window and run the version command for one of the scripts 
 extract-frame -v
 #+end_src
 
-*** Mac OS install
+*** Mac install
 :PROPERTIES:
 :CUSTOM_ID: mac-install
 :END:
