@@ -227,6 +227,8 @@ source ~/.bashrc
 Download the latest NixOS release archive and sha256sum check sum
 and then follow these steps to install the binaries.
 
+[[https://github.com/NapoleonWils0n/ffmpeg-rust-scripts/releases]]
+
 ***** check the sha256sum check sum
 
 Open your terminal and run the following command:
@@ -406,6 +408,8 @@ source ~/.bashrc
 Download the latest Linux release archive and sha256sum check sum
 and then follow these steps to install the binaries.
 
+[[https://github.com/NapoleonWils0n/ffmpeg-rust-scripts/releases]]
+
 ***** check the sha256sum check sum
 
 Open your terminal and run the following command:
@@ -520,6 +524,8 @@ If you prefer to manage your folders manually, follow these steps:
 
 Download the latest Windows release archive and sha256sum check sum
 and then follow these steps to install the binaries.
+
+[[https://github.com/NapoleonWils0n/ffmpeg-rust-scripts/releases]]
 
 ***** check the sha256sum check sum
 
