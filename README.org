@@ -112,6 +112,9 @@ including dependency management and environment path configuration.
 :PROPERTIES:
 :CUSTOM_ID: nixos-install
 :END:
+
+🎥 [[https://youtu.be/UMEr7ry_25g][NixOS FFmpeg Rust Scripts install]]
+
 **** Install Dependencies
 
 Install dependencies with home-manager by adding the following packages.
