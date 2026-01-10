@@ -23,6 +23,8 @@ Visualization & Analysis: Generate waveforms, scopes, and measure EBU R128 loudn
 
 Conversion & Extras: Create high-quality GIFs, WebP images, and handle time format conversions.
 
+[[https://github.com/NapoleonWils0n/ffmpeg-rust-scripts/releases][https://img.shields.io/github/downloads/NapoleonWils0n/ffmpeg-rust-scripts/total?style=flat-square&color=blue&label=downloads]]
+
 *** Supported Operating Systems
 
 This project is designed to be cross-platform and work on:
