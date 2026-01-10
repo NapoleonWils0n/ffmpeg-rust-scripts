@@ -4,6 +4,8 @@
 ** Project overview
 
 FFmpeg Rust Scripts is a collection of high-performance utilities designed to automate common video and audio editing tasks.
+  
+🎥 [[https://youtu.be/ALFk6GL9mOk][FFmpeg Rust Scripts for Linux, Windows, Mac, NixOS and Freebsd]]
 
 *** Script Categories
 
@@ -963,6 +965,8 @@ This is normal, but you only need the files that match the script names.
 :CUSTOM_ID: trim-clip
 :END:
 
+🎥 [[https://youtu.be/ALFk6GL9mOk?t=280][trim-clip]]
+
 The trim-clip script allows for precise trimming of video or audio files with millisecond accuracy.
 It uses [[https://trac.ffmpeg.org/wiki/Seeking][FFmpeg Input Seeking]] to ensure the extraction is both fast and frame-accurate.
 
@@ -1059,6 +1063,8 @@ Notes:
 :CUSTOM_ID: trim-clip-to
 :END:
 
+🎥 [[https://youtu.be/ALFk6GL9mOk?t=555][trim-clip-to]]
+
 The trim-clip-to script allows for precise trimming of video or audio files with millisecond accuracy.
 It uses [[https://trac.ffmpeg.org/wiki/Seeking][FFmpeg Input Seeking]] to ensure the extraction is both fast and frame-accurate.
 
@@ -1152,6 +1158,8 @@ Dependencies:
 :CUSTOM_ID: trim-remote-clip
 :END:
 
+🎥 [[https://youtu.be/ALFk6GL9mOk?t=734][trim-remote-clip]]
+
 The trim-remote-clip script allows you to download and trim a specific segment of an online video without downloading the entire file. It leverages yt-dlp to fetch the stream and FFmpeg to extract the clip with millisecond accuracy.
 
 You can use two different time unit formats:
@@ -1216,6 +1224,8 @@ Dependencies:
 :PROPERTIES:
 :CUSTOM_ID: trim-short
 :END:
+
+🎥 [[https://youtu.be/ALFk6GL9mOk?t=941][trim-short]]
 
 The trim-short script creates vertical 9:16 clips from horizontal video sources.
 It automatically crops and scales the footage to 1080x1920 resolution, making it ready for YouTube Shorts or TikTok
@@ -1335,6 +1345,8 @@ Dependencies:
 :CUSTOM_ID: clip-time
 :END:
 
+🎥 [[https://youtu.be/ALFk6GL9mOk?t=1411][clip-time]]
+
 The clip-time script converts a simple list of "Start" and "End" timestamps into a cutlist format (start,duration).
 This cutlist is then used by the scene-cut-to script to automate the extraction of multiple clips or images from a single video.
 
@@ -1416,6 +1428,8 @@ Dependencies:
 :CUSTOM_ID: scene-cut-to
 :END:
 
+🎥 [[https://youtu.be/ALFk6GL9mOk?t=1585][scene-cut-to]]
+
 The scene-cut-to script automates the process of cutting a single video into multiple individual clips.
 It reads a cutlist (created by clip-time) and uses "End-point seeking" to ensure every clip is frame-accurate.
 
@@ -1494,6 +1508,8 @@ and another 30 second clip that starts at 00:01:00 to 00:01:30
 :CUSTOM_ID: combine-clips
 :END:
 
+🎥 [[https://youtu.be/ALFk6GL9mOk?t=1663][combine-clips]]
+
 The combine-clips script merges a video file with an external audio file.
 Because it uses "stream copying" -c copy, the process is nearly instantaneous and results in zero quality loss.
 
@@ -1568,6 +1584,8 @@ ffmpeg, ffprobe: https://www.ffmpeg.org/
 :CUSTOM_ID: waveform
 :END:
 
+🎥 [[https://youtu.be/ALFk6GL9mOk?t=1823][waveform]]
+
 The waveform script generates a static image representation of the audio levels from either a video or an audio file.
 
 You can define the dimensions, colors, and image format.
@@ -1638,6 +1656,8 @@ Dependencies:
 :CUSTOM_ID: scopes
 :END:
 
+🎥 [[https://youtu.be/ALFk6GL9mOk?t=1931][scopes]]
+
 The scopes script is a professional analysis tool that plays a video with technical scopes stacked vertically underneath.
 
 It uses ffplay to provide a live playback window,
@@ -1705,6 +1725,8 @@ Dependencies:
 :CUSTOM_ID: ebu-meter
 :END:
 
+🎥 [[https://youtu.be/ALFk6GL9mOk?t=2108][ebu-meter]]
+
 The ebu-meter script provides a real-time visual representation of audio loudness levels
 according to the EBU R128 standard.
 
@@ -1761,6 +1783,8 @@ Dependencies:
 :PROPERTIES:
 :CUSTOM_ID: contact-sheet
 :END:
+
+🎥 [[https://youtu.be/ALFk6GL9mOk?t=2231][contact-sheet]]
 
 The contact-sheet script generates a tiled image of thumbnails representing the entire duration of a video.
 
@@ -1851,6 +1875,8 @@ Notes:
 :PROPERTIES:
 :CUSTOM_ID: chapter-csv
 :END:
+
+🎥 [[https://youtu.be/ALFk6GL9mOk?t=2464][chapter-csv]]
 
 The chapter-csv script is Step 1 in the chapter creation workflow.
 It converts a simple list of timestamps and titles into the complex metadata format required by FFmpeg.
@@ -1948,6 +1974,8 @@ and End isnt used as a chapter
 :CUSTOM_ID: chapter-add
 :END:
 
+🎥 [[https://youtu.be/ALFk6GL9mOk?t=2585][chapter-add]]
+
 The chapter-add script is Step 2 in the chapter creation workflow.
 It takes the metadata file created by chapter-csv and "muxes" it into your video or audio file.
 
@@ -2014,6 +2042,8 @@ Example:
 :PROPERTIES:
 :CUSTOM_ID: chapter-extract
 :END:
+
+🎥 [[https://youtu.be/ALFk6GL9mOk?t=2707][chapter-extract]]
 
 The chapter-extract script performs the reverse of the chapter workflow:
 it pulls existing chapter markers out of a media file and saves them into the same portable CSV format used by the other tools.
@@ -2091,6 +2121,8 @@ Dependencies:
 :PROPERTIES:
 :CUSTOM_ID: subtitle-add
 :END:
+
+🎥 [[https://youtu.be/ALFk6GL9mOk?t=2832][subtitle-add]]
 
 The subtitle-add script allows you to "soft-mux" external subtitle files (like .srt or .vtt)
 into your video as a proper metadata track.
@@ -2182,6 +2214,8 @@ Example:
 :CUSTOM_ID: overlay-clip
 :END:
 
+🎥 [[https://youtu.be/ALFk6GL9mOk?t=2988][overlay-clip]]
+
 The overlay-clip script is designed for B-roll insertion.
 
 It overlays a video clip on top of your main footage at a specific time,
@@ -2246,6 +2280,8 @@ Dependencies:
 :PROPERTIES:
 :CUSTOM_ID: overlay-pip
 :END:
+
+🎥 [[https://youtu.be/ALFk6GL9mOk?t=3174][overlay-pip]]
 
 The overlay-pip script creates a professional Picture-in-Picture effect.
 
@@ -2322,6 +2358,8 @@ Dependencies:
 :CUSTOM_ID: fade-clip
 :END:
 
+🎥 [[https://youtu.be/ALFk6GL9mOk?t=3356][fade-clip]]
+
 The fade-clip script applies a fade-in transition to both the video and audio of a clip simultaneously.
 
 This is ideal for smoothing out the beginning of a video or audio track,
@@ -2383,6 +2421,8 @@ Dependencies:
 :PROPERTIES:
 :CUSTOM_ID: xfade
 :END:
+
+🎥 [[https://youtu.be/ALFk6GL9mOk?t=3444][xfade]]
 
 The xfade script creates smooth transitions between two video clips.
 It applies the xfade filter for video and the acrossfade filter for audio simultaneously, ensuring a professional audio-visual blend.
@@ -2453,6 +2493,8 @@ Dependencies:
 :PROPERTIES:
 :CUSTOM_ID: pan-scan
 :END:
+
+🎥 [[https://youtu.be/ALFk6GL9mOk?t=3633][pan-scan]]
 
 The pan-scan script animates a static image by panning the "camera" across it in a specified direction.
 
@@ -2531,6 +2573,8 @@ Dependencies:
 :PROPERTIES:
 :CUSTOM_ID: zoompan
 :END:
+
+🎥 [[https://youtu.be/ALFk6GL9mOk?t=3725][zoompan]]
 
 The zoompan script converts a static image into a video clip by applying a Ken Burns-style zoom animation.
 
@@ -2619,6 +2663,8 @@ Dependencies:
 :CUSTOM_ID: audio-silence
 :END:
 
+🎥 [[https://youtu.be/ALFk6GL9mOk?t=3963][audio-silence]]
+
 The audio-silence script replaces or adds a silent audio track to a video file.
 
 It works by copying the original video stream without re-encoding and generating a silent AAC audio track using lavfi.
@@ -2689,6 +2735,8 @@ Example:
 :PROPERTIES:
 :CUSTOM_ID: extract-frame
 :END:
+
+🎥 [[https://youtu.be/ALFk6GL9mOk?t=4050][extract-frame]]
 
 The extract-frame script saves a single frame from a video as a png or jpg image.
 
@@ -2777,6 +2825,8 @@ Notes:
 :CUSTOM_ID: img2video
 :END:
 
+🎥 [[https://youtu.be/ALFk6GL9mOk?t=4165][img2video]]
+
 The img2video script converts a static image into a video file with a specified duration.
 
 The script creates a high-compatibility H.264 video at 30fps with a YUV420P pixel format,
@@ -2859,6 +2909,8 @@ Example:
 :CUSTOM_ID: sexagesimal-time
 :END:
 
+🎥 [[https://youtu.be/ALFk6GL9mOk?t=4310][sexagesimal-time]]
+
 The sexagesimal-time script calculates a precise duration by subtracting a start timecode from an end timecode.
 
 This is designed to help determine the exact length needed for trimming video or audio files with FFmpeg.
@@ -2927,6 +2979,8 @@ also works with milliseconds
 :PROPERTIES:
 :CUSTOM_ID: vid2gif
 :END:
+
+🎥 [[https://youtu.be/ALFk6GL9mOk?t=4365][vid2gif]]
 
 The vid2gif script converts a video file into a high-quality GIF animation.
 
@@ -3003,6 +3057,8 @@ Dependencies:
 :CUSTOM_ID: webp
 :END:
 
+🎥 [[https://youtu.be/ALFk6GL9mOk?t=4511][webp]]
+
 The webp script converts a video into an animated WebP image using FFmpeg.
 
 Animated WebP files often provide better compression than GIFs while supporting a full range of colours and transparency,
@@ -3075,6 +3131,8 @@ Dependencies:
 :PROPERTIES:
 :CUSTOM_ID: scene-detect-auto
 :END:
+
+🎥 [[https://youtu.be/ALFk6GL9mOk?t=4601][scene-detect-auto]]
 
 Automated scene detection and video splitting.
 
@@ -3508,6 +3566,8 @@ and another 30 second clip that starts at 60
 :PROPERTIES:
 :CUSTOM_ID: scene-images
 :END:
+
+🎥 [[https://youtu.be/ALFk6GL9mOk?t=4834][scene-images]]
 
 The scene-images script generates a thumbnail image for every cut point defined in your cutlist.
 This is so you can visually verify that your scene detection or manual timestamps are accurate.
