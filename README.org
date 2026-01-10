@@ -4094,7 +4094,8 @@ cargo clean
 
 ** Created by
 
-#+begin_example
+#+BEGIN_EXPORT html
+<pre style="line-height: 1.1; font-family: monospace; white-space: pre; border: none; background: none; padding: 0;">
        _   __                  __               _       ___ __     ____
       / | / /___ _____  ____  / /__  ____  ____| |     / (_) /____/ __ \____
      /  |/ / __ `/ __ \/ __ \/ / _ \/ __ \/ __ \ | /| / / / / ___/ / / / __ \
@@ -4102,4 +4103,4 @@ cargo clean
    /_/ |_/\__,_/ .___/\____/_/\___/\____/_/ /_/|__/|__/_/_/____/\____/_/ /_/
               /_/
 
-#+end_example
+#+END_EXPORT
