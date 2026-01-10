@@ -5,8 +5,6 @@
 
 FFmpeg Rust Scripts is a collection of high-performance utilities designed to automate common video and audio editing tasks.
 
-By leveraging Rust, these scripts provide a fast, safe, and portable alternative to traditional shell scripts.
-
 *** Script Categories
 
 The tools are organized into functional categories.
