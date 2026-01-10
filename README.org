@@ -750,6 +750,9 @@ This is normal, but you only need the files that match the script names.
 :PROPERTIES:
 :CUSTOM_ID: freebsd-install
 :END:
+
+🎥 [[https://youtu.be/q2wvflAWLgc][Freebsd FFmpeg Rust Scripts install]]
+
 **** Rust install
 
 Install the required tools and the Rust toolchain using the pkg manager.
