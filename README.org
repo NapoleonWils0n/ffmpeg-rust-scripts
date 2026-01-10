@@ -596,6 +596,9 @@ extract-frame -v
 :PROPERTIES:
 :CUSTOM_ID: mac-install
 :END:
+
+🎥 [[https://youtu.be/EODZ_QeX4zo][Mac FFmpeg Rust Scripts install]]
+
 **** Xcode install
 
 On macOS, you will need to install the development tools and the Rust compiler to build the scripts from source.
