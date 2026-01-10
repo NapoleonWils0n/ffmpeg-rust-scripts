@@ -4094,6 +4094,7 @@ cargo clean
 
 ** Created by
 
+#+HTML: <div align="center">
 #+begin_src
        _   __                  __               _       ___ __     ____
       / | / /___ _____  ____  / /__  ____  ____| |     / (_) /____/ __ \____
@@ -4104,3 +4105,4 @@ cargo clean
 
 
 #+end_src
+#+HTML: </div>
