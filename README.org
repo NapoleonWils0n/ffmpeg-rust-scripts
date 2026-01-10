@@ -7,7 +7,7 @@ FFmpeg Rust Scripts is a collection of high-performance utilities designed to au
 
 [[https://github.com/NapoleonWils0n/ffmpeg-rust-scripts/releases][https://img.shields.io/github/downloads/NapoleonWils0n/ffmpeg-rust-scripts/total.svg]]
 [[https://github.com/NapoleonWils0n/ffmpeg-rust-scripts/stargazers][https://img.shields.io/github/stars/NapoleonWils0n/ffmpeg-rust-scripts.svg?style=flat-square&color=yellow]]
-[[https://github.com/NapoleonWils0n/ffmpeg-rust-scripts/blob/master/LICENSE][https://img.shields.io/github/license/NapoleonWils0n/ffmpeg-rust-scripts.svg?style=flat-square&color=orange]]
+[[https://github.com/NapoleonWils0n/ffmpeg-rust-scripts/blob/master/LICENSE][https://img.shields.io/github/license/NapoleonWils0n/ffmpeg-rust-scripts.svg?style=flat-square&color=228b22]]
   
 🎥 [[https://youtu.be/ALFk6GL9mOk][FFmpeg Rust Scripts for Linux, Windows, Mac, NixOS and Freebsd]]
 
