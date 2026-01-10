@@ -254,6 +254,9 @@ mv nixos-ffmpeg-rust-scripts-v1/* ~/bin/
 :PROPERTIES:
 :CUSTOM_ID: linux-install
 :END:
+
+🎥 [[https://youtu.be/eKsOq0pwBgQ][Linux FFmpeg Rust Scripts install]]
+
 **** ffmpeg install
 
 Install ffmpeg on debian or ubuntu,
