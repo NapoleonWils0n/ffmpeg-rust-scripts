@@ -45,16 +45,6 @@ These are standalone executables that do not require a Rust runtime to be instal
 
 Manual Compilation: For macOS and FreeBSD, you will need to install the Rust toolchain and compile the scripts from source to ensure compatibility with your specific system architecture.
 
-*** Key Features
-
-Stateless & Portable: No complex databases; scripts operate directly on your files.
-
-High Performance: Rust's speed ensures that logic-heavy tasks (like calculating scene changes) happen instantly.
-
-Human Readable: Uses clear CLI arguments and provides helpful -h documentation for every tool.
-
-Pipe-friendly: Designed to work in sequence with other command-line utilities like fd or find for batch processing.
-
 ** Installation instructions
 
 Choose your operating system below for specific installation steps,
