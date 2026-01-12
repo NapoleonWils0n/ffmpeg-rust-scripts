@@ -3752,12 +3752,46 @@ run nix develop which will set up the rust environment
 nix develop
 #+end_src
 
-**** cargo init
+**** Cargo Initialization
 
-run cargo init to create the project
+After entering the Nix development environment for the first time, you must initialize the Rust project structure.
+
+***** Initialize the Project
+
+Run cargo init to generate the necessary Rust configuration files and directory structure within the current folder.
 
 #+begin_src sh
 cargo init .
+#+end_src
+
+Note: This command creates a Cargo.toml file and a src/ directory with a default main.rs.
+
+***** Staging Project Files
+
+This will automatically create a git repository
+
+Once initialized, you need to track the following essential files in your git repository:
+
+#+begin_example
+.gitignore
+Cargo.toml
+flake.lock
+flake.nix
+src/
+#+end_example
+
+***** Git Setup
+
+Stage all the newly created files:
+
+#+begin_src sh
+git add .
+#+end_src
+
+Finalize the initialization with an initial commit:
+
+#+begin_src sh
+git commit -m 'project init'
 #+end_src
 
 **** gitignore
