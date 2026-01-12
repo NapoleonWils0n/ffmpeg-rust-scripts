@@ -3668,13 +3668,13 @@ rm -f ~/Desktop/build/{nixos,linux,windows}/*
 **** create the project directory
 
 #+begin_src sh
-mkdir -p ~/git/projects/ffmpeg-scripts-rust
+mkdir -p ~/git/projects/ffmpeg-rust-scripts/
 #+end_src
 
 change directory into the project directory
 
 #+begin_src sh
-cd ~/git/projects/ffmpeg-scripts-rust
+cd ~/git/projects/ffmpeg-rust-scripts/
 #+end_src
 
 **** create the flake.nix
