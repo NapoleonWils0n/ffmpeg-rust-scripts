@@ -3752,6 +3752,14 @@ run nix develop which will set up the rust environment
 nix develop
 #+end_src
 
+**** cargo init
+
+run cargo init to create the project
+
+#+begin_src sh
+cargo init .
+#+end_src
+
 **** gitignore
 
 a .gitignore file will be created
