@@ -728,7 +728,7 @@ git clone https://github.com/NapoleonWils0n/ffmpeg-rust-scripts
 
 ***** Build the project using Cargo.
 
-Change directory into the ffmpeg-scripts-rust git repository.
+Change directory into the ffmpeg-rust-scripts git repository.
 
 #+begin_src sh
 cd ffmpeg-rust-scripts
@@ -952,7 +952,7 @@ git clone https://github.com/NapoleonWils0n/ffmpeg-rust-scripts
 
 ***** Build the project using Cargo.
 
-Change directory into the ffmpeg-scripts-rust git repository.
+Change directory into the ffmpeg-rust-scripts git repository.
 
 #+begin_src sh
 cd ffmpeg-rust-scripts
