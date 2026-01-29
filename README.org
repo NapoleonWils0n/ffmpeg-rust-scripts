@@ -486,6 +486,22 @@ Install dependencies with Chocolatey.
 choco install ffmpeg yt-dlp deno fd
 #+end_src
 
+**** upgrade packages
+
+upgrade Chocolatey
+
+open powershell as an administrator
+
+#+begin_src sh
+choco upgrade chocolatey
+#+end_src
+
+upgrade packages
+
+#+begin_src sh
+choco upgrade all
+#+end_src
+
 **** Environment Path Setup
 
 You need to put the .exe files in a place where Windows can find them.
