@@ -1552,7 +1552,7 @@ Because it uses "stream copying" -c copy, the process is nearly instantaneous an
 Provide the input video -i and the input audio -a.
 
 #+begin_src sh
-combine-clips -i video.mp4 -a audio.wav -o combined-video.mp4
+combine-clips -i video.mp4 -a audio.m4a -o combined-video.mp4
 #+end_src
 
 If you omit the output -o option,
@@ -1565,9 +1565,9 @@ This is useful when you have several videos and matching audio files with the sa
 
 #+BEGIN_EXAMPLE
 file1.mp4
-file1.wav
+file1.m4a
 file2.mp4
-file2.wav
+file2.m4a
 #+END_EXAMPLE
 
 To automatically pair and combine these, run:
@@ -1577,7 +1577,7 @@ fd -e mp4 -x combine-clips -i {} -a {.}.wav
 #+end_src
 
 running the following code will combine
-file1.mp4 with file1.wav and file2.mp4 with file2.wav
+file1.mp4 with file1.m4a and file2.mp4 with file2.m4a
 
 Note: The {.} syntax in fd strips the extension from the video file,
 allowing the script to find the matching .wav file automatically.
