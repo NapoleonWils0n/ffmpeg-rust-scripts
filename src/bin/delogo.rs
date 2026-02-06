@@ -45,7 +45,7 @@ struct Args {
     #[arg(short = 'o', long = "outfile")]
     outfile: Option<String>,
 
-    #[arg(short = 'h', long = "help", action = clap::ArgAction::Help)]
+    #[arg(short = 'H', long = "help", action = clap::ArgAction::Help)]
     help: Option<bool>,
 
     #[arg(short = 'v', long = "version", action = clap::ArgAction::Version)]
