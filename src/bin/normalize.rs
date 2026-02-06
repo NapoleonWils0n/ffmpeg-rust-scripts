@@ -61,7 +61,7 @@ fn main() {
     
     let analysis_output = Command::new("ffmpeg")
         .args([
-            "-hide_banner",
+            "-hide_banner", "-stats", "-v", "error",
             "-i", &args.infile,
             "-af", &format!("loudnorm=I={}:TP={}:LRA=11:print_format=json", args.lufs, args.tp),
             "-f", "null",
@@ -97,7 +97,7 @@ fn main() {
 
     let status = Command::new("ffmpeg")
         .args([
-            "-hide_banner",
+            "-hide_banner", "-stats", "-v", "error",
             "-i", &args.infile,
             "-af", &format!(
                 "loudnorm=I={}:TP={}:LRA=11:measured_i={}:measured_tp={}:measured_lra={}:measured_thresh={}:offset={}:linear=true",
