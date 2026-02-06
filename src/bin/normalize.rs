@@ -23,11 +23,11 @@ struct Args {
     #[arg(short = 'i', long = "infile", required = true)]
     infile: String,
 
-    /// Target True Peak (TP) level (Default: -3.0)
+    /// Target True Peak (TP) level
     #[arg(short = 't', long = "tp", default_value = "-3.0")]
     tp: String,
 
-    /// Target Integrated Loudness (LUFS) level (Default: -16)
+    /// Target Integrated Loudness (LUFS) level
     #[arg(short = 'l', long = "lufs", default_value = "-16")]
     lufs: String,
 
