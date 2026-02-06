@@ -19,23 +19,26 @@ use ffmpeg_rust_scripts::{get_media_info};
 #[clap(disable_version_flag = true, disable_help_flag = true)]
 struct Args {
     /// Left video input
-    #[arg(short = 'l', long = "left", required = true)]
+    #[arg(short = 'l', help = "left video input", required = true)]
     left: String,
 
     /// Right video input
-    #[arg(short = 'r', long = "right", required = true)]
+    #[arg(short = 'r', help = "right video input", required = true)]
     right: String,
 
     /// Audio source: l (left) or r (right)
-    #[arg(short = 'a', long = "audio", default_value = "l")]
+    #[arg(short = 'a', help = "audio source: l (left) or r (right)", default_value = "l")]
     audio: String,
 
-    #[arg(short = 'o', long = "outfile")]
+    /// optional argument: output file
+    #[arg(short = 'o', help = "optional output file")]
     outfile: Option<String>,
 
+    /// Print help
     #[arg(short = 'h', long = "help", action = clap::ArgAction::Help)]
     help: Option<bool>,
 
+    /// Print version
     #[arg(short = 'v', long = "version", action = clap::ArgAction::Version)]
     version: Option<bool>,
 }
