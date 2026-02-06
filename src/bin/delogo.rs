@@ -42,12 +42,15 @@ struct Args {
     #[arg(short = 'p', help = "preview mode: 1=box, 0=no box")]
     preview: Option<u32>,
 
+    /// optional argument: output file
     #[arg(short = 'o', help = "optional output file")]
     outfile: Option<String>,
 
+    /// Print help
     #[arg(short = 'H', long = "help", help = "Print help", action = clap::ArgAction::Help)]
     help: Option<bool>,
 
+    /// Print version
     #[arg(short = 'v', long = "version", help = "Print version", action = clap::ArgAction::Version)]
     version: Option<bool>,
 }
