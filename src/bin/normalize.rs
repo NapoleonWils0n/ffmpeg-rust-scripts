@@ -110,7 +110,7 @@ fn main() {
         .status()
         .expect("Failed to execute ffmpeg normalization");
 
-    if status.success() {
-        println!("+ Successfully normalized: {}", out_path);
+    if !status.success() {
+        std::process::exit(1);
     }
 }
