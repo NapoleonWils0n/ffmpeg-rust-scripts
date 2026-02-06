@@ -18,6 +18,7 @@ use std::process::Command; // Needed for [LIB-06]
 // - extract-frame
 // - fade-clip
 // - img2video
+// - normalize
 // - overlay-clip
 // - overlay-pip
 // - pan-scan
@@ -60,6 +61,7 @@ pub struct MediaInfo {
 // - fade-clip
 // - img2video
 // - pan-scan
+// - normalize
 // - overlay-clip
 // - overlay-pip
 // - scene-cut

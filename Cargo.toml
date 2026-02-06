@@ -1,6 +1,6 @@
 [package]
 name = "ffmpeg_rust_scripts"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2024"
 
 [lib]
@@ -49,6 +49,10 @@ path = "src/bin/fade-clip.rs"
 [[bin]]
 name = "img2video"
 path = "src/bin/img2video.rs"
+
+[[bin]]
+name = "normalize"
+path = "src/bin/normalize.rs"
 
 [[bin]]
 name = "overlay-clip"
