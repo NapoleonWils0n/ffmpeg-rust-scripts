@@ -51,7 +51,7 @@ fn main() {
         std::process::exit(1);
     }
 
-    let info = get_media_info(&args.infile); // 
+    let info = get_media_info(&args.infile);
     let out_path = args.outfile.unwrap_or_else(|| {
         format!("{}-normalize.{}", info.stem, info.extension)
     });
@@ -70,7 +70,7 @@ fn main() {
         .output()
         .expect("Failed to execute ffmpeg analysis");
 
-    let measurements = String::from_utf8_lossy(&analysis_output.stderr); // 
+    let measurements = String::from_utf8_lossy(&analysis_output.stderr);
 
     // Extracting values using simple string parsing (avoiding heavy regex)
     let get_val = |key: &str| {
@@ -88,7 +88,7 @@ fn main() {
     let offset = get_val("target_offset");
 
     if measured_i.is_empty() {
-        eprintln!("! Error: Could not analyze audio. Verify ffmpeg installation."); // [cite: 4, 5]
+        eprintln!("! Error: Could not analyze audio. Verify ffmpeg installation.");
         std::process::exit(1);
     }
 
@@ -103,7 +103,7 @@ fn main() {
                 "loudnorm=I={}:TP={}:LRA=11:measured_i={}:measured_tp={}:measured_lra={}:measured_thresh={}:offset={}:linear=true",
                 args.lufs, args.tp, measured_i, measured_tp, measured_lra, measured_thresh, offset
             ),
-            "-c:v", "copy", // 
+            "-c:v", "copy",
             "-ar", "48000", // Reset sample rate 
             &out_path,
         ])
