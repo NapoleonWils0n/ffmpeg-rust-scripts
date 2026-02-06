@@ -13,7 +13,7 @@ use ffmpeg_rust_scripts::{get_media_info};
 #[command(
     author, version,
     about = "Stack two videos side-by-side (hstack)",
-    after_help = "Example:\n  hstack -l left.mp4 -r right.mp4 -a r -o comparison.mp4\n\nNotes:\n - Auto-scales to match heights (max 1080p).\n - Uses High-Quality NVENC VBR or libx264 CRF 16.\n - Smart Audio: Copies AAC from source, transcodes others to AAC.",
+    after_help = "Example:\n  hstack -l left.mp4 -r right.mp4 -a r -o comparison.mp4\n\nNotes:\n - Auto-scales to match heights (max 1080p).\n - Uses High-Quality NVENC VBR or libx264 CRF 16.\n - Audio: Transcoded to AAC to ensure duration sync with shortest video.",
     override_usage = "hstack [OPTIONS] -l <LEFT> -r <RIGHT>"
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
@@ -57,20 +57,6 @@ fn has_nvenc() -> bool {
     String::from_utf8_lossy(&output.stdout).contains("hevc_nvenc")
 }
 
-fn get_audio_codec(path: &str) -> String {
-    let output = Command::new("ffprobe")
-        .args([
-            "-v", "error",
-            "-select_streams", "a:0",
-            "-show_entries", "stream=codec_name",
-            "-of", "default=noprint_wrappers=1:nokey=1",
-            path
-        ])
-        .output()
-        .expect("ffprobe audio check failed");
-    String::from_utf8_lossy(&output.stdout).trim().to_string()
-}
-
 fn main() {
     let args = Args::parse();
 
@@ -91,7 +77,6 @@ fn main() {
         target_h, target_h
     );
 
-    let audio_source = if args.audio.to_lowercase() == "r" { &args.right } else { &args.left };
     let audio_map = if args.audio.to_lowercase() == "r" { "1:a" } else { "0:a" };
     
     let info = get_media_info(&args.left);
@@ -123,19 +108,15 @@ fn main() {
         cmd.args(["-c:v", "libx264", "-crf", "16", "-preset", "medium"]);
     }
 
-    // 2. Smart Audio Settings: Copy AAC, Encode everything else
-    let codec = get_audio_codec(audio_source);
-    if codec == "aac" {
-        println!("+ Audio source is AAC: Using stream copy");
-        cmd.args(["-c:a", "copy"]);
-    } else {
-        println!("+ Audio source is {}: Transcoding to AAC", codec);
-        cmd.args(["-c:a", "aac"]);
-    }
+    // 2. Force Audio Transcoding to ensure duration sync
+    println!("+ Encoding audio to AAC to ensure proper duration sync");
+    cmd.args(["-c:a", "aac"]);
+
+    // 3. Final Global Options
+    cmd.arg("-shortest");
 
     // Final output arguments
     cmd.args([
-        "-shortest", // Force a hard stop for all streams
         "-pix_fmt", "yuv420p", 
         "-movflags", "+faststart", 
         &out_path
