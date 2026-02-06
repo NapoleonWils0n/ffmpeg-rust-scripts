@@ -37,6 +37,7 @@ fn main() {
 
     println!("\n--- Conversion & Extras ---");
     println!("  - audio-silence       : Detect or strip silence from audio");
+    println!("  - delogo              : Remove a logo from video footage");
     println!("  - extract-frame       : Extract a single high-quality frame");
     println!("  - img2video           : Create a video from a sequence of images");
     println!("  - normalize           : 2-Pass audio normalization (loudnorm)");
