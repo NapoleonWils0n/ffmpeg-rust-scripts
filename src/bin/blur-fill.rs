@@ -13,7 +13,7 @@ use ffmpeg_rust_scripts::{get_media_info};
 #[command(
     author, version,
     about = "Fill pillarboxes with a blurred version of the input video",
-    after_help = "Example:\n  blur-fill -i vertical.mp4 -b 50 -o output.mp4\n\nNotes:\n - Targets 1920x1080 (16:9).\n - Uses NVENC p7 (Highest Quality) or libx264 CRF 18.",
+    after_help = "Example:\n  blur-fill -i vertical.mp4 -b 20 -o output.mp4\n\nNotes:\n - Targets 1920x1080 (16:9).\n - Uses High-Quality NVENC VBR or libx264 CRF 18.\n - Smart Audio: Copies AAC, transcodes others to AAC.",
     override_usage = "blur-fill [OPTIONS] -i <INFILE>"
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
@@ -22,8 +22,8 @@ struct Args {
     #[arg(short = 'i', help = "input file", required = true)]
     infile: String,
 
-    /// blur strength (default: 40)
-    #[arg(short = 'b', help = "blur strength", default_value = "40")]
+    /// blur strength (default: 20)
+    #[arg(short = 'b', help = "blur strength", default_value = "10")]
     blur: u32,
 
     /// optional output file
@@ -44,6 +44,20 @@ fn has_nvenc() -> bool {
     String::from_utf8_lossy(&output.stdout).contains("hevc_nvenc")
 }
 
+fn get_audio_codec(path: &str) -> String {
+    let output = Command::new("ffprobe")
+        .args([
+            "-v", "error",
+            "-select_streams", "a:0",
+            "-show_entries", "stream=codec_name",
+            "-of", "default=noprint_wrappers=1:nokey=1",
+            path
+        ])
+        .output()
+        .expect("ffprobe audio check failed");
+    String::from_utf8_lossy(&output.stdout).trim().to_string()
+}
+
 fn main() {
     let args = Args::parse();
 
@@ -55,9 +69,6 @@ fn main() {
     let info = get_media_info(&args.infile);
     let out_path = args.outfile.unwrap_or_else(|| format!("{}-blurfill.mp4", info.stem));
 
-    // Filter Logic:
-    // Scale background to 'increase' (fill 1080p area), crop excess, blur.
-    // Scale foreground to match 1080p height.
     let filter = format!(
         "[0:v]split=2[main][bg]; \
          [bg]scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080,boxblur={}:10[blurred]; \
@@ -71,19 +82,37 @@ fn main() {
     cmd.args(["-i", &args.infile]);
     cmd.args(["-filter_complex", &filter]);
 
+    // 1. Video Encoder Settings
     if has_nvenc() {
-        println!("+ Using Hardware Encoding (NVENC p7)");
-        // Using p7 for highest quality as suggested
-        cmd.args(["-c:v", "hevc_nvenc", "-cq", "20", "-preset", "p7"]);
+        println!("+ Using High-Quality Hardware Encoding (NVENC)");
+        cmd.args([
+            "-c:v", "hevc_nvenc",
+            "-tune", "hq",
+            "-preset", "p7",
+            "-rc", "vbr",
+            "-multipass", "fullres",
+            "-cq", "20",
+            "-b:v", "0",
+            "-rc-lookahead", "32",
+            "-spatial-aq", "1"
+        ]);
     } else {
         println!("+ NVENC not found. Falling back to libx264 (CRF 18)");
-        // CRF 18 for visually lossless fallback
         cmd.args(["-c:v", "libx264", "-crf", "18", "-preset", "medium"]);
     }
 
+    // 2. Smart Audio Settings
+    let codec = get_audio_codec(&args.infile);
+    if codec == "aac" {
+        println!("+ Audio is AAC: Using stream copy");
+        cmd.args(["-c:a", "copy"]);
+    } else {
+        println!("+ Audio is {}: Transcoding to AAC", codec);
+        cmd.args(["-c:a", "aac"]);
+    }
+
+    // Final mapping and output
     cmd.args([
-        "-map", "0:a?", 
-        "-c:a", "aac",
         "-pix_fmt", "yuv420p",
         "-movflags", "+faststart",
         &out_path
@@ -94,6 +123,4 @@ fn main() {
     if !status.success() {
         std::process::exit(1);
     }
-
-    println!("+ Done! Saved to: {}", out_path);
 }
