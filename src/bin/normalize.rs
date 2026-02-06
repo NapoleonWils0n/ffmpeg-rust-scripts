@@ -24,11 +24,11 @@ struct Args {
     infile: String,
 
     /// Target True Peak (TP) level
-    #[arg(short = 't', long = "tp", default_value = "-3.0", allow_hyphen_values = true))]
+    #[arg(short = 't', long = "tp", default_value = "-3.0", allow_hyphen_values = true)]
     tp: String,
 
     /// Target Integrated Loudness (LUFS) level
-    #[arg(short = 'l', long = "lufs", default_value = "-16", allow_hyphen_values = true))]
+    #[arg(short = 'l', long = "lufs", default_value = "-16", allow_hyphen_values = true)]
     lufs: String,
 
     #[arg(short = 'o', long = "outfile")]
