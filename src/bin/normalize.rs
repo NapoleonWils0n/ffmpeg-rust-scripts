@@ -20,18 +20,20 @@ use ffmpeg_rust_scripts::{get_media_info};
 #[clap(disable_version_flag = true, disable_help_flag = true)]
 
 struct Args {
-    #[arg(short = 'i', long = "infile", required = true)]
+    /// input file
+    #[arg(short = 'i', help = "input file", required = true)]
     infile: String,
 
     /// Target True Peak (TP) level
-    #[arg(short = 't', long = "tp", default_value = "-3.0", allow_hyphen_values = true)]
+    #[arg(short = 't', help = "Target True Peak (TP) level", default_value = "-3.0", allow_hyphen_values = true)]
     tp: String,
 
     /// Target Integrated Loudness (LUFS) level
-    #[arg(short = 'l', long = "lufs", default_value = "-16", allow_hyphen_values = true)]
+    #[arg(short = 'l', help = "Target Integrated Loudness (LUFS) level", default_value = "-16", allow_hyphen_values = true)]
     lufs: String,
 
-    #[arg(short = 'o', long = "outfile")]
+    /// optional argument: output file
+    #[arg(short = 'o', help = "optional output file")]
     outfile: Option<String>,
 
     /// Print help
