@@ -19,36 +19,36 @@ use ffmpeg_rust_scripts::{get_media_info};
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
 struct Args {
-    #[arg(short = 'i', long = "infile", required = true)]
+    #[arg(short = 'i', help = "input file", required = true)]
     infile: String,
 
     /// x coordinate
-    #[arg(short = 'x', required = true)]
+    #[arg(short = 'x', help = "x coordinate", required = true)]
     x: u32,
 
     /// y coordinate
-    #[arg(short = 'y', required = true)]
+    #[arg(short = 'y', help = "y coordinate", required = true)]
     y: u32,
 
     /// filter width
-    #[arg(short = 'w', required = true)]
+    #[arg(short = 'w', help = "filter width", required = true)]
     width: u32,
 
     /// filter height
-    #[arg(short = 'h', required = true)]
+    #[arg(short = 'h', help = "filter height", required = true)]
     height: u32,
 
     /// preview mode: 1=box, 0=no box
-    #[arg(short = 'p')]
+    #[arg(short = 'p', help = "preview mode: 1=box, 0=no box")]
     preview: Option<u32>,
 
-    #[arg(short = 'o', long = "outfile")]
+    #[arg(short = 'o', help = "optional output file")]
     outfile: Option<String>,
 
-    #[arg(short = 'H', long = "help", action = clap::ArgAction::Help)]
+    #[arg(short = 'H', long = "help", help = "Print help", action = clap::ArgAction::Help)]
     help: Option<bool>,
 
-    #[arg(short = 'v', long = "version", action = clap::ArgAction::Version)]
+    #[arg(short = 'v', long = "version", help = "Print version", action = clap::ArgAction::Version)]
     version: Option<bool>,
 }
 
