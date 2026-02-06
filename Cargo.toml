@@ -11,6 +11,10 @@ name = "audio-silence"
 path = "src/bin/audio-silence.rs"
 
 [[bin]]
+name = "blur-fill"
+path = "src/bin/blur-fill.rs"
+
+[[bin]]
 name = "chapter-add"
 path = "src/bin/chapter-add.rs"
 

@@ -37,6 +37,7 @@ fn main() {
 
     println!("\n--- Conversion & Extras ---");
     println!("  - audio-silence       : Detect or strip silence from audio");
+    println!("  - blur-fill           : replace black bars with a blur fill effect");
     println!("  - delogo              : Remove a logo from video footage");
     println!("  - extract-frame       : Extract a single high-quality frame");
     println!("  - hstack              : Stack two videos side-by-side (auto-scale)");

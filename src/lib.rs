@@ -8,6 +8,7 @@ use std::process::Command; // Needed for [LIB-06]
 /// [LIB-01] Path used to check if the file exists before it is processed by FFmpeg
 // used by: 
 // - audio-silence
+// - blur-fill
 // - chapter-add
 // - chapter-csv
 // - chapter-extract
@@ -55,6 +56,7 @@ pub struct MediaInfo {
 /// [LIB-03] Extracts the file stem (filename without extension) and the lowercase extension.
 // used by: 
 // - audio-silence
+// - blur-fill
 // - chapter-add
 // - clip-time
 // - combine-clips
