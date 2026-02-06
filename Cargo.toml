@@ -51,6 +51,10 @@ name = "fade-clip"
 path = "src/bin/fade-clip.rs"
 
 [[bin]]
+name = "hstack"
+path = "src/bin/hstack.rs"
+
+[[bin]]
 name = "img2video"
 path = "src/bin/img2video.rs"
 

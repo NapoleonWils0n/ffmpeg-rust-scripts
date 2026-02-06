@@ -39,6 +39,7 @@ fn main() {
     println!("  - audio-silence       : Detect or strip silence from audio");
     println!("  - delogo              : Remove a logo from video footage");
     println!("  - extract-frame       : Extract a single high-quality frame");
+    println!("  - hstack              : Stack two videos side-by-side (auto-scale)");
     println!("  - img2video           : Create a video from a sequence of images");
     println!("  - normalize           : 2-Pass audio normalization (loudnorm)");
     println!("  - vid2gif             : Convert video segments to high-quality GIFs");
