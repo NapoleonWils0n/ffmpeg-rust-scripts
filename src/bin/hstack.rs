@@ -96,7 +96,15 @@ fn main() {
         cmd.args(["-c:v", "libx264", "-crf", "16", "-preset", "medium"]);
     }
 
-    cmd.args(["-c:a", "aac", "-pix_fmt", "yuv420p", "-movflags", "+faststart", &out_path]);
+    // Final output arguments
+    cmd.args([
+        "-c:a", "aac", 
+        "-shortest", // <--- Add this here to force a hard stop for all streams
+        "-pix_fmt", "yuv420p", 
+        "-movflags", "+faststart", 
+        &out_path
+    ]);
+
 
     let status = cmd.status().expect("ffmpeg failed");
 
