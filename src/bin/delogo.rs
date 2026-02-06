@@ -87,11 +87,14 @@ fn main() {
         }
     }
 
+    // [LIB-03] Get file info for naming
     let info = get_media_info(&args.infile);
     let out_path = args.outfile.unwrap_or_else(|| {
         format!("{}-delogo.{}", info.stem, info.extension)
     });
 
+    // Construct the filter string
+    // show=1 draws the green box, show=0 does not
     let filter = format!("delogo=x={}:y={}:w={}:h={}:show={}", 
         args.x, args.y, args.width, args.height, args.preview.unwrap_or(0));
 
