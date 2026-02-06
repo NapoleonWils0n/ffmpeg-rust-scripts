@@ -35,6 +35,10 @@ name = "contact-sheet"
 path = "src/bin/contact-sheet.rs"
 
 [[bin]]
+name = "delogo"
+path = "src/bin/delogo.rs"
+
+[[bin]]
 name = "ebu-meter"
 path = "src/bin/ebu-meter.rs"
 

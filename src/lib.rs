@@ -14,6 +14,7 @@ use std::process::Command; // Needed for [LIB-06]
 // - clip-time
 // - combine-clips
 // - contact-sheet
+// - delogo
 // - ebu-meter
 // - extract-frame
 // - fade-clip
@@ -57,6 +58,7 @@ pub struct MediaInfo {
 // - clip-time
 // - combine-clips
 // - contact-sheet
+// - delogo
 // - extract-frame
 // - fade-clip
 // - img2video
