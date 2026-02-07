@@ -63,6 +63,12 @@ fn get_image_dimensions(path: &str) -> (u32, u32) {
     if dims.len() == 2 { (dims[0], dims[1]) } else { (1920, 1080) }
 }
 
+/// check if the nvenc code is available
+fn has_nvenc() -> bool {
+    let output = Command::new("ffmpeg").args(["-encoders"]).output().expect("ffmpeg check failed");
+    String::from_utf8_lossy(&output.stdout).contains("hevc_nvenc")
+}
+
 fn main() {
     let args = Args::parse();
 
@@ -73,13 +79,11 @@ fn main() {
 
     let (iw, ih) = get_image_dimensions(&args.infile);
     let dur = parse_to_seconds(&args.duration);
-    
     let info = get_media_info(&args.infile);
     let full_ts = format_seconds_ms(dur);
-    let timestamp_raw = full_ts.split('.').next().unwrap_or("00:00:00");
 
     // Apply LIB-10 OS check
-    let timestamp = format_time_for_filename(timestamp_raw);
+    let timestamp = format_time_for_filename(&full_ts);
     
     let pos_full = match args.position.as_str() {
         "l" => "left", "r" => "right", "u" => "up", "d" => "down",
@@ -101,29 +105,44 @@ fn main() {
         }
     };
 
-    let status = Command::new("ffmpeg")
-        .args([
-            "-hide_banner",
-            "-loglevel", "error", // Suppress errors and banner
-            "-stats",             // Enable real-time progress
-            "-r", "30",
-            "-loop", "1",
-            "-i", &args.infile,
-            "-t", &dur.to_string(),
-            "-filter_complex", &filter,
-            "-c:v", "libx264",
-            "-crf", "18",
-            "-profile:v", "high",
-            "-pix_fmt", "yuv420p",
-            "-movflags", "+faststart",
-            "-y",
-            &final_output,
-        ])
-        .status()
-        .expect("Failed to execute FFmpeg");
+    // 3. Build FFmpeg Command
+    let mut cmd = Command::new("ffmpeg");
+    cmd.args([
+        "-hide_banner", "-loglevel", "error", "-stats",
+        "-loop", "1",
+        "-i", &args.infile,
+        "-vf", &filter,
+        "-t", &dur.to_string(),
+    ]);
+
+    // Video Encoder Settings (NVENC with x264 fallback)
+    if has_nvenc() {
+        println!("+ Using High-Fidelity Hardware Encoding (NVENC)");
+        cmd.args([
+            "-c:v", "hevc_nvenc",
+            "-tune", "hq",
+            "-preset", "p7",
+            "-rc", "vbr",
+            "-multipass", "fullres",
+            "-cq", "20",
+            "-b:v", "0",
+        ]);
+    } else {
+        println!("+ NVENC not found. Falling back to libx264 (CRF 18)");
+        cmd.args(["-c:v", "libx264", "-crf", "18"]);
+    }
+
+    cmd.args([
+        "-pix_fmt", "yuv420p",
+        "-movflags", "+faststart",
+        "-y",
+        &final_output,
+    ]);
+
+    let status = cmd.status().expect("Failed to execute FFmpeg");
 
     if !status.success() {
-        eprintln!("Error: FFmpeg execution failed.");
+        eprintln!("Error: FFmpeg failed to create pan-scan animation.");
         std::process::exit(1);
     }
 }
