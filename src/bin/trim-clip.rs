@@ -71,15 +71,15 @@ fn main() {
             let duration_sec = parse_to_seconds(&args.duration);
             let end_sec = start_sec + duration_sec;
 
-            // Get clean HH:MM:SS for the filename (strip milliseconds)
-            let start_clean = format_seconds_ms(start_sec).split('.').next().unwrap_or("00:00:00").to_string();
-            let end_clean = format_seconds_ms(end_sec).split('.').next().unwrap_or("00:00:00").to_string();
+            // Get full HH:MM:SS.mmm for the filename (preserving milliseconds)
+            let start_full = format_seconds_ms(start_sec);
+            let end_full = format_seconds_ms(end_sec);
 
-            // LIB-10: OS check to replace colons with dashes if on Windows
-            let start_fs = format_time_for_filename(&start_clean);
-            let end_fs = format_time_for_filename(&end_clean);
+            // LIB-10: OS check to replace colons with underscores/dashes
+            let start_fs = format_time_for_filename(&start_full);
+            let end_fs = format_time_for_filename(&end_full);
 
-            format!("{}-[{}-{}].{}", info.stem, start_fs, end_fs, info.extension)
+            format!("{}-[{}–{}].{}", info.stem, start_fs, end_fs, info.extension)
         }
     };
 
