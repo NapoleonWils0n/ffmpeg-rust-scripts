@@ -38,6 +38,12 @@ struct Args {
     version: Option<bool>,
 }
 
+/// check if the nvenc code is available
+fn has_nvenc() -> bool {
+    let output = Command::new("ffmpeg").args(["-encoders"]).output().expect("ffmpeg check failed");
+    String::from_utf8_lossy(&output.stdout).contains("hevc_nvenc")
+}
+
 fn main() {
     let args = Args::parse();
 
@@ -54,6 +60,14 @@ fn main() {
     let file = File::open(&args.cutlist).expect("Failed to open cutlist");
     let reader = BufReader::new(file);
 
+    // 1. Determine Encoder once at the start
+    let use_nvenc = has_nvenc();
+    if use_nvenc {
+        println!("+ Using High-Fidelity Hardware Encoding (NVENC)");
+    } else {
+        println!("+ NVENC not found. Falling back to libx264 (CRF 18)");
+    }
+
     for (index, line) in reader.lines().enumerate() {
         if let Ok(l) = line {
             let parts: Vec<&str> = l.split(',').collect();
@@ -66,9 +80,8 @@ fn main() {
             let duration_sec = parse_to_seconds(duration_raw);
             let end_sec = start_sec + duration_sec;
 
-            // Extract HH:MM:SS with colons
-            let start_filename_raw = format_seconds_ms(start_sec).split('.').next().unwrap_or("00:00:00").to_string();
-            let end_filename_raw = format_seconds_ms(end_sec).split('.').next().unwrap_or("00:00:00").to_string();
+            let start_filename_raw = format_seconds_ms(start_sec);
+            let end_filename_raw = format_seconds_ms(end_sec);
 
             // Apply LIB-10 OS check to replace colons with dashes if on Windows
             let start_ts = format_time_for_filename(&start_filename_raw);
@@ -80,26 +93,42 @@ fn main() {
 
             println!("Processing Scene {}: {} -> {}", index + 1, start_raw, format_seconds_ms(end_sec));
 
-            let status = Command::new("ffmpeg")
-                .args([
-                    "-hide_banner", "-loglevel", "error", "-stats",
-                    "-ss", start_raw,
-                    "-t", duration_raw,
-                    "-i", &args.input,
-                    "-c:v", "libx264",      // re-encode video
-                    "-profile:v", "high",   // high profile
-                    "-pix_fmt", "yuv420p",  // pixel format
-                    "-c:a", "aac",          // re-encode audio
-                    "-movflags", "+faststart", // faststart for web
-                    "-f", "mp4",            // force mp4 format
-                    &output_name
-                ])
-                .status()
-                .expect("Failed to execute FFmpeg");
+        let mut cmd = Command::new("ffmpeg");
+        cmd.args([
+            "-hide_banner", "-loglevel", "error", "-stats",
+            "-ss", start_raw,
+            "-t", duration_raw,
+            "-i", &args.input,
+        ]);
 
-            if !status.success() {
-                eprintln!("Error: FFmpeg failed on scene {}", index + 1);
-            }
+        // 3. Encoder Logic (No printing inside the loop)
+        if use_nvenc {
+            cmd.args([
+                "-c:v", "hevc_nvenc",
+                "-tune", "hq",
+                "-preset", "p7",
+                "-rc", "vbr",
+                "-multipass", "fullres",
+                "-cq", "20",
+                "-b:v", "0",
+            ]);
+        } else {
+            cmd.args(["-c:v", "libx264", "-crf", "18"]);
         }
+
+        cmd.args([
+            "-pix_fmt", "yuv420p",
+            "-c:a", "aac",
+            "-movflags", "+faststart",
+            "-y",
+            &output_name
+        ]);
+
+        let status = cmd.status().expect("Failed to execute FFmpeg");
+
+        if !status.success() {
+            eprintln!("Error: FFmpeg failed on scene {}.", index + 1);
+        }
+      }
     }
 }
