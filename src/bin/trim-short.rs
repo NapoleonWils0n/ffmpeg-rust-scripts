@@ -73,13 +73,13 @@ fn main() {
     // 2. NAMING LOGIC
     let info = get_media_info(&args.infile);
     
-    // Get clean HH:MM:SS (no milliseconds) for filename
-    let start_clean = format_seconds_ms(start_sec).split('.').next().unwrap_or("00:00:00").to_string();
-    let end_clean = format_seconds_ms(end_sec).split('.').next().unwrap_or("00:00:00").to_string();
+    // 1. Get full timestamps (preserving milliseconds)
+    let start_full = format_seconds_ms(start_sec);
+    let end_full = format_seconds_ms(end_sec);
     
-    // LIB-10: OS check for Windows safety (replace : with -)
-    let start_fs = format_time_for_filename(&start_clean);
-    let end_fs = format_time_for_filename(&end_clean);
+    // 2. LIB-10: Use the library's built-in OS check
+    let start_fs = format_time_for_filename(&start_full);
+    let end_fs = format_time_for_filename(&end_full);
 
     let x_was_specified = env::args().any(|arg| arg == "-x");
 
