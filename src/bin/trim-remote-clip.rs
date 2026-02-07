@@ -45,6 +45,12 @@ struct Args {
     version: Option<bool>,
 }
 
+/// check if the nvenc code is available
+fn has_nvenc() -> bool {
+    let output = Command::new("ffmpeg").args(["-encoders"]).output().expect("ffmpeg check failed");
+    String::from_utf8_lossy(&output.stdout).contains("hevc_nvenc")
+}
+
 fn main() {
     let args = Args::parse();
 
@@ -106,15 +112,21 @@ fn main() {
         ffmpeg.args(["-map", "0:v:0", "-map", "1:a:0"]);
     }
 
-    ffmpeg.args([
-        "-c:v", "libx264",
-        "-profile:v", "high",
-        "-pix_fmt", "yuv420p",
-        "-c:a", "aac",
-        "-movflags", "+faststart",
-        "-y", // Overwrite output
-        &out_path
-    ]);
+    // 5. Video Encoder Settings
+    if has_nvenc() {
+        println!("+ Using High-Fidelity Hardware Encoding (NVENC)");
+        ffmpeg.args([
+            "-c:v", "hevc_nvenc", "-tune", "hq", "-preset", "p7",
+            "-rc", "vbr", "-multipass", "fullres", "-cq", "20",
+            "-b:v", "0", "-rc-lookahead", "32", "-spatial-aq", "1"
+        ]);
+    } else {
+        println!("+ NVENC not found. Falling back to libx264 (CRF 18)");
+        ffmpeg.args(["-c:v", "libx264", "-crf", "18", "-preset", "medium"]);
+    }
+
+    // 6. Audio and Final Output
+    ffmpeg.args(["-c:a", "aac", "-pix_fmt", "yuv420p", "-movflags", "+faststart", &out_path]);
 
     let status = ffmpeg.status().expect("Failed to execute FFmpeg");
 
