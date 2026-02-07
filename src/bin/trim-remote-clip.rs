@@ -64,16 +64,23 @@ fn main() {
     
     // 2. Generate the cross-platform output path
     let out_path = args.outfile.unwrap_or_else(|| {
-        // Strip milliseconds for the filename
-        let start_clean = args.start.split('.').next().unwrap_or("00:00:00");
-        let end_clean = args.end.split('.').next().unwrap_or("00:00:00");
+        // 1. Handle the Timestamps
+        let (start_fs, end_fs) = if cfg!(windows) {
+            // On Windows, use the library helper to swap : for _
+            (format_time_for_filename(&args.start), format_time_for_filename(&args.end))
+        } else {
+            // On Linux/NixOS, keep the colons exactly as they are
+            (args.start.clone(), args.end.clone())
+        };
 
-        // LIB-10: Replace colons with dashes for Windows compatibility
-        let start_fs = format_time_for_filename(start_clean);
-        let end_fs = format_time_for_filename(end_clean);
-
-        // Sanitize title: remove slashes and colons which are illegal in Windows filenames
-        let safe_title = raw_title.replace(['/', ':'], "_");
+        // 2. Handle the Video Title
+        // Slashes '/' must ALWAYS be removed because they represent directories
+        let mut safe_title = raw_title.replace('/', "_");
+        
+        // If on Windows, remove the rest of the illegal characters
+        if cfg!(windows) {
+            safe_title = safe_title.replace([':', '<', '>', '"', '\\', '|', '?', '*'], "_");
+        }
 
         format!("{}-[{}–{}].mp4", safe_title, start_fs, end_fs)
     });
