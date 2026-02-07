@@ -49,6 +49,12 @@ struct Args {
     version: Option<bool>,
 }
 
+/// check if the nvenc code is available
+fn has_nvenc() -> bool {
+    let output = Command::new("ffmpeg").args(["-encoders"]).output().expect("ffmpeg check failed");
+    String::from_utf8_lossy(&output.stdout).contains("hevc_nvenc")
+}
+
 fn main() {
     let args = Args::parse();
 
@@ -100,23 +106,50 @@ fn main() {
     let filter_string = format!("crop=ih*9/16:ih:{}:0,scale=1080:1920", x_offset);
 
     // 4. EXECUTE FFMPEG (Output Seeking: -i before -ss and -to)
-    let status = Command::new("ffmpeg")
-        .args([
-            "-hide_banner", "-v", "error", "-stats",
-            "-i", &args.infile,
-            "-ss", &args.start,
-            "-to", &format_seconds_ms(end_sec),
-            "-vf", &filter_string,
-            "-c:v", "libx264",
-            "-profile:v", "high",
-            "-pix_fmt", "yuv420p",
-            "-c:a", "aac",
-            "-movflags", "+faststart",
-            "-y",
-            &final_output,
-        ])
-        .status()
-        .expect("Failed to execute FFmpeg");
+    let mut cmd = Command::new("ffmpeg");
+    cmd.args([
+        "-hide_banner", "-v", "error", "-stats",
+        "-i", &args.infile,
+    ]);
+
+    // Position and Duration
+    cmd.args([
+        "-ss", &args.start,
+        "-to", &format_seconds_ms(end_sec),
+    ]);
+
+    // Video Filter (9:16 Crop and Scale)
+    cmd.args(["-vf", &filter_string]);
+
+    // Video Encoder Settings
+    if has_nvenc() {
+        println!("+ Using High-Fidelity Hardware Encoding (NVENC)");
+        cmd.args([
+            "-c:v", "hevc_nvenc",
+            "-tune", "hq",
+            "-preset", "p7",
+            "-rc", "vbr",
+            "-multipass", "fullres",
+            "-cq", "20",
+            "-b:v", "0",
+            "-rc-lookahead", "32",
+            "-spatial-aq", "1"
+        ]);
+    } else {
+        println!("+ NVENC not found. Falling back to libx264 (CRF 18)");
+        cmd.args(["-c:v", "libx264", "-crf", "18", "-preset", "medium"]);
+    }
+
+    // Audio and Final Output Arguments
+    cmd.args([
+        "-c:a", "aac",
+        "-pix_fmt", "yuv420p",
+        "-movflags", "+faststart",
+        "-y",
+        &final_output,
+    ]);
+
+    let status = cmd.status().expect("Failed to execute FFmpeg");
 
     if !status.success() {
         eprintln!("FFmpeg failed to create the vertical clip.");
