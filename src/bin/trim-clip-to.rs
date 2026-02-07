@@ -65,13 +65,10 @@ fn main() {
     let out_path = match args.outfile {
         Some(ref path) => path.clone(),
         None => {
-            // Get clean HH:MM:SS for the filename (strip milliseconds)
-            let start_clean = args.start.split('.').next().unwrap_or("00:00:00");
-            let end_clean = args.end.split('.').next().unwrap_or("00:00:00");
-
-            // LIB-10: OS check for Windows safety (replaces : with -)
-            let start_fs = format_time_for_filename(start_clean);
-            let end_fs = format_time_for_filename(end_clean);
+            // In trim-clip-to, args.start and args.end are already strings.
+            // We just need to ensure they are processed for the OS.
+            let start_fs = format_time_for_filename(&args.start);
+            let end_fs = format_time_for_filename(&args.end);
 
             format!("{}-[{}–{}].{}", info.stem, start_fs, end_fs, info.extension)
         }
