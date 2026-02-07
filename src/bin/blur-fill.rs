@@ -22,7 +22,7 @@ struct Args {
     #[arg(short = 'i', help = "input file", required = true)]
     infile: String,
 
-    /// blur strength (default: 20)
+    /// blur strength (default: 10)
     #[arg(short = 'b', help = "blur strength", default_value = "10")]
     blur: u32,
 
