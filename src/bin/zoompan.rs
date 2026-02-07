@@ -55,6 +55,12 @@ fn get_image_height(path: &str) -> u32 {
     String::from_utf8_lossy(&output.stdout).trim().parse().unwrap_or(720)
 }
 
+/// check if the nvenc code is available
+fn has_nvenc() -> bool {
+    let output = Command::new("ffmpeg").args(["-encoders"]).output().expect("ffmpeg check failed");
+    String::from_utf8_lossy(&output.stdout).contains("hevc_nvenc")
+}
+
 fn main() {
     let args = Args::parse();
 
@@ -89,12 +95,11 @@ fn main() {
     // 1. Get media info
     let info = get_media_info(&args.infile);
 
-    // 2. Format the duration (strip milliseconds for filename)
+    // 2. LIB-09: Get full HH:MM:SS.mmm (Preserving milliseconds)
     let full_ts = format_seconds_ms(dur);
-    let timestamp_raw = full_ts.split('.').next().unwrap_or("00:00:00");
     
     // 3. LIB-10: Convert colons to dashes for Windows compatibility
-    let timestamp_fs = format_time_for_filename(timestamp_raw);
+    let timestamp_fs = format_time_for_filename(&full_ts);
 
     let final_output = args.outfile.unwrap_or_else(|| {
         format!("{}-zoom-{}-{}-[{}].mp4", info.stem, args.zoom, args.position, timestamp_fs)
@@ -106,28 +111,46 @@ fn main() {
         z_expr, x, y, total_frames, img_h
     );
 
-    
+    // 4. Build FFmpeg Command
+    let mut cmd = Command::new("ffmpeg");
+    cmd.args([
+        "-hide_banner",
+        "-loglevel", "error",
+        "-stats",
+        "-loop", "1",
+        "-i", &args.infile,
+        "-vf", &filter,
+        "-t", &dur.to_string(),
+    ]);
 
-    // Run FFmpeg with progress enabled
-    let status = Command::new("ffmpeg")
-        .args([
-            "-hide_banner",
-            "-loglevel", "error", // Suppress errors
-            "-stats",             // Force progress stats even with low loglevel
-            "-loop", "1",
-            "-i", &args.infile,
-            "-t", &dur.to_string(),
-            "-vf", &filter,
-            "-c:v", "libx264",
-            "-crf", "18",
-            "-pix_fmt", "yuv420p",
-            "-y",
-            &final_output
-        ])
-        .status()
-        .expect("Failed to execute FFmpeg");
+    // Video Encoder Settings (NVENC with x264 fallback)
+    if has_nvenc() {
+        println!("+ Using High-Fidelity Hardware Encoding (NVENC)");
+        cmd.args([
+            "-c:v", "hevc_nvenc",
+            "-tune", "hq",
+            "-preset", "p7",
+            "-rc", "vbr",
+            "-multipass", "fullres",
+            "-cq", "20",
+            "-b:v", "0",
+        ]);
+    } else {
+        println!("+ NVENC not found. Falling back to libx264 (CRF 18)");
+        cmd.args(["-c:v", "libx264", "-crf", "18"]);
+    }
+
+    cmd.args([
+        "-pix_fmt", "yuv420p",
+        "-movflags", "+faststart",
+        "-y",
+        &final_output,
+    ]);
+
+    let status = cmd.status().expect("Failed to execute FFmpeg");
 
     if !status.success() {
+        eprintln!("Error: FFmpeg failed to create zoompan animation.");
         std::process::exit(1);
     }
 }

@@ -112,29 +112,6 @@ fn main() {
         args.transition, fade_dur, offset_secs, fade_dur
     );
 
-//    let status = Command::new("ffmpeg")
-//        .args([
-//            "-hide_banner",
-//            "-loglevel", "error",
-//            "-stats",
-//            "-i", &args.input1,
-//            "-i", &args.input2,
-//            "-filter_complex", &filter_complex,
-//            "-map", "[v]",
-//            "-map", "[a]",
-//            "-c:v", "libx264",
-//            "-crf", "18",
-//            "-pix_fmt", "yuv420p",
-//            "-y",
-//            &final_output,
-//        ])
-//        .status()
-//        .expect("Failed to execute FFmpeg");
-//
-//    if !status.success() {
-//        std::process::exit(1);
-//    }
-
     // 5. Build FFmpeg Command
     let mut cmd = Command::new("ffmpeg");
     cmd.args([
