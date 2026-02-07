@@ -91,12 +91,8 @@ fn main() {
             let start_raw = l.split(',').next().unwrap_or("00:00:00").trim();
             let start_sec = parse_to_seconds(start_raw);
             
-            // 1. Get HH:MM:SS without milliseconds
-            let time_raw = format_seconds_ms(start_sec)
-                .split('.')
-                .next()
-                .unwrap_or("00:00:00")
-                .to_string();
+            // 1. LIB-09: Get HH:MM:SS.mmm (Preserving the milliseconds)
+            let time_raw = format_seconds_ms(start_sec);
 
             // 2. Apply LIB-10 OS check for the filename
             let time_fs = format_time_for_filename(&time_raw);
