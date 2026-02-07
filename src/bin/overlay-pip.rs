@@ -68,6 +68,12 @@ struct Args {
     version: Option<bool>,
 }
 
+/// check if the nvenc code is available
+fn has_nvenc() -> bool {
+    let output = Command::new("ffmpeg").args(["-encoders"]).output().expect("ffmpeg check failed");
+    String::from_utf8_lossy(&output.stdout).contains("hevc_nvenc")
+}
+
 fn main() {
     let args = Args::parse();
 
@@ -91,12 +97,11 @@ fn main() {
     let start_secs = parse_to_seconds(&args.position);
     let info = get_media_info(&args.input);
     let fg_info = get_media_info(&args.overlay);
+
     let full_ts = format_seconds_ms(start_secs);
 
-    let timestamp_raw = full_ts.split('.').next().unwrap_or("00:00:00");
-
     // Apply LIB-10 OS check
-    let timestamp = format_time_for_filename(timestamp_raw);
+    let timestamp = format_time_for_filename(&full_ts);
     
     // 2. FILENAME LOGIC (Updated to use p- instead of pos-)
     let mut name_parts = format!("{}-pip-{}-p-[{}]", info.stem, fg_info.stem, timestamp);
@@ -132,18 +137,40 @@ fn main() {
         scale_val, border, border, offset, offset, color, fade, fade, start_secs, x_coord, y_coord
     );
 
-    let status = Command::new("ffmpeg")
-        .args([
-            "-hide_banner", "-loglevel", "error", "-stats",
-            "-i", &args.input,
-            "-i", &args.overlay,
-            "-filter_complex", &filter,
-            "-map", "0:a?",
-            "-c:v", "libx264", "-crf", "18", "-pix_fmt", "yuv420p",
-            "-y", &final_output,
-        ])
-        .status()
-        .expect("Failed to execute FFmpeg");
+    // 5. Build FFmpeg Command
+    let mut cmd = Command::new("ffmpeg");
+    cmd.args([
+        "-hide_banner", "-loglevel", "error", "-stats",
+        "-i", &args.input,
+        "-i", &args.overlay,
+        "-filter_complex", &filter,
+    ]);
+
+    // Video Encoder Settings (NVENC with x264 fallback)
+    if has_nvenc() {
+        println!("+ Using High-Fidelity Hardware Encoding (NVENC)");
+        cmd.args([
+            "-c:v", "hevc_nvenc",
+            "-tune", "hq",
+            "-preset", "p7",
+            "-rc", "vbr",
+            "-multipass", "fullres",
+            "-cq", "20",
+            "-b:v", "0",
+        ]);
+    } else {
+        println!("+ NVENC not found. Falling back to libx264 (CRF 18)");
+        cmd.args(["-c:v", "libx264", "-crf", "18"]);
+    }
+
+    cmd.args([
+        "-pix_fmt", "yuv420p",
+        "-movflags", "+faststart",
+        "-y",
+        &final_output,
+    ]);
+
+    let status = cmd.status().expect("Failed to execute FFmpeg");
 
     if !status.success() {
         std::process::exit(1);
