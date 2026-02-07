@@ -111,6 +111,8 @@ fn main() {
                 "-multipass", "fullres",
                 "-cq", "20",
                 "-b:v", "0",
+                "-rc-lookahead", "32",
+                "-spatial-aq", "1"
             ]);
         } else {
             cmd.args(["-c:v", "libx264", "-crf", "18"]);
