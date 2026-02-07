@@ -64,28 +64,20 @@ fn main() {
     
     // 2. Generate the cross-platform output path
     let out_path = args.outfile.unwrap_or_else(|| {
-        // 1. Handle the Timestamps
-        let (start_fs, end_fs) = if cfg!(windows) {
-            // On Windows, use the library helper to swap : for _
-            (format_time_for_filename(&args.start), format_time_for_filename(&args.end))
-        } else {
-            // On Linux/NixOS, keep the colons exactly as they are
-            (args.start.clone(), args.end.clone())
-        };
+        // 3. Handle the Timestamps using the library's built-in OS check
+        // This automatically keeps colons on NixOS and uses underscores on Windows
+        let start_fs = format_time_for_filename(&args.start);
+        let end_fs = format_time_for_filename(&args.end);
 
-        // 2. Handle the Video Title
-        // Slashes '/' must ALWAYS be removed because they represent directories
-        let mut safe_title = raw_title.replace('/', "_");
-        
-        // If on Windows, remove the rest of the illegal characters
-        if cfg!(windows) {
-            safe_title = safe_title.replace([':', '<', '>', '"', '\\', '|', '?', '*'], "_");
-        }
+        // 4. Handle the Video Title
+        // We still need to replace '/' because it's a directory separator on Linux
+        // and ':' because it's a drive separator on Windows.
+        let safe_title = raw_title.replace(['/', ':'], "_");
 
         format!("{}-[{}–{}].mp4", safe_title, start_fs, end_fs)
     });
 
-    // 3. Get stream URLs
+    // 5. Get stream URLs
     let url_output = Command::new("yt-dlp")
         .args(["-g", "--default-search", "ytsearch", &args.input])
         .output()
@@ -103,7 +95,7 @@ fn main() {
         std::process::exit(1);
     }
 
-    // 4. Construct FFmpeg command (Output Seeking)
+    // 6. Construct FFmpeg command (Output Seeking)
     let mut ffmpeg = Command::new("ffmpeg");
     ffmpeg.args(["-hide_banner", "-stats", "-v", "error"]);
 
@@ -119,7 +111,7 @@ fn main() {
         ffmpeg.args(["-map", "0:v:0", "-map", "1:a:0"]);
     }
 
-    // 5. Video Encoder Settings
+    // 7. Video Encoder Settings
     if has_nvenc() {
         println!("+ Using High-Fidelity Hardware Encoding (NVENC)");
         ffmpeg.args([
@@ -132,7 +124,7 @@ fn main() {
         ffmpeg.args(["-c:v", "libx264", "-crf", "18", "-preset", "medium"]);
     }
 
-    // 6. Audio and Final Output
+    // 8. Audio and Final Output
     ffmpeg.args(["-c:a", "aac", "-pix_fmt", "yuv420p", "-movflags", "+faststart", &out_path]);
 
     let status = ffmpeg.status().expect("Failed to execute FFmpeg");
