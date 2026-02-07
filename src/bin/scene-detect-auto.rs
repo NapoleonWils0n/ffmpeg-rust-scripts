@@ -37,6 +37,13 @@ struct Args {
     version: Option<bool>,
 }
 
+/// check if the nvenc code is available
+fn has_nvenc() -> bool {
+    let output = Command::new("ffmpeg").args(["-encoders"]).output().expect("ffmpeg check failed");
+    String::from_utf8_lossy(&output.stdout).contains("hevc_nvenc")
+}
+
+
 fn main() {
     let args = Args::parse();
     if !Path::new(&args.input).exists() {
@@ -48,7 +55,15 @@ fn main() {
     let detect_file = "detection.txt";
     let cutlist_file = "cutlist.txt";
 
-    // STEP 1: SCENE DETECTION
+    // 1. Determine Encoder once at the start (Print ONLY once)
+    let use_nvenc = has_nvenc();
+    if use_nvenc {
+        println!("+ Using High-Fidelity Hardware Encoding (NVENC)");
+    } else {
+        println!("+ NVENC not found. Falling back to libx264 (CRF 18)");
+    }
+
+    // STEP 2: SCENE DETECTION
     let output = Command::new("ffmpeg")
         .args([
             "-hide_banner", "-i", &args.input,
@@ -74,7 +89,7 @@ fn main() {
     }
     write(detect_file, timestamps.join("\n")).expect("Unable to write detection.txt");
 
-    // STEP 2: CREATE CUTLIST
+    // STEP 3: CREATE CUTLIST
     let mut cutlist_content = String::new();
     for i in 0..timestamps.len() {
         let start_sec: f64 = timestamps[i].parse().unwrap_or(0.0);
@@ -95,7 +110,7 @@ fn main() {
     }
     write(cutlist_file, cutlist_content).expect("Unable to write cutlist.txt");
 
-    // STEP 3: CUT SCENES
+    // STEP 4: CUT SCENES
     let file = File::open(cutlist_file).expect("Failed to open cutlist");
     let reader = BufReader::new(file);
 
@@ -103,7 +118,7 @@ fn main() {
         let line = line.expect("Failed to read line");
         let parts: Vec<&str> = line.split(',').collect();
 
-        if parts.len() == 2 {
+        if parts.len() != 2 { continue; }
             let start_raw = parts[0].trim();
             let dur_raw = parts[1].trim();
 
@@ -111,32 +126,56 @@ fn main() {
             let duration_sec = parse_to_seconds(dur_raw);
             let end_sec = start_sec + duration_sec;
 
-            // 1. Get HH:MM:SS strings (strip milliseconds) for filename
-            let start_clean = format_seconds_ms(start_sec).split('.').next().unwrap_or("00:00:00").to_string();
-            let end_clean = format_seconds_ms(end_sec).split('.').next().unwrap_or("00:00:00").to_string();
+            // LIB-09: HH:MM:SS.mmm (Preserve milliseconds)
+            let start_filename_raw = format_seconds_ms(start_sec);
+            let end_filename_raw = format_seconds_ms(end_sec);
 
-            // 2. Apply LIB-10 OS check
-            let start_fs = format_time_for_filename(&start_clean);
-            let end_fs = format_time_for_filename(&end_clean);
+            // 5. Apply LIB-10 OS check
+            let start_fs = format_time_for_filename(&start_filename_raw);
+            let end_fs = format_time_for_filename(&end_filename_raw);
 
             let output_name = format!(
                 "{}-scene-{:03}-[{}–{}].mp4",
                 info.stem, index + 1, start_fs, end_fs
             );
 
-            // Using Input Seeking (-ss and -t BEFORE -i) for speed
-            Command::new("ffmpeg")
-                .args([
-                    "-hide_banner", "-v", "error", "-stats",
-                    "-ss", start_raw,
-                    "-t", dur_raw,
-                    "-i", &args.input,
-                    "-c:a", "aac", "-c:v", "libx264", "-profile:v", "high",
-                    "-pix_fmt", "yuv420p", "-movflags", "+faststart", "-y",
-                    &output_name,
-                ])
-                .status()
-                .expect("Failed to execute FFmpeg");
+            println!("Cutting Scene {}: {} -> {}", index + 1, start_filename_raw, end_filename_raw);
+
+        let mut cmd = Command::new("ffmpeg");
+        cmd.args([
+            "-hide_banner", "-v", "error", "-stats",
+            "-ss", start_raw,
+            "-t", dur_raw,
+            "-i", &args.input,
+        ]);
+
+        // 3. Encoder Logic (No printing inside the loop)
+        if use_nvenc {
+            cmd.args([
+                "-c:v", "hevc_nvenc",
+                "-tune", "hq",
+                "-preset", "p7",
+                "-rc", "vbr",
+                "-multipass", "fullres",
+                "-cq", "20",
+                "-b:v", "0",
+            ]);
+        } else {
+            cmd.args(["-c:v", "libx264", "-crf", "18"]);
+        }
+
+        cmd.args([
+            "-pix_fmt", "yuv420p",
+            "-c:a", "aac",
+            "-movflags", "+faststart",
+            "-y",
+            &output_name
+        ]);
+
+        let status = cmd.status().expect("Failed to execute FFmpeg");
+
+        if !status.success() {
+            eprintln!("Error: FFmpeg failed on scene {}.", index + 1);
         }
     }
 }
