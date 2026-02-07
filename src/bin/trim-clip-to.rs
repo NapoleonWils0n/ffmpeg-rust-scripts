@@ -45,6 +45,12 @@ struct Args {
     version: Option<bool>,
 }
 
+/// check if the nvenc code is available
+fn has_nvenc() -> bool {
+    let output = Command::new("ffmpeg").args(["-encoders"]).output().expect("ffmpeg check failed");
+    String::from_utf8_lossy(&output.stdout).contains("hevc_nvenc")
+}
+
 fn main() {
     let args = Args::parse();
 
@@ -92,25 +98,55 @@ fn main() {
 }
 
 /// Video Runner (Output Seeking: -i before -ss/-to)
-fn run_ffmpeg_video(args: &Args, out_path: &str, aac: &str, ext: &str) {
+fn run_ffmpeg_video(args: &Args, out_path: &str, aac_encoder: &str, ext: &str) {
     let mut cmd = Command::new("ffmpeg");
+
+    // 1. Input Declaration
     cmd.args([
         "-hide_banner", "-stats", "-v", "error",
-        "-i", &args.infile, 
-        "-ss", &args.start, 
-        "-to", &args.end,
-        "-c:a", aac, "-c:v", "libx264", "-profile:v", "high",
-        "-pix_fmt", "yuv420p", "-movflags", "+faststart",
+        "-i", &args.infile,
     ]);
-    
-    // Explicitly set format except for MKV
-    if ext.to_lowercase() != "mkv" {
+
+    // 2. Position and Duration (Output Seeking)
+    cmd.args([
+        "-ss", &args.start,
+        "-to", &args.end,
+    ]);
+
+    // 3. High-Quality Video Encoder Settings (matching blur-fill)
+    if has_nvenc() {
+        println!("+ Using High-Fidelity Hardware Encoding (NVENC)");
+        cmd.args([
+            "-c:v", "hevc_nvenc",
+            "-tune", "hq",
+            "-preset", "p7",
+            "-rc", "vbr",
+            "-multipass", "fullres",
+            "-cq", "20",
+            "-b:v", "0",
+            "-rc-lookahead", "32",
+            "-spatial-aq", "1"
+        ]);
+    } else {
+        println!("+ NVENC not found. Falling back to libx264 (CRF 18)");
+        cmd.args(["-c:v", "libx264", "-crf", "18", "-preset", "medium"]);
+    }
+
+    // 2. Audio settings (using the codec passed from main)
+    cmd.args(["-c:a", aac_encoder]);
+
+    // 3. Final Output Arguments
+    cmd.args(["-pix_fmt", "yuv420p", "-movflags", "+faststart"]);
+
+    // Explicitly set format for MP4/MOV, let FFmpeg auto-detect for MKV
+    if ext != "mkv" {
         cmd.args(["-f", ext]);
     }
-    
+
     cmd.arg(out_path);
     cmd.status().expect("Failed to execute FFmpeg");
 }
+
 
 /// WebM Runner (Output Seeking)
 fn run_ffmpeg_webm(args: &Args, out_path: &str) {
