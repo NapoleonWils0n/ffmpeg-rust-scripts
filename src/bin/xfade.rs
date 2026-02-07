@@ -59,6 +59,12 @@ struct Args {
     version: Option<bool>,
 }
 
+/// check if the nvenc code is available
+fn has_nvenc() -> bool {
+    let output = Command::new("ffmpeg").args(["-encoders"]).output().expect("ffmpeg check failed");
+    String::from_utf8_lossy(&output.stdout).contains("hevc_nvenc")
+}
+
 fn main() {
     let args = Args::parse();
 
@@ -89,45 +95,87 @@ fn main() {
     // 1. Get media info for the file stem
     let info = get_media_info(&args.input1);
 
-    // 2. Format the duration of the effect (strip milliseconds for filename)
+    // 2. LIB-09: Get full HH:MM:SS.mmm (Preserving milliseconds)
     let full_ts = format_seconds_ms(fade_dur);
-    let timestamp_raw = full_ts.split('.').next().unwrap_or("00:00:00");
 
     // 3. LIB-10: Convert colons to dashes for Windows compatibility
-    let timestamp_fs = format_time_for_filename(timestamp_raw);
+    let timestamp_fs = format_time_for_filename(&full_ts);
     
     let final_output = args.outfile.unwrap_or_else(|| {
         format!("{}-xfade-{}-[{}].mp4", info.stem, args.transition, timestamp_fs)
     });
 
-    // Correct Filter Complex Logic:
-    // Both xfade (video) and acrossfade (audio) need to explicitly map their inputs
+    // 4. Both xfade (video) and acrossfade (audio) need to explicitly map their inputs
     let filter_complex = format!(
         "[0:v][1:v]xfade=transition={}:duration={}:offset={}[v]; \
          [0:a][1:a]acrossfade=d={}[a]", 
         args.transition, fade_dur, offset_secs, fade_dur
     );
 
-    let status = Command::new("ffmpeg")
-        .args([
-            "-hide_banner",
-            "-loglevel", "error",
-            "-stats",
-            "-i", &args.input1,
-            "-i", &args.input2,
-            "-filter_complex", &filter_complex,
-            "-map", "[v]",
-            "-map", "[a]",
-            "-c:v", "libx264",
-            "-crf", "18",
-            "-pix_fmt", "yuv420p",
-            "-y",
-            &final_output,
-        ])
-        .status()
-        .expect("Failed to execute FFmpeg");
+//    let status = Command::new("ffmpeg")
+//        .args([
+//            "-hide_banner",
+//            "-loglevel", "error",
+//            "-stats",
+//            "-i", &args.input1,
+//            "-i", &args.input2,
+//            "-filter_complex", &filter_complex,
+//            "-map", "[v]",
+//            "-map", "[a]",
+//            "-c:v", "libx264",
+//            "-crf", "18",
+//            "-pix_fmt", "yuv420p",
+//            "-y",
+//            &final_output,
+//        ])
+//        .status()
+//        .expect("Failed to execute FFmpeg");
+//
+//    if !status.success() {
+//        std::process::exit(1);
+//    }
+
+    // 5. Build FFmpeg Command
+    let mut cmd = Command::new("ffmpeg");
+    cmd.args([
+        "-hide_banner",
+        "-loglevel", "error",
+        "-stats",
+        "-i", &args.input1,
+        "-i", &args.input2,
+        "-filter_complex", &filter_complex,
+        "-map", "[v]",
+        "-map", "[a]",
+    ]);
+
+    // Video Encoder Settings (NVENC with x264 fallback)
+    if has_nvenc() {
+        println!("+ Using High-Fidelity Hardware Encoding (NVENC)");
+        cmd.args([
+            "-c:v", "hevc_nvenc",
+            "-tune", "hq",
+            "-preset", "p7",
+            "-rc", "vbr",
+            "-multipass", "fullres",
+            "-cq", "20",
+            "-b:v", "0",
+        ]);
+    } else {
+        println!("+ NVENC not found. Falling back to libx264 (CRF 18)");
+        cmd.args(["-c:v", "libx264", "-crf", "18"]);
+    }
+
+    cmd.args([
+        "-pix_fmt", "yuv420p",
+        "-movflags", "+faststart",
+        "-y",
+        &final_output,
+    ]);
+
+    let status = cmd.status().expect("Failed to execute FFmpeg");
 
     if !status.success() {
+        eprintln!("Error: FFmpeg failed to create xfade transition.");
         std::process::exit(1);
     }
 }
