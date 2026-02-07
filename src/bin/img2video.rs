@@ -43,6 +43,14 @@ struct Args {
     version: Option<bool>,
 }
 
+
+/// check if the nvenc code is available
+fn has_nvenc() -> bool {
+    let output = Command::new("ffmpeg").args(["-encoders"]).output().expect("ffmpeg check failed");
+    String::from_utf8_lossy(&output.stdout).contains("hevc_nvenc")
+}
+
+
 fn main() {
     let args = Args::parse();
 
@@ -63,29 +71,53 @@ fn main() {
     
     // Format duration to HH:MM:SS for the filename [LIB-09]
     let full_ts = format_seconds_ms(duration_secs);
-    let timestamp_raw = full_ts.split('.').next().unwrap_or("00:00:00");
 
     // Apply LIB-10 OS check
-    let timestamp = format_time_for_filename(timestamp_raw);
+    let timestamp = format_time_for_filename(&full_ts);
     
     let final_output = args.outfile.unwrap_or_else(|| {
         format!("{}-[{}].mp4", info.stem, timestamp)
     });
 
     // 3. Run FFmpeg to convert image to video
-    let status = Command::new("ffmpeg")
-        .args([
-            "-loglevel", "error",
-            "-loop", "1",
-            "-i", &args.infile,
-            "-c:v", "libx264",
-            "-t", &duration_secs.to_string(),
-            "-r", "30",
-            "-pix_fmt", "yuv420p",
-            "-movflags", "+faststart",
-            "-y",
-            &final_output,
-        ])
+    let mut cmd = Command::new("ffmpeg");
+    
+    // Common Input Arguments
+    cmd.args([
+        "-loglevel", "error",
+        "-loop", "1",
+        "-i", &args.infile,
+    ]);
+
+    // Video Encoder Settings (NVENC with x264 fallback)
+    if has_nvenc() {
+        println!("+ Using High-Fidelity Hardware Encoding (NVENC)");
+        cmd.args([
+            "-c:v", "hevc_nvenc",
+            "-tune", "hq",
+            "-preset", "p7",
+            "-rc", "vbr",
+            "-multipass", "fullres",
+            "-cq", "20",
+            "-b:v", "0",
+        ]);
+    } else {
+        println!("+ NVENC not found. Falling back to libx264 (CRF 18)");
+        cmd.args(["-c:v", "libx264", "-crf", "18"]);
+    }
+
+    // Common Output Arguments
+    cmd.args([
+        "-t", &duration_secs.to_string(),
+        "-r", "30",
+        "-pix_fmt", "yuv420p",
+        "-movflags", "+faststart",
+        "-y",
+        &final_output,
+    ]);
+
+    // Execute with suppressed output and status check
+    let status = cmd
         .stdout(Stdio::null())
         .stderr(Stdio::null())
         .status()
