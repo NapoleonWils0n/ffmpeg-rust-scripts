@@ -1,14 +1,14 @@
 //==============================================================================
 // trim-clip-to
 // Description: Trim video/audio using start and end timestamps (Output Seeking)
-// References: [LIB-01] through [LIB-06], [LIB-10]
+// References: [LIB-01] through [LIB-06], [LIB-10], [LIB-11]
 //==============================================================================
 
 use clap::Parser;
 use std::process::Command;
 use std::path::Path; 
 // Removed unused imports to fix compiler warnings
-use ffmpeg_rust_scripts::{get_media_info, has_encoder, format_time_for_filename};
+use ffmpeg_rust_scripts::{get_media_info, has_encoder, format_time_for_filename, is_nvenc_available};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -43,12 +43,6 @@ struct Args {
     /// Print version
     #[arg(short = 'v', long = "version", action = clap::ArgAction::Version)]
     version: Option<bool>,
-}
-
-/// check if the nvenc code is available
-fn has_nvenc() -> bool {
-    let output = Command::new("ffmpeg").args(["-encoders"]).output().expect("ffmpeg check failed");
-    String::from_utf8_lossy(&output.stdout).contains("hevc_nvenc")
 }
 
 fn main() {
@@ -96,54 +90,68 @@ fn main() {
 
 /// Video Runner (Output Seeking: -i before -ss/-to)
 fn run_ffmpeg_video(args: &Args, out_path: &str, aac_encoder: &str, ext: &str) {
+    // 1. Determine encoder and parameters upfront
+    let (v_codec, v_params) = if is_nvenc_available() {
+        println!("+ Hardware acceleration detected. Using NVENC...");
+        (
+            "hevc_nvenc",
+            vec![
+                "-tune", "hq",
+                "-preset", "p7",
+                "-rc", "vbr",
+                "-multipass", "fullres",
+                "-rc-lookahead", "32",
+                "-spatial-aq", "1",
+                "-cq", "20",
+                "-b:v", "0",
+            ],
+        )
+    } else {
+        println!("+ NVENC not found. Using libx264 software encoding...");
+        (
+            "libx264",
+            vec!["-crf", "18", "-preset", "medium"],
+        )
+    };
+
+    // 2. Create the unified command
     let mut cmd = Command::new("ffmpeg");
 
-    // 1. Input Declaration
+    // Input and Seeking (Exact order preserved)
     cmd.args([
-        "-hide_banner", "-stats", "-v", "error",
+        "-hide_banner",
+        "-stats",
+        "-v", "error", 
         "-i", &args.infile,
-    ]);
-
-    // 2. Position and Duration (Output Seeking)
-    cmd.args([
         "-ss", &args.start,
         "-to", &args.end,
     ]);
 
-    // 3. High-Quality Video Encoder Settings (matching blur-fill)
-    if has_nvenc() {
-        println!("+ Using High-Fidelity Hardware Encoding (NVENC)");
-        cmd.args([
-            "-c:v", "hevc_nvenc",
-            "-tune", "hq",
-            "-preset", "p7",
-            "-rc", "vbr",
-            "-multipass", "fullres",
-            "-rc-lookahead", "32",
-            "-spatial-aq", "1",
-            "-cq", "20",
-            "-b:v", "0",
-        ]);
-    } else {
-        println!("+ NVENC not found. Falling back to libx264 (CRF 18)");
-        cmd.args(["-c:v", "libx264", "-crf", "18", "-preset", "medium"]);
-    }
+    // Apply selected Video Encoder and Params
+    cmd.arg("-c:v").arg(v_codec);
+    cmd.args(v_params);
 
-    // 2. Audio settings (using the codec passed from main)
-    cmd.args(["-c:a", aac_encoder]);
+    // Audio and Output settings
+    cmd.args([
+        "-c:a", aac_encoder,
+        "-pix_fmt", "yuv420p",
+        "-movflags", "+faststart",
+        "-y", // Force overwrite
+    ]);
 
-    // 3. Final Output Arguments
-    cmd.args(["-pix_fmt", "yuv420p", "-movflags", "+faststart"]);
-
-    // Explicitly set format for MP4/MOV, let FFmpeg auto-detect for MKV
     if ext != "mkv" {
         cmd.args(["-f", ext]);
     }
 
     cmd.arg(out_path);
-    cmd.status().expect("Failed to execute FFmpeg");
-}
 
+    // 3. Execution
+    let status = cmd.status().expect("Failed to execute FFmpeg");
+    
+    if !status.success() {
+        eprintln!("! FFmpeg exited with an error.");
+    }
+}
 
 /// WebM Runner (Output Seeking)
 fn run_ffmpeg_webm(args: &Args, out_path: &str) {

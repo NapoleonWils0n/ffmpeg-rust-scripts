@@ -263,3 +263,30 @@ pub fn format_time_for_filename(time: &str) -> String {
         time.to_string()
     }
 }
+
+/// [LIB-11] nvidia check
+pub fn is_nvenc_available() -> bool {
+    #[cfg(target_os = "linux")]
+    {
+        // Instant check: If this file exists, NVIDIA drivers are active.
+        // This avoids the 10-12 second "command-not-found" hang on NixOS.
+        std::path::Path::new("/dev/nvidiactl").exists()
+    }
+
+    #[cfg(target_os = "windows")]
+    {
+        use std::process::{Command, Stdio};
+        Command::new("where")
+            .arg("nvcuda.dll")
+            .stdout(Stdio::null())
+            .stderr(Stdio::null())
+            .status()
+            .map(|s| s.success())
+            .unwrap_or(false)
+    }
+
+    #[cfg(not(any(target_os = "linux", target_os = "windows")))]
+    {
+        false
+    }
+}
