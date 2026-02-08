@@ -97,8 +97,12 @@ including dependency management and environment path configuration.
 *** Conversion and Extras
 
 + [[#audio-silence][audio-silence]]
++ [[#blur-fill][blur-fill]]
++ [[#delogo][delogo]]
 + [[#extract-frame][extract-frame]]
++ [[#hstack][hstack]]
 + [[#img2video][img2video]]
++ [[#normalize][normalize]]
 + [[#sexagesimal-time][sexagesimal-time]]
 + [[#vid2gif][vid2gif]]
 + [[#webp][webp]]
