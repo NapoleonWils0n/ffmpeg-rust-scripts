@@ -155,39 +155,83 @@ fn run_ffmpeg_video(args: &Args, out_path: &str, aac_encoder: &str, ext: &str) {
 
 /// WebM Runner (Output Seeking)
 fn run_ffmpeg_webm(args: &Args, out_path: &str) {
-    Command::new("ffmpeg")
-        .args([
-            "-hide_banner", "-stats", "-v", "error",
-            "-i", &args.infile, 
-            "-ss", &args.start, 
-            "-to", &args.end,
-            "-c:a", "libopus", "-c:v", "vp9", "-f", "webm", out_path
-        ])
-        .status().expect("Failed to execute FFmpeg");
+    let mut cmd = Command::new("ffmpeg");
+
+    // Common Input/Seeking
+    cmd.args(vec![
+        "-hide_banner",
+        "-stats",
+        "-v", "error",
+        "-i", &args.infile,
+        "-ss", &args.start,
+        "-to", &args.end,
+    ]);
+
+    // WebM Specific Encoding
+    cmd.args(vec![
+        "-c:v", "libvpx-vp9",
+        "-c:a", "libopus",
+        "-f", "webm",
+        "-y",
+    ]);
+
+    cmd.arg(out_path);
+
+    let status = cmd.status().expect("Failed to execute FFmpeg");
+    if !status.success() {
+        eprintln!("! FFmpeg WebM export exited with an error.");
+    }
 }
 
 /// Audio Runner (Output Seeking)
 fn run_ffmpeg_audio(args: &Args, out_path: &str, codec: &str, format: &str) {
-    Command::new("ffmpeg")
-        .args([
-            "-hide_banner", "-stats", "-v", "error",
-            "-i", &args.infile, 
-            "-ss", &args.start, 
-            "-to", &args.end,
-            "-c:a", codec, "-f", format, out_path
-        ])
-        .status().expect("Failed to execute FFmpeg");
+    let mut cmd = Command::new("ffmpeg");
+
+    cmd.args(vec![
+        "-hide_banner",
+        "-stats",
+        "-v", "error",
+        "-i", &args.infile,
+        "-ss", &args.start,
+        "-to", &args.end,
+    ]);
+
+    cmd.args(vec![
+        "-c:a", codec,
+        "-f", format,
+        "-y",
+    ]);
+
+    cmd.arg(out_path);
+
+    let status = cmd.status().expect("Failed to execute FFmpeg");
+    if !status.success() {
+        eprintln!("! FFmpeg Audio export exited with an error.");
+    }
 }
 
 /// Fallback Stream Copy (Output Seeking)
 fn run_ffmpeg_fallback(args: &Args, out_path: &str) {
-    Command::new("ffmpeg")
-        .args([
-            "-hide_banner", "-stats", "-v", "error",
-            "-i", &args.infile, 
-            "-ss", &args.start, 
-            "-to", &args.end,
-            "-c", "copy", out_path
-        ])
-        .status().expect("Failed to execute FFmpeg");
+    let mut cmd = Command::new("ffmpeg");
+
+    cmd.args(vec![
+        "-hide_banner",
+        "-stats",
+        "-v", "error",
+        "-i", &args.infile,
+        "-ss", &args.start,
+        "-to", &args.end,
+    ]);
+
+    cmd.args(vec![
+        "-c", "copy",
+        "-y",
+    ]);
+
+    cmd.arg(out_path);
+
+    let status = cmd.status().expect("Failed to execute FFmpeg");
+    if !status.success() {
+        eprintln!("! FFmpeg Fallback export exited with an error.");
+    }
 }
