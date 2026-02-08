@@ -3172,6 +3172,24 @@ Example:
 :CUSTOM_ID: normalize
 :END:
 
+The normalize script provides professional-grade, EBU R128 compliant audio normalization using a 2-pass loudnorm process.
+
+It ensures your audio meets specific loudness and peak targets while preserving the original video stream.
+
+The script employs a high-fidelity processing chain:
+
+2-Pass Analysis:
+
+Pass 1: Performs a full scan of the file to measure its current integrated loudness, true peak, and dynamic range.
+
+Pass 2: Uses the precise measurements from the first pass to apply linear normalization, hitting your target levels without clipping or unwanted compression artifacts.
+
+Target Customization: Allows you to define specific Integrated Loudness (LUFS) and True Peak (TP) targets to match the requirements of different platforms (e.g., -16 LUFS for podcasts or -14 LUFS for streaming).
+
+Video Preservation: Uses a bit-perfect stream copy (-c:v copy) for the video, ensuring the original visual quality is untouched while only the audio is processed.
+
+Professional Audio Standard: Automatically resets the sample rate to 48kHz during the application pass to maintain high-quality broadcast standards.
+
 ***** 1) Run the script
 
 #+begin_src sh
