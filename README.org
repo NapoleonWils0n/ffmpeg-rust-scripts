@@ -2872,6 +2872,8 @@ Run the delogo script without the -p option to record
 delogo -i input.mp4 -x 590 -y 670 -w 120 -h 49
 #+end_src
 
+If the -o option is omitted, the script generates a default name: input-delogo.mp4
+
 ***** 2) delogo batch process
 
 To process all MP4 files in a directory, use fd.
@@ -3027,13 +3029,60 @@ Notes:
 :CUSTOM_ID: hstack
 :END:
 
+The hstack script allows you to stack two videos side-by-side into a single frame, which is ideal for creating comparison videos or split-screen presentations.
+
+The script handles the technical complexities of merging two different sources:
+
+Auto-Scaling: It automatically calculates and matches the height of both videos (capping the target height at 1080p) to ensure a perfectly aligned horizontal stack regardless of the original dimensions.
+
+Flexible Audio Mapping: You can choose whether to use the audio track from the left (-a l) or right (-a r) input.
+
+Duration Sync: To prevent "hanging" frames at the end of the video, the script automatically syncs the output to the shortest input and transcodes the audio to AAC to ensure perfect alignment.
+
 ***** 1) Run the script
+
+#+begin_src sh
+hstack -l left.mp4 -r right.mp4
+#+end_src
+
+If the -o option is omitted, the script generates a default name: input-hstack.mp4
+
+***** Script usage and help.
 
 #+begin_src sh
 hstack -l left.mp4 -r right.mp4 -a r -o comparison.mp4
 #+end_src
 
-***** Script usage and help.
+Run the script with the -h option to show the help.
+
+#+begin_src sh
+hstack -h
+#+end_src
+
+Help output.
+
+#+begin_example
+Stack two videos side-by-side (hstack)
+
+Usage: hstack [OPTIONS] -l <LEFT> -r <RIGHT>
+
+Options:
+  -l <LEFT>      left video input
+  -r <RIGHT>     right video input
+  -a <AUDIO>     audio source: l (left) or r (right) [default: l]
+  -o <OUTFILE>   optional output file
+  -h, --help     Print help
+  -v, --version  Print version
+
+Example:
+  hstack -l left.mp4 -r right.mp4 -a r -o comparison.mp4
+
+Notes:
+ - Auto-scales to match heights (max 1080p).
+ - Uses High-Quality NVENC VBR or libx264 CRF 16.
+ - Audio: Transcoded to AAC to ensure duration sync with shortest video.
+#+end_example
+
 **** img2video
 :PROPERTIES:
 :CUSTOM_ID: img2video
