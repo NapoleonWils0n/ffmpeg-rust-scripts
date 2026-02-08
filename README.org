@@ -3167,6 +3167,66 @@ Example:
   ffmpeg: https://www.ffmpeg.org/
 #+end_example
 
+**** normalize
+:PROPERTIES:
+:CUSTOM_ID: normalize
+:END:
+
+***** 1) Run the script
+
+#+begin_src sh
+normalize -i input.mp4
+#+end_src
+
+If the -o option is omitted, the script generates a default name: input-normalize.mp4
+
+***** 2) normalize batch process
+
+To normalize the audio from every MP4 file in a directory, use fd.
+
+#+begin_src sh
+fd -e mp4 -x normalize -i {}
+#+end_src
+
+To normalize the audio from every WAV file in a directory, use fd.
+
+#+begin_src sh
+fd -e wav -x normalize -i {}
+#+end_src
+
+***** Script usage and help.
+
+#+begin_src sh
+normalize -i input.mp4 -t -6.0 -l 16
+#+end_src
+
+Run the script with the -h option to show the help.
+
+#+begin_src sh
+normalize -h
+#+end_src
+
+Help output.
+
+#+begin_example
+2-Pass audio normalization (loudnorm)
+
+Usage: normalize [OPTIONS] -i <INFILE>
+
+Options:
+  -i <INFILE>    input file
+  -t <TP>        Target True Peak (TP) level [default: -3.0]
+  -l <LUFS>      Target Integrated Loudness (LUFS) level [default: -16]
+  -o <OUTFILE>   optional output file
+  -h, --help     Print help
+  -v, --version  Print version
+
+Example:
+  normalize -i input.mp4 -t -3.0 -l -16
+
+Dependencies: ffmpeg
+#+end_example
+
 **** sexagesimal-time
 :PROPERTIES:
 :CUSTOM_ID: sexagesimal-time
