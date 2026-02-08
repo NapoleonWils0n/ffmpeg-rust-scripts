@@ -2836,6 +2836,105 @@ Notes:
  - Smart Audio: Copies AAC, transcodes others to AAC.
 #+end_example
 
+**** delogo
+
+The delogo script is designed to remove unwanted watermarks or logos from video footage by interpolating the surrounding pixels to fill the specified area.
+
+Dual Mode Operation:
+
+Preview Mode: Integrates with ffplay to allow real-time adjustment.
+
+Green Box Helper: Using -p 1 draws a green box around the target area to help you pinpoint the exact coordinates.
+
+Clean Preview: Using -p 0 allows you to preview the video with the delogo filter applied, but without the green box, so you can see the final visual result before rendering.
+
+Record Mode: Omit the -p option entirely to execute the final render using FFmpeg.
+
+Record Mode: Executes the final render using FFmpeg.
+
+Smart Encoding: Automatically detects hardware capabilities to use HEVC NVENC for maximum speed, falling back to libx264 (CRF 18) if a GPU is not present.
+
+Audio Preservation: Uses a bit-perfect stream copy (-c:a copy) for the audio, ensuring that only the video is re-encoded to apply the filter while the original audio quality remains untouched.
+
+Note on Bounds: The delogo filter requires at least 1 pixel of space between the filter box and the edge of the video frame.
+
+The script includes a safety check that will prevent the process from starting and print an error if your coordinates are too close to the edge.
+
+***** 1) Run the script
+
+Run the delogo script with the -p 1 option for a preview using ffplay
+
+#+begin_src sh
+delogo -i input.mp4 -x 590 -y 670 -w 120 -h 49 -p 1
+#+end_src
+
+Run the delogo script without the -p option to record
+
+#+begin_src sh
+delogo -i input.mp4 -x 590 -y 670 -w 120 -h 49
+#+end_src
+
+***** 2) delogo batch process
+
+To process all MP4 files in a directory, use fd.
+
+#+begin_src sh
+fd -e mp4 -x delogo -i {} -x 590 -y 670 -w 120 -h 49
+#+end_src
+
+***** Script usage and help.
+
+Run the delogo script with the -p 1 option for a preview with a green box using ffplay
+
+#+begin_src sh
+delogo -i input.mp4 -x 590 -y 670 -w 120 -h 49 -p 1
+#+end_src
+
+Run the delogo script with the -p 0 option for a preview without the green box using ffplay
+
+#+begin_src sh
+delogo -i input.mp4 -x 590 -y 670 -w 120 -h 49 -p 0
+#+end_src
+
+Run the delogo script without the -p option to record
+
+#+begin_src sh
+delogo -i input.mp4 -x 590 -y 670 -w 120 -h 49
+#+end_src
+
+Run the script with the -H option or --help to show the help.
+
+#+begin_src sh
+delogo -H
+#+end_src
+
+Help output.
+
+#+begin_example
+remove a logo from video footage
+
+Usage: delogo [OPTIONS] -i <INFILE> -x <X> -y <Y> -w <W> -h <H>
+
+Options:
+  -i <INFILE>    input file
+  -x <X>         x coordinate
+  -y <Y>         y coordinate
+  -w <WIDTH>     filter width
+  -h <HEIGHT>    filter height
+  -p <PREVIEW>   preview mode: 1=box, 0=no box
+  -o <OUTFILE>   optional output file
+  -H, --help     Print help
+  -v, --version  Print version
+
+Example:
+  delogo -i input.mp4 -x 590 -y 670 -w 120 -h 49 -p 1
+
+Dependencies: ffmpeg, ffplay
+
+Notes:
+ The -p 1 option previews with a green box. -p 0 previews without the box. Omit -p to record.
+#+end_example
+
 **** extract-frame
 :PROPERTIES:
 :CUSTOM_ID: extract-frame
