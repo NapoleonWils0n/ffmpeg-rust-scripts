@@ -2778,10 +2778,6 @@ The script employs a high-fidelity processing chain:
 
 Video Filtering: Uses a complex filter to split the input into two streams—one scaled and blurred for the background, and the original scaled to fit the foreground.
 
-Smart Encoding: Automatically detects hardware capabilities to use HEVC NVENC for maximum speed, falling back to libx264 (CRF 18) if a GPU is not present.
-
-Smart Audio: Detects the source audio codec; it performs a bit-perfect stream copy if the audio is already AAC, or transcodes to AAC if it is not, ensuring maximum compatibility without unnecessary quality loss.
-
 ***** 1) Run the script
 
 #+begin_src sh
@@ -2857,10 +2853,6 @@ Clean Preview: Using -p 0 allows you to preview the video with the delogo filter
 Record Mode: Omit the -p option entirely to execute the final render using FFmpeg.
 
 Record Mode: Executes the final render using FFmpeg.
-
-Smart Encoding: Automatically detects hardware capabilities to use HEVC NVENC for maximum speed, falling back to libx264 (CRF 18) if a GPU is not present.
-
-Audio Preservation: Uses a bit-perfect stream copy (-c:a copy) for the audio, ensuring that only the video is re-encoded to apply the filter while the original audio quality remains untouched.
 
 Note on Bounds: The delogo filter requires at least 1 pixel of space between the filter box and the edge of the video frame.
 
@@ -3036,6 +3028,11 @@ Notes:
 :END:
 
 ***** 1) Run the script
+
+#+begin_src sh
+hstack -l left.mp4 -r right.mp4 -a r -o comparison.mp4
+#+end_src
+
 ***** Script usage and help.
 **** img2video
 :PROPERTIES:
