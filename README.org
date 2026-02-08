@@ -2765,6 +2765,77 @@ Example:
   ffmpeg: https://www.ffmpeg.org/
 #+end_example
 
+**** blur-fill
+
+The blur-fill script is designed to eliminate black pillarboxes in 4:3 footage or vertical 9:16 video by filling the background with a scaled and blurred version of the original content.
+
+Instead of having static black bars (pillarboxes) on the sides, the script creates a dynamic background by scaling and blurring the original footage to fill the entire frame.
+
+The script employs a high-fidelity processing chain:
+
+Video Filtering: Uses a complex filter to split the input into two streams—one scaled and blurred for the background, and the original scaled to fit the foreground.
+
+Smart Encoding: Automatically detects hardware capabilities to use HEVC NVENC for maximum speed, falling back to libx264 (CRF 18) if a GPU is not present.
+
+Smart Audio: Detects the source audio codec; it performs a bit-perfect stream copy if the audio is already AAC, or transcodes to AAC if it is not, ensuring maximum compatibility without unnecessary quality loss.
+
+***** 1) Run the script
+
+#+begin_src sh
+blur-fill -i input.mp4 -b 10 -o output.mp4
+#+end_src
+
+If the -o option is omitted, the script generates a default name: input-blurfill.mp4
+
+***** 2) blur-fill batch process
+
+To process all MP4 files in a directory, use fd.
+
+#+begin_src sh
+fd -e mp4 -x blur-fill -i {}
+#+end_src
+
+To override the defaults and use change the blur filter to 20
+
+#+begin_src sh
+fd -e mp4 -x blur-fill -i {} -b 20
+#+end_src
+
+***** Script usage and help.
+
+#+begin_src sh
+blur-fill -i input.mp4 -b 10 -o output.mp4
+#+end_src
+
+Run the script with the -h option to show the help.
+
+#+begin_src sh
+blur-fill -h
+#+end_src
+
+Help output.
+
+#+begin_example
+Fill pillarboxes with a blurred version of the input video
+
+Usage: blur-fill [OPTIONS] -i <INFILE>
+
+Options:
+  -i <INFILE>    input file
+  -b <BLUR>      blur strength [default: 10]
+  -o <OUTFILE>   optional output file
+  -h, --help     Print help
+  -v, --version  Print version
+
+Example:
+  blur-fill -i input.mp4 -b 10 -o output.mp4
+
+Notes:
+ - Targets 1920x1080 (16:9).
+ - Uses High-Quality NVENC VBR or libx264 CRF 18.
+ - Smart Audio: Copies AAC, transcodes others to AAC.
+#+end_example
+
 **** extract-frame
 :PROPERTIES:
 :CUSTOM_ID: extract-frame
