@@ -2766,6 +2766,9 @@ Example:
 #+end_example
 
 **** blur-fill
+:PROPERTIES:
+:CUSTOM_ID: blur-fill
+:END:
 
 The blur-fill script is designed to eliminate black pillarboxes in 4:3 footage or vertical 9:16 video by filling the background with a scaled and blurred version of the original content.
 
@@ -2837,6 +2840,9 @@ Notes:
 #+end_example
 
 **** delogo
+:PROPERTIES:
+:CUSTOM_ID: delogo
+:END:
 
 The delogo script is designed to remove unwanted watermarks or logos from video footage by interpolating the surrounding pixels to fill the specified area.
 
@@ -3024,6 +3030,13 @@ Notes:
   If -o is not provided, defaults to: input-frame-[timestamp].ext
 #+end_example
 
+**** hstack
+:PROPERTIES:
+:CUSTOM_ID: hstack
+:END:
+
+***** 1) Run the script
+***** Script usage and help.
 **** img2video
 :PROPERTIES:
 :CUSTOM_ID: img2video

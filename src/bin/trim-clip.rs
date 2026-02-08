@@ -135,7 +135,7 @@ fn run_ffmpeg_video(args: &Args, out_path: &str, aac_encoder: &str, ext: &str) {
             "-rc", "vbr",
             "-multipass", "fullres",
             "-rc-lookahead", "32",
-            "-spatial-aq", "1"
+            "-spatial-aq", "1",
             "-cq", "20",
             "-b:v", "0",
         ]);
