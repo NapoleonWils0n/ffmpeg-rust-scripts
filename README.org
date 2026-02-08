@@ -4325,16 +4325,16 @@ cargo clean
 cd ~/Desktop
 #+end_src
 
-Note: replace v1 with the release number in the examples below.
+Note: replace v2 with the release number in the examples below.
 
 #+begin_src sh
-mv build ffmpeg-rust-scripts-build-v1
+mv build ffmpeg-rust-scripts-build-v2
 #+end_src
 
-Change into the ffmpeg-rust-scripts-build-v1 directory
+Change into the ffmpeg-rust-scripts-build-v2 directory
 
 #+begin_src sh
-cd ffmpeg-rust-scripts-build-v1
+cd ffmpeg-rust-scripts-build-v2
 #+end_src
 
 **** rename the build directories for nixos, linux and windows
@@ -4342,19 +4342,19 @@ cd ffmpeg-rust-scripts-build-v1
 linux
 
 #+begin_src sh
-mv linux linux-ffmpeg-rust-scripts-v1
+mv linux linux-ffmpeg-rust-scripts-v2
 #+end_src
 
 nixos
 
 #+begin_src sh
-mv nixos nixos-ffmpeg-rust-scripts-v1
+mv nixos nixos-ffmpeg-rust-scripts-v2
 #+end_src
 
 windows
 
 #+begin_src sh
-mv windows windows-ffmpeg-rust-scripts-v1
+mv windows windows-ffmpeg-rust-scripts-v2
 #+end_src
 
 **** remove the ffmpeg_rust_scripts file
@@ -4367,50 +4367,50 @@ Remove the ffmpeg_rust_scripts file from the Linux, NixOS and Windows build dire
 Linux
 
 #+begin_src sh
-rm -i linux-ffmpeg-rust-scripts-v1/ffmpeg_rust_scripts
+rm -i linux-ffmpeg-rust-scripts-v2/ffmpeg_rust_scripts
 #+end_src
 
 NixOS
 
 #+begin_src sh
-rm -i nixos-ffmpeg-rust-scripts-v1/ffmpeg_rust_scripts
+rm -i nixos-ffmpeg-rust-scripts-v2/ffmpeg_rust_scripts
 #+end_src
 
 Windows
 
 #+begin_src sh
-rm -i windows-ffmpeg-rust-scripts-v1/ffmpeg_rust_scripts.exe
+rm -i windows-ffmpeg-rust-scripts-v2/ffmpeg_rust_scripts.exe
 #+end_src
 
 **** compress the releases
 ***** linux
 
 #+begin_src sh
-tar -czvf linux-ffmpeg-rust-scripts-v1.tar.gz linux-ffmpeg-rust-scripts-v1 
+tar -czvf linux-ffmpeg-rust-scripts-v2.tar.gz linux-ffmpeg-rust-scripts-v2
 #+end_src
 
 ***** nixos
 
 #+begin_src sh
-tar -czvf nixos-ffmpeg-rust-scripts-v1.tar.gz nixos-ffmpeg-rust-scripts-v1
+tar -czvf nixos-ffmpeg-rust-scripts-v2.tar.gz nixos-ffmpeg-rust-scripts-v2
 #+end_src
 
 ***** windows
 
 #+begin_src sh
-zip -r windows-ffmpeg-rust-scripts-v1.zip windows-ffmpeg-rust-scripts-v1
+zip -r windows-ffmpeg-rust-scripts-v2.zip windows-ffmpeg-rust-scripts-v2
 #+end_src
 
 **** create release-files directory
 
 #+begin_src sh
-mkdir -p release-files-v1
+mkdir -p release-files-v2
 #+end_src
 
 move the tar files and zip into the release-files directory
 
 #+begin_src sh
-mv *-ffmpeg-rust-scripts-v[0-9]*{.tar.gz,.zip} release-files-v1/
+mv *-ffmpeg-rust-scripts-v[0-9]*{.tar.gz,.zip} release-files-v2/
 #+end_src
 
 **** create checksums for the archives
@@ -4418,7 +4418,7 @@ mv *-ffmpeg-rust-scripts-v[0-9]*{.tar.gz,.zip} release-files-v1/
 change directory into the release-files-v1 directory
 
 #+begin_src sh
-cd release-files-v1
+cd release-files-v2
 #+end_src
 
 create the checksums
@@ -4426,19 +4426,19 @@ create the checksums
 ***** linux 
 
 #+begin_src sh
-sha256sum linux-ffmpeg-rust-scripts-v1.tar.gz > linux-ffmpeg-rust-scripts-v1.tar.gz.sha256
+sha256sum linux-ffmpeg-rust-scripts-v2.tar.gz > linux-ffmpeg-rust-scripts-v2.tar.gz.sha256
 #+end_src
 
 ***** nixos
 
 #+begin_src sh
-sha256sum nixos-ffmpeg-rust-scripts-v1.tar.gz > nixos-ffmpeg-rust-scripts-v1.tar.gz.sha256
+sha256sum nixos-ffmpeg-rust-scripts-v2.tar.gz > nixos-ffmpeg-rust-scripts-v2.tar.gz.sha256
 #+end_src
 
 ***** windows
 
 #+begin_src sh
-sha256sum windows-ffmpeg-rust-scripts-v1.zip > windows-ffmpeg-rust-scripts-v1.zip.sha256
+sha256sum windows-ffmpeg-rust-scripts-v2.zip > windows-ffmpeg-rust-scripts-v2.zip.sha256
 #+end_src
 
 *** Remove old scripts before rebuilding.
