@@ -1,7 +1,7 @@
 //==============================================================================
 // blur-fill
 // Description: Fill pillarboxes/letterboxes with a blurred version of the video
-// References: [LIB-01] [LIB-03] 
+// References: [LIB-01] [LIB-03], [LIB-11]
 //==============================================================================
 
 use clap::Parser;
@@ -9,11 +9,13 @@ use std::process::Command;
 use std::path::Path;
 use ffmpeg_rust_scripts::{get_media_info};
 
+// , is_nvenc_available
+
 #[derive(Parser, Debug)]
 #[command(
     author, version,
     about = "Fill pillarboxes with a blurred version of the input video",
-    after_help = "Example:\n  blur-fill -i input.mp4 -b 10 -o output.mp4\n\nNotes:\n - Targets 1920x1080 (16:9).\n - Uses High-Quality NVENC VBR or libx264 CRF 18.\n - Smart Audio: Copies AAC, transcodes others to AAC.",
+    after_help = "Example:\n  blur-fill -i input.mp4 -b 10 -o output.mp4",
     override_usage = "blur-fill [OPTIONS] -i <INFILE>"
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]

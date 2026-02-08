@@ -265,6 +265,8 @@ pub fn format_time_for_filename(time: &str) -> String {
 }
 
 /// [LIB-11] nvidia check
+// - blur-fill
+// - trim-clip-to
 pub fn is_nvenc_available() -> bool {
     #[cfg(target_os = "linux")]
     {
