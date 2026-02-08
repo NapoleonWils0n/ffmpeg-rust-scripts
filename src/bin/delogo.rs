@@ -55,6 +55,12 @@ struct Args {
     version: Option<bool>,
 }
 
+/// check if the nvenc code is available
+fn has_nvenc() -> bool {
+    let output = Command::new("ffmpeg").args(["-encoders"]).output().expect("ffmpeg check failed");
+    String::from_utf8_lossy(&output.stdout).contains("hevc_nvenc")
+}
+
 fn main() {
     let args = Args::parse();
 
@@ -101,6 +107,16 @@ fn main() {
     let filter = format!("delogo=x={}:y={}:w={}:h={}:show={}", 
         args.x, args.y, args.width, args.height, args.preview.unwrap_or(0));
 
+    // Determine Encoder once at the start of main
+    let use_nvenc = has_nvenc();
+    if args.preview.is_none() {
+        if use_nvenc {
+            println!("+ Using High-Fidelity Hardware Encoding (NVENC)");
+        } else {
+            println!("+ NVENC not found. Falling back to libx264 (CRF 18)");
+        }
+    }
+
     if args.preview.is_some() {
         // PREVIEW MODE (ffplay)
         Command::new("ffplay")
@@ -109,16 +125,39 @@ fn main() {
             .expect("Failed to execute ffplay");
     } else {
         // RECORD MODE (ffmpeg)
-        let status = Command::new("ffmpeg")
-            .args([
+        let mut cmd = Command::new("ffmpeg");
+            cmd.args([
                 "-hide_banner", "-stats", "-v", "error",
                 "-i", &args.infile,
                 "-vf", &filter,
-                "-c:a", "copy", // preserve audio
-                &out_path,
-            ])
-            .status()
-            .expect("Failed to execute ffmpeg");
+            ]);
+
+         // Standardized High-Fidelity Encoder Block
+        if use_nvenc {
+            cmd.args([
+                "-c:v", "hevc_nvenc",
+                "-preset", "p7",
+                "-tune", "hq",
+                "-rc", "vbr",
+                "-multipass", "fullres",
+                "-rc-lookahead", "32",
+                "-spatial-aq", "1",
+                "-cq", "20",
+                "-b:v", "0",
+            ]);
+        } else {
+            cmd.args(["-c:v", "libx264", "-crf", "18"]);
+        }
+
+        cmd.args([
+            "-pix_fmt", "yuv420p",
+            "-c:a", "copy",        // preserve original audio
+            "-movflags", "+faststart",
+            "-y",
+            &out_path,
+        ]);
+
+        let status = cmd.status().expect("Failed to execute ffmpeg");
 
         if !status.success() {
             std::process::exit(1);
