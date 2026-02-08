@@ -91,10 +91,10 @@ fn main() {
             "-preset", "p7",
             "-rc", "vbr",
             "-multipass", "fullres",
-            "-cq", "20",
-            "-b:v", "0",
             "-rc-lookahead", "32",
             "-spatial-aq", "1"
+            "-cq", "20",
+            "-b:v", "0",
         ]);
     } else {
         println!("+ NVENC not found. Falling back to libx264 (CRF 18)");

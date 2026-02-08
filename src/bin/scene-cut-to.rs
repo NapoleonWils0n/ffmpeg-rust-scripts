@@ -38,6 +38,12 @@ struct Args {
     version: Option<bool>,
 }
 
+/// check if the nvenc code is available
+fn has_nvenc() -> bool {
+    let output = Command::new("ffmpeg").args(["-encoders"]).output().expect("ffmpeg check failed");
+    String::from_utf8_lossy(&output.stdout).contains("hevc_nvenc")
+}
+
 fn main() {
     let args = Args::parse();
 
@@ -50,60 +56,86 @@ fn main() {
     let file = File::open(&args.cutlist).expect("Failed to open cutlist");
     let reader = BufReader::new(file);
 
+    // 1. Determine Encoder once at the start
+    let use_nvenc = has_nvenc();
+    if use_nvenc {
+        println!("+ Using High-Fidelity Hardware Encoding (NVENC)");
+    } else {
+        println!("+ NVENC not found. Falling back to libx264 (CRF 18)");
+    }
+
+    // 2. PROCESS CUTLIST
     for (index, line) in reader.lines().enumerate() {
         let line = line.expect("Failed to read line");
         let parts: Vec<&str> = line.split(',').collect();
 
-        if parts.len() == 2 {
+            if parts.len() != 2 { continue; }
             let start_raw = parts[0].trim();
             let duration_raw = parts[1].trim();
 
-            // 1. Prepare raw timestamps for calculation
+            // 3. Prepare raw timestamps for calculation
             let start_sec = parse_to_seconds(start_raw);
             let duration_sec = parse_to_seconds(duration_raw);
             let end_sec = start_sec + duration_sec;
 
-            // 2. Get HH:MM:SS strings (without milliseconds) for the filename
-            let end_ts_raw = format_seconds_ms(end_sec);
-            let start_clean = start_raw.split('.').next().unwrap_or("00:00:00");
-            let end_clean = end_ts_raw.split('.').next().unwrap_or("00:00:00");
+            // 4. LIB-09: Get full HH:MM:SS.mmm (Preserving milliseconds)
+            let start_filename_raw = format_seconds_ms(start_sec);
+            let end_filename_raw = format_seconds_ms(end_sec);
 
-            // 3. Apply LIB-10 OS check for the filename
-            let start_filename = format_time_for_filename(start_clean);
-            let end_filename = format_time_for_filename(end_clean);
+            // 5. Apply LIB-10 OS check for the filename
+            let start_ts = format_time_for_filename(&start_filename_raw);
+            let end_ts = format_time_for_filename(&end_filename_raw);
 
             // Filename with original colons preserved
             let output_name = format!(
                 "{}-scene-{:03}-[{}-{}].mp4",
                 info.stem,
                 index + 1,
-                start_filename,
-                end_filename
+                start_ts,
+                end_ts
             );
 
-            // Output seeking: -i FIRST, then -ss and -to (using calculated end_ts)
-            let status = Command::new("ffmpeg")
-                .args([
-                    "-hide_banner",
-                    "-v", "error",
-                    "-stats",
-                    "-i", &args.input,
-                    "-ss", start_raw,
-                    "-to", &end_ts_raw,
-                    "-c:a", "aac",
-                    "-c:v", "libx264",
-                    "-profile:v", "high",
-                    "-pix_fmt", "yuv420p",
-                    "-movflags", "+faststart",
-                    "-y",
-                    &output_name,
-                ])
-                .status()
-                .expect("Failed to execute FFmpeg");
+            println!("Processing Scene {}: {} -> {}", index + 1, start_raw, format_seconds_ms(end_sec));
 
-            if !status.success() {
-                eprintln!("Error processing scene {}", index + 1);
-            }
+        let mut cmd = Command::new("ffmpeg");
+        cmd.args([
+            "-hide_banner",
+            "-v", "error",
+            "-stats",
+            "-i", &args.input,     // Input Seeking (Frame Accurate)
+            "-ss", start_raw,
+            "-to", &end_filename_raw,    // Use the calculated ms timestamp
+        ]);
+
+        // 6. High-Fidelity Encoder Logic
+        if use_nvenc {
+            cmd.args([
+                "-c:v", "hevc_nvenc",
+                "-preset", "p7",
+                "-tune", "hq",
+                "-rc", "vbr",
+                "-multipass", "fullres",
+                "-rc-lookahead", "32",
+                "-spatial-aq", "1",
+                "-cq", "20",
+                "-b:v", "0",
+            ]);
+        } else {
+            cmd.args(["-c:v", "libx264", "-crf", "18"]);
+        }
+
+        cmd.args([
+            "-pix_fmt", "yuv420p",
+            "-c:a", "aac",
+            "-movflags", "+faststart",
+            "-y",
+            &output_name,
+        ]);
+
+        let status = cmd.status().expect("Failed to execute FFmpeg");
+
+        if !status.success() {
+            eprintln!("Error processing scene {}", index + 1);
         }
     }
 }

@@ -52,6 +52,7 @@ fn get_dims(path: &str) -> (u32, u32) {
     if parts.len() == 2 { (parts[0], parts[1]) } else { (0, 0) }
 }
 
+/// check if the nvenc code is available
 fn has_nvenc() -> bool {
     let output = Command::new("ffmpeg").args(["-encoders"]).output().expect("ffmpeg check failed");
     String::from_utf8_lossy(&output.stdout).contains("hevc_nvenc")
@@ -98,10 +99,10 @@ fn main() {
             "-preset", "p7",
             "-rc", "vbr",
             "-multipass", "fullres",
-            "-cq", "20",
-            "-b:v", "0",
             "-rc-lookahead", "32",
             "-spatial-aq", "1"
+            "-cq", "20",
+            "-b:v", "0",
         ]);
     } else {
         println!("+ NVENC not found. Falling back to Software Encoding (libx264)");

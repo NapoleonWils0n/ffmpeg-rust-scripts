@@ -72,7 +72,6 @@ fn main() {
         if let Ok(l) = line {
             let parts: Vec<&str> = l.split(',').collect();
             if parts.len() != 2 { continue; }
-
             let start_raw = parts[0].trim();
             let duration_raw = parts[1].trim();
 
@@ -80,6 +79,7 @@ fn main() {
             let duration_sec = parse_to_seconds(duration_raw);
             let end_sec = start_sec + duration_sec;
 
+            // LIB-09: Get full HH:MM:SS.mmm (Preserving milliseconds)
             let start_filename_raw = format_seconds_ms(start_sec);
             let end_filename_raw = format_seconds_ms(end_sec);
 
@@ -109,10 +109,10 @@ fn main() {
                 "-preset", "p7",
                 "-rc", "vbr",
                 "-multipass", "fullres",
-                "-cq", "20",
-                "-b:v", "0",
                 "-rc-lookahead", "32",
                 "-spatial-aq", "1"
+                "-cq", "20",
+                "-b:v", "0",
             ]);
         } else {
             cmd.args(["-c:v", "libx264", "-crf", "18"]);

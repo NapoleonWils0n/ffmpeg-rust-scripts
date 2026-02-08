@@ -115,9 +115,15 @@ fn main() {
     if has_nvenc() {
         println!("+ Using High-Fidelity Hardware Encoding (NVENC)");
         ffmpeg.args([
-            "-c:v", "hevc_nvenc", "-tune", "hq", "-preset", "p7",
-            "-rc", "vbr", "-multipass", "fullres", "-cq", "20",
-            "-b:v", "0", "-rc-lookahead", "32", "-spatial-aq", "1"
+               "-c:v", "hevc_nvenc",
+               "-tune", "hq",
+               "-preset", "p7",
+               "-rc", "vbr",
+               "-multipass", "fullres",
+               "-rc-lookahead", "32",
+               "-spatial-aq", "1"
+               "-cq", "20",
+               "-b:v", "0",
         ]);
     } else {
         println!("+ NVENC not found. Falling back to libx264 (CRF 18)");
