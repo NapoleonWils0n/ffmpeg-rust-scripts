@@ -42,7 +42,7 @@ fn main() {
 
     let input_path = Path::new(&args.infile);
     if !input_path.exists() {
-        eprintln!("Error: Input file '{}' not found.", args.infile);
+        eprintln!("! error: Input file '{}' not found.", args.infile);
         std::process::exit(1);
     }
 
@@ -64,7 +64,7 @@ fn main() {
         .collect();
 
     if timestamps.len() < 2 {
-        eprintln!("Error: Need at least two timestamps to create a clip.");
+        eprintln!("! error: Need at least two timestamps to create a clip.");
         std::process::exit(1);
     }
 

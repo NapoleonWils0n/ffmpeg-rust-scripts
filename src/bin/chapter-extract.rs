@@ -44,7 +44,7 @@ fn main() {
     let args = Args::parse();
 
     if !Path::new(&args.infile).exists() {
-        eprintln!("Error: Input file '{}' not found.", args.infile);
+        eprintln!("! error: Input file '{}' not found.", args.infile);
         std::process::exit(1);
     }
 
@@ -64,7 +64,7 @@ fn main() {
         .expect("Failed to execute ffprobe");
 
     if !output.status.success() {
-        eprintln!("Error: ffprobe failed to read chapters.");
+        eprintln!("! error: ffprobe failed to read chapters.");
         std::process::exit(1);
     }
 

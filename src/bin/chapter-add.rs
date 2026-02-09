@@ -46,11 +46,11 @@ fn main() {
 
     // 1. Validate inputs exist
     if !Path::new(&args.infile).exists() {
-        eprintln!("Error: Input file '{}' not found.", args.infile);
+        eprintln!("! error: Input file '{}' not found.", args.infile);
         std::process::exit(1);
     }
     if !Path::new(&args.metafile).exists() {
-        eprintln!("Error: Metadata file '{}' not found.", args.metafile);
+        eprintln!("! error: Metadata file '{}' not found.", args.metafile);
         std::process::exit(1);
     }
 
@@ -70,7 +70,6 @@ fn main() {
             "-map", "0",            // Map all streams from original file
             "-map_metadata", "1",   // Use metadata from the text file
             "-codec", "copy",       // Fast muxing without re-encoding
-            "-y",                   // Overwrite output
             &final_output,
         ])
         .stdout(Stdio::null())
@@ -79,7 +78,7 @@ fn main() {
         .expect("Failed to execute FFmpeg");
 
     if !status.success() {
-        eprintln!("Error: FFmpeg failed to add chapters.");
+        eprintln!("! error: FFmpeg failed to add chapters.");
         std::process::exit(1);
     }
 }

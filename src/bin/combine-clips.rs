@@ -45,7 +45,7 @@ fn main() {
 
     // Check if input files exist 
     if !Path::new(&args.input).exists() || !Path::new(&args.audio).exists() {
-        eprintln!("Error: Input video or audio file not found.");
+        eprintln!("! error: Input video or audio file not found.");
         std::process::exit(1);
     }
 
@@ -82,7 +82,6 @@ fn main() {
             "-pix_fmt", "yuv420p",
             "-movflags", "+faststart",
             "-f", "mp4",
-            "-y",
             &final_output,
         ])
         .status()

@@ -43,7 +43,7 @@ fn main() {
 
     // 1. Validate input exists
     if !Path::new(&args.infile).exists() {
-        eprintln!("Error: Input file '{}' not found.", args.infile);
+        eprintln!("! error: Input file '{}' not found.", args.infile);
         std::process::exit(1);
     }
 
@@ -67,7 +67,7 @@ fn main() {
     }
 
     if entries.len() < 2 {
-        eprintln!("Error: CSV must have at least one chapter line and one 'End' duration line.");
+        eprintln!("! error: CSV must have at least one chapter line and one 'End' duration line.");
         std::process::exit(1);
     }
 
