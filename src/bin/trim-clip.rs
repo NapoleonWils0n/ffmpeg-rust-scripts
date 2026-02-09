@@ -155,7 +155,6 @@ fn run_ffmpeg_video(args: &Args, out_path: &str, aac_encoder: &str, ext: &str) {
         "-c:a", aac_encoder,
         "-pix_fmt", "yuv420p",
         "-movflags", "+faststart",
-        "-y",
     ]);
 
     if ext != "mkv" {
@@ -187,7 +186,6 @@ fn run_ffmpeg_webm(args: &Args, out_path: &str) {
         "-c:v", "libvpx-vp9",
         "-c:a", "libopus",
         "-f", "webm",
-        "-y",
     ]);
 
     cmd.arg(out_path);
@@ -214,7 +212,6 @@ fn run_ffmpeg_audio(args: &Args, out_path: &str, codec: &str, format: &str) {
     cmd.args(vec![
         "-c:a", codec,
         "-f", format,
-        "-y",
     ]);
 
     cmd.arg(out_path);
@@ -240,7 +237,6 @@ fn run_ffmpeg_fallback(args: &Args, out_path: &str) {
 
     cmd.args(vec![
         "-c", "copy",
-        "-y",
     ]);
 
     cmd.arg(out_path);

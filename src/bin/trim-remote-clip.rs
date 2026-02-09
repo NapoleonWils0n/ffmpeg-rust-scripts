@@ -111,7 +111,7 @@ fn run_remote_mp4(args: &Args, urls: &[&str], out_path: &str) {
     }
 
     cmd.arg("-c:v").arg(v_codec).args(v_params);
-    cmd.args(["-c:a", "aac", "-pix_fmt", "yuv420p", "-movflags", "+faststart", "-y", out_path]);
+    cmd.args(["-c:a", "aac", "-pix_fmt", "yuv420p", "-movflags", "+faststart", out_path]);
 
     let status = cmd.status().expect("FFmpeg failed");
     if !status.success() { eprintln!("! FFmpeg remote MP4 export failed."); }
@@ -131,7 +131,7 @@ fn run_remote_webm(args: &Args, urls: &[&str], out_path: &str) {
         cmd.args(["-map", "0:v:0", "-map", "1:a:0"]);
     }
 
-    cmd.args(["-c:v", "libvpx-vp9", "-c:a", "libopus", "-y", out_path]);
+    cmd.args(["-c:v", "libvpx-vp9", "-c:a", "libopus", out_path]);
 
     let status = cmd.status().expect("FFmpeg failed");
     if !status.success() { eprintln!("! FFmpeg remote WebM export failed."); }
