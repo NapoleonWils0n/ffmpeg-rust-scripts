@@ -5,7 +5,7 @@
 //==============================================================================
 
 use clap::Parser;
-use std::process::{Command, Stdio};
+use std::process::Command;
 use std::path::Path;
 use ffmpeg_rust_scripts::get_media_info;
 
@@ -68,27 +68,33 @@ fn main() {
 
     // 3. Run FFmpeg to replace audio with silence
     // Uses anullsrc to generate silent audio matching video duration
-    let status = Command::new("ffmpeg")
-        .args([
-            "-loglevel", "error",
-            "-i", &args.infile,
-            "-f", "lavfi",
-            "-i", &format!("anullsrc=channel_layout={}:sample_rate={}", layout, args.rate),
-            "-c:v", "copy",           // Copy video without re-encoding
-            "-c:a", "aac",            // Encode silence to AAC
-            "-map", "0:v:0",          // Use first video stream from first input
-            "-map", "1:a:0",          // Use first audio stream from silent source
-            "-shortest",              // Ensure audio doesn't outlast video
-            "-y",                     // Overwrite output
-            &final_output,
-        ])
-        .stdout(Stdio::null())
-        .stderr(Stdio::null())
+    let mut cmd = Command::new("ffmpeg");
+    
+    // FIX (E0716): Create a binding for the temporary format! string 
+    // so it lives until the end of the main function.
+    let silent_src = format!("anullsrc=channel_layout={}:sample_rate={}", layout, args.rate);
+
+    let ffmpeg_args = vec![
+        "-hide_banner",
+        "-v", "error",
+        "-stats",
+        "-i", &args.infile,
+        "-f", "lavfi",
+        "-i", &silent_src,        // Now borrowing from a stable variable
+        "-c:v", "copy",           // Copy video without re-encoding
+        "-c:a", "aac",            // Encode silence to AAC
+        "-map", "0:v:0",          // Use first video stream from first input
+        "-map", "1:a:0",          // Use first audio stream from silent source
+        "-shortest",              // Ensure audio doesn't outlast video
+        &final_output,            // Non-destructive (no -y)
+    ];
+
+    let status = cmd.args(ffmpeg_args)
         .status()
         .expect("Failed to execute FFmpeg");
 
     if !status.success() {
-        eprintln!("Error: FFmpeg failed to create silent audio track.");
+        eprintln!("! error: ffmpeg failed to create silent audio track.");
         std::process::exit(1);
     }
 }
