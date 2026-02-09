@@ -1,13 +1,13 @@
 //==============================================================================
 // overlay-clip
 // Description: Overlay a video onto a background clip at a specific time
-// References: [LIB-01], [LIB-03], [LIB-04], [LIB-09], [LIB-10]
+// References: [LIB-01], [LIB-03], [LIB-04], [LIB-09], [LIB-10] [LIB-11]
 //==============================================================================
 
 use clap::Parser;
 use std::process::Command;
 use std::path::Path;
-use ffmpeg_rust_scripts::{get_media_info, parse_to_seconds, format_seconds_ms, format_time_for_filename};
+use ffmpeg_rust_scripts::{get_media_info, parse_to_seconds, format_seconds_ms, format_time_for_filename, hardware_encoding};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -44,78 +44,86 @@ struct Args {
     version: Option<bool>,
 }
 
-/// check if the nvenc code is available
-fn has_nvenc() -> bool {
-    let output = Command::new("ffmpeg").args(["-encoders"]).output().expect("ffmpeg check failed");
-    String::from_utf8_lossy(&output.stdout).contains("hevc_nvenc")
-}
-
 fn main() {
     let args = Args::parse();
 
+    // 1. Validate inputs
     if !Path::new(&args.input).exists() || !Path::new(&args.overlay).exists() {
-        eprintln!("Error: One or more input files not found.");
+        eprintln!("! error: one or both input files not found.");
         std::process::exit(1);
     }
 
-    let start_secs = parse_to_seconds(&args.position);
+    // 2. Logic and Naming
     let info = get_media_info(&args.input);
     let fg_info = get_media_info(&args.overlay);
-    
-    // Format the position for the filename (e.g., 00:00:10)
-    let full_ts = format_seconds_ms(start_secs);
+    let start_secs = parse_to_seconds(&args.position);
+    let timestamp = format_time_for_filename(&format_seconds_ms(start_secs));
 
-    // Apply LIB-10 OS check
-    let timestamp = format_time_for_filename(&full_ts);
-    
-    let final_output = args.outfile.unwrap_or_else(|| {
+    let out_path = args.outfile.unwrap_or_else(|| {
         format!("{}-overlay-{}-[{}].mp4", info.stem, fg_info.stem, timestamp)
     });
 
-    // Filter: setpts delays the foreground, overlay=eof_action=pass keeps bg after fg ends
+    // 3. Encoder Selection Logic
+    let (v_codec, v_params) = if hardware_encoding() {
+        println!("+ using hardware acceleration.");
+        (
+            "hevc_nvenc",
+            vec![
+                "-tune", "hq",
+                "-preset", "p7",
+                "-rc", "vbr",
+                "-multipass", "fullres",
+                "-rc-lookahead", "32",
+                "-spatial-aq", "1",
+                "-cq", "20",
+                "-b:v", "0",
+            ],
+        )
+    } else {
+        println!("+ using software encoding.");
+        (
+            "libx264",
+            vec![
+                "-crf", "18",
+                "-preset", "medium",
+            ],
+        )
+    };
+
+    // 4. Filter Construction
+    // setpts delays the foreground, overlay=eof_action=pass keeps bg after fg ends
     let filter = format!("[1:v]setpts=PTS+{}/TB[fg]; [0:v][fg]overlay=eof_action=pass", start_secs);
 
+    // 5. EXECUTE FFMPEG (Unified Vec)
     let mut cmd = Command::new("ffmpeg");
-    cmd.args([
+    
+    let mut ffmpeg_args = vec![
         "-hide_banner",
-        "-loglevel", "error",
+        "-v", "error",
         "-stats",
         "-i", &args.input,
         "-i", &args.overlay,
         "-filter_complex", &filter,
-    ]);
+        "-c:v", v_codec,
+    ];
 
-    // Video Encoder Settings (NVENC with x264 fallback)
-    if has_nvenc() {
-        println!("+ Using High-Fidelity Hardware Encoding (NVENC)");
-        cmd.args([
-            "-c:v", "hevc_nvenc",
-            "-tune", "hq",
-            "-preset", "p7",
-            "-rc", "vbr",
-            "-multipass", "fullres",
-            "-rc-lookahead", "32",
-            "-spatial-aq", "1",
-            "-cq", "20",
-            "-b:v", "0",
-        ]);
-    } else {
-        println!("+ NVENC not found. Falling back to libx264 (CRF 18)");
-        cmd.args(["-c:v", "libx264", "-crf", "18"]);
-    }
+    // Append encoder params
+    ffmpeg_args.extend(v_params);
 
-    // Final Output Arguments
-    cmd.args([
+    // Finalize with audio and output
+    ffmpeg_args.extend(vec![
+        "-c:a", "aac",           // Transcode to ensure sync and compatibility
         "-pix_fmt", "yuv420p",
         "-movflags", "+faststart",
-        "-y",
-        &final_output,
+        &out_path,
     ]);
 
-    let status = cmd.status().expect("Failed to execute FFmpeg");
+    let status = cmd.args(ffmpeg_args)
+        .status()
+        .expect("failed to execute ffmpeg");
 
     if !status.success() {
-        eprintln!("Error: FFmpeg failed to overlay clips.");
+        eprintln!("! error: ffmpeg failed to process overlay-clip.");
         std::process::exit(1);
     }
 }
