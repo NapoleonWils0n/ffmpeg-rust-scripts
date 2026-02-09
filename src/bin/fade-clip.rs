@@ -43,74 +43,82 @@ struct Args {
 fn main() {
     let args = Args::parse();
 
+    // 1. Validate input
     if !Path::new(&args.infile).exists() {
         eprintln!("Error: Input file '{}' not found.", args.infile);
         std::process::exit(1);
     }
 
-    let dur_secs = parse_to_seconds(&args.duration);
+    // 2. Determine duration and naming
     let info = get_media_info(&args.infile);
-    
-    // Format the duration for the filename (e.g., 00:00:02)
-    let full_ts = format_seconds_ms(dur_secs);
+    let dur_secs = parse_to_seconds(&args.duration);
+    let timestamp = format_time_for_filename(&format_seconds_ms(dur_secs));
 
-    // This single line replaces all the old raw/split logic
-    let timestamp = format_time_for_filename(&full_ts);
-
-    let final_output = args.outfile.unwrap_or_else(|| {
-        format!("{}-faded-in-[{}].mp4", info.stem, timestamp)
+    let out_path = args.outfile.unwrap_or_else(|| {
+        format!("{}-fade-in-[{}].mp4", info.stem, timestamp)
     });
 
-    // Filters
+    // 3. Encoder Selection Logic
+    let (v_codec, v_params) = if hardware_encoding() {
+        println!("+ using hardware acceleration.");
+        (
+            "hevc_nvenc",
+            vec![
+                "-tune", "hq",
+                "-preset", "p7",
+                "-rc", "vbr",
+                "-multipass", "fullres",
+                "-rc-lookahead", "32",
+                "-spatial-aq", "1",
+                "-cq", "20",
+                "-b:v", "0",
+            ],
+        )
+    } else {
+        println!("+ using software encoding.");
+        (
+            "libx264",
+            vec![
+                "-crf", "18",
+                "-preset", "medium",
+            ],
+        )
+    };
+
+    // 4. Filters
     let v_filter = format!("fade=t=in:st=0:d={}", dur_secs);
     let a_filter = format!("afade=t=in:st=0:d={}", dur_secs);
 
-    // EXECUTE FFMPEG
+    // 5. EXECUTE FFMPEG (Unified Vec)
     let mut cmd = Command::new("ffmpeg");
-    cmd.args([
+    
+    let mut ffmpeg_args = vec![
         "-hide_banner",
-        "-loglevel", "error",
+        "-v", "error",
         "-stats",
         "-i", &args.infile,
-    ]);
+        "-vf", &v_filter,
+        "-af", &a_filter,
+        "-c:v", v_codec,
+    ];
 
-    // Apply Video and Audio filters
-    cmd.args(["-vf", &v_filter]);
-    cmd.args(["-af", &a_filter]);
+    // Append encoder-specific parameters
+    ffmpeg_args.extend(v_params);
 
-    // Video Encoder Settings
-    if has_nvenc() {
-        println!("+ Using High-Fidelity Hardware Encoding (NVENC)");
-        cmd.args([
-            "-c:v", "hevc_nvenc",
-            "-tune", "hq",
-            "-preset", "p7",
-            "-rc", "vbr",
-            "-multipass", "fullres",
-            "-rc-lookahead", "32",
-            "-spatial-aq", "1",
-            "-cq", "20",
-            "-b:v", "0",
-        ]);
-    } else {
-        println!("+ NVENC not found. Falling back to libx264 (CRF 18)");
-        cmd.args(["-c:v", "libx264", "-crf", "18", "-preset", "medium"]);
-    }
-
-    // Audio and Final Output Arguments
-    cmd.args([
+    // Finalize arguments
+    ffmpeg_args.extend(vec![
         "-c:a", "aac",
         "-pix_fmt", "yuv420p",
         "-movflags", "+faststart",
-        &final_output,
+        &out_path,
     ]);
 
-    // Capture the status here so the success check below still works
-    let status = cmd.status().expect("Failed to execute FFmpeg");
+    let status = cmd.args(ffmpeg_args)
+        .status()
+        .expect("failed to execute ffmpeg");
 
     if !status.success() {
-        eprintln!("Error: FFmpeg execution failed.");
+        eprintln!("! error: ffmpeg failed to process fade-clip.");
         std::process::exit(1);
     }
-
 }
