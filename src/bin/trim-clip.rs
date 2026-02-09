@@ -1,13 +1,13 @@
 //==============================================================================
 // trim-clip
 // Description: Trim video or audio clips with millisecond accuracy
-// References: [LIB-01] through [LIB-06], [LIB-10]
+// References: [LIB-01] through [LIB-06], [LIB-10], [LIB-11]
 //==============================================================================
 
 use clap::Parser;
 use std::process::Command;
 use std::path::Path; 
-use ffmpeg_rust_scripts::{get_media_info, parse_to_seconds, format_seconds_ms, has_encoder, format_time_for_filename};
+use ffmpeg_rust_scripts::{get_media_info, parse_to_seconds, format_seconds_ms, has_encoder, format_time_for_filename, hardware_encoding};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -44,12 +44,6 @@ struct Args {
     version: Option<bool>,
 }
 
-
-/// check if the nvenc code is available
-fn has_nvenc() -> bool {
-    let output = Command::new("ffmpeg").args(["-encoders"]).output().expect("ffmpeg check failed");
-    String::from_utf8_lossy(&output.stdout).contains("hevc_nvenc")
-}
 
 fn main() {
     let args = Args::parse();
@@ -117,77 +111,142 @@ fn main() {
     }
 }
 
-/// FFmpeg command for General Video (MP4, MOV, MKV)
+/// Video Runner (Input Seeking: -ss before -i)
 fn run_ffmpeg_video(args: &Args, out_path: &str, aac_encoder: &str, ext: &str) {
+    let (v_codec, v_params) = if hardware_encoding() {
+        println!("+ using hardware acceleration.");
+        (
+            "hevc_nvenc",
+            vec![
+                "-tune", "hq",
+                "-preset", "p7",
+                "-rc", "vbr",
+                "-multipass", "fullres",
+                "-rc-lookahead", "32",
+                "-spatial-aq", "1",
+                "-cq", "20",
+                "-b:v", "0",
+            ],
+        )
+    } else {
+        println!("+ using software encoding.");
+        (
+            "libx264",
+            vec!["-crf", "18", "-preset", "medium"],
+        )
+    };
+
     let mut cmd = Command::new("ffmpeg");
-    cmd.args([
-        "-hide_banner", "-stats", "-v", "error",
-        "-ss", &args.start, "-i", &args.infile, "-t", &args.duration,
+
+    // Input Seeking logic preserved (-ss before -i)
+    cmd.args(vec![
+        "-hide_banner",
+        "-stats",
+        "-v", "error", 
+        "-ss", &args.start,
+        "-i", &args.infile,
+        "-t", &args.duration,
     ]);
 
-    // 1. High-Quality Video Encoder Settings (matching blur-fill)
-    if has_nvenc() {
-        println!("+ Using High-Fidelity Hardware Encoding (NVENC)");
-        cmd.args([
-            "-c:v", "hevc_nvenc",
-            "-tune", "hq",
-            "-preset", "p7",
-            "-rc", "vbr",
-            "-multipass", "fullres",
-            "-rc-lookahead", "32",
-            "-spatial-aq", "1",
-            "-cq", "20",
-            "-b:v", "0",
-        ]);
-    } else {
-        println!("+ NVENC not found. Falling back to libx264 (CRF 18)");
-        cmd.args(["-c:v", "libx264", "-crf", "18", "-preset", "medium"]);
-    }
+    cmd.arg("-c:v").arg(v_codec);
+    cmd.args(v_params);
 
-    // 2. Audio settings (using the codec passed from main)
-    cmd.args(["-c:a", aac_encoder]);
+    cmd.args(vec![
+        "-c:a", aac_encoder,
+        "-pix_fmt", "yuv420p",
+        "-movflags", "+faststart",
+        "-y",
+    ]);
 
-    // 3. Final Output Arguments
-    cmd.args(["-pix_fmt", "yuv420p", "-movflags", "+faststart"]);
-
-    // Explicitly set format for MP4/MOV, let FFmpeg auto-detect for MKV
     if ext != "mkv" {
-        cmd.args(["-f", ext]);
+        cmd.args(vec!["-f", ext]);
     }
 
     cmd.arg(out_path);
-    cmd.status().expect("Failed to execute FFmpeg");
+
+    let status = cmd.status().expect("Failed to execute FFmpeg");
+    if !status.success() {
+        eprintln!("! FFmpeg Video export exited with an error.");
+    }
 }
 
-/// FFmpeg command for WebM video
+/// WebM Runner (Input Seeking)
 fn run_ffmpeg_webm(args: &Args, out_path: &str) {
-    Command::new("ffmpeg")
-        .args([
-            "-hide_banner", "-stats", "-v", "error",
-            "-ss", &args.start, "-i", &args.infile, "-t", &args.duration,
-            "-c:a", "libopus", "-c:v", "vp9", "-f", "webm", out_path
-        ])
-        .status().expect("Failed to execute FFmpeg");
+    let mut cmd = Command::new("ffmpeg");
+
+    cmd.args(vec![
+        "-hide_banner",
+        "-stats",
+        "-v", "error",
+        "-ss", &args.start,
+        "-i", &args.infile,
+        "-t", &args.duration,
+    ]);
+
+    cmd.args(vec![
+        "-c:v", "libvpx-vp9",
+        "-c:a", "libopus",
+        "-f", "webm",
+        "-y",
+    ]);
+
+    cmd.arg(out_path);
+
+    let status = cmd.status().expect("Failed to execute FFmpeg");
+    if !status.success() {
+        eprintln!("! FFmpeg WebM export exited with an error.");
+    }
 }
 
-/// FFmpeg command for specific Audio formats
+/// Audio Runner (Input Seeking)
 fn run_ffmpeg_audio(args: &Args, out_path: &str, codec: &str, format: &str) {
-    Command::new("ffmpeg")
-        .args([
-            "-hide_banner", "-stats", "-v", "error",
-            "-ss", &args.start, "-i", &args.infile, "-t", &args.duration,
-            "-c:a", codec, "-f", format, out_path
-        ])
-        .status().expect("Failed to execute FFmpeg");
+    let mut cmd = Command::new("ffmpeg");
+
+    cmd.args(vec![
+        "-hide_banner",
+        "-stats",
+        "-v", "error",
+        "-ss", &args.start,
+        "-i", &args.infile,
+        "-t", &args.duration,
+    ]);
+
+    cmd.args(vec![
+        "-c:a", codec,
+        "-f", format,
+        "-y",
+    ]);
+
+    cmd.arg(out_path);
+
+    let status = cmd.status().expect("Failed to execute FFmpeg");
+    if !status.success() {
+        eprintln!("! FFmpeg Audio export exited with an error.");
+    }
 }
 
-/// Fallback command (Stream Copy) - Helps with MKV and unknown types
+/// Fallback Stream Copy (Input Seeking)
 fn run_ffmpeg_fallback(args: &Args, out_path: &str) {
-    Command::new("ffmpeg")
-        .args([
-            "-hide_banner", "-stats", "-v", "error",
-            "-ss", &args.start, "-i", &args.infile, "-t", &args.duration,
-            "-c", "copy", out_path
-        ])
-        .status().expect("Failed to execute FFmpeg");
+    let mut cmd = Command::new("ffmpeg");
+
+    cmd.args(vec![
+        "-hide_banner",
+        "-stats",
+        "-v", "error",
+        "-ss", &args.start,
+        "-i", &args.infile,
+        "-t", &args.duration,
+    ]);
+
+    cmd.args(vec![
+        "-c", "copy",
+        "-y",
+    ]);
+
+    cmd.arg(out_path);
+
+    let status = cmd.status().expect("Failed to execute FFmpeg");
+    if !status.success() {
+        eprintln!("! FFmpeg Fallback export exited with an error.");
+    }
 }
