@@ -1,13 +1,13 @@
 //==============================================================================
 // delogo
 // Description: remove a logo from video footage
-// References: [LIB-01] [LIB-03] 
+// References: [LIB-01] [LIB-03], [LIB-11]
 //==============================================================================
 
 use clap::Parser;
 use std::process::Command;
 use std::path::Path;
-use ffmpeg_rust_scripts::{get_media_info};
+use ffmpeg_rust_scripts::{get_media_info, hardware_encoding};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -53,12 +53,6 @@ struct Args {
     /// Print version
     #[arg(short = 'v', long = "version", help = "Print version", action = clap::ArgAction::Version)]
     version: Option<bool>,
-}
-
-/// check if the nvenc code is available
-fn has_nvenc() -> bool {
-    let output = Command::new("ffmpeg").args(["-encoders"]).output().expect("ffmpeg check failed");
-    String::from_utf8_lossy(&output.stdout).contains("hevc_nvenc")
 }
 
 fn main() {
@@ -108,58 +102,75 @@ fn main() {
         args.x, args.y, args.width, args.height, args.preview.unwrap_or(0));
 
     // Determine Encoder once at the start of main
-    let use_nvenc = has_nvenc();
-    if args.preview.is_none() {
-        if use_nvenc {
-            println!("+ Using High-Fidelity Hardware Encoding (NVENC)");
-        } else {
-            println!("+ NVENC not found. Falling back to libx264 (CRF 18)");
-        }
-    }
-
-    if args.preview.is_some() {
-        // PREVIEW MODE (ffplay)
-        Command::new("ffplay")
-            .args(["-hide_banner", "-stats", "-v", "error", "-i", &args.infile, "-vf", &filter])
-            .status()
-            .expect("Failed to execute ffplay");
-    } else {
-        // RECORD MODE (ffmpeg)
-        let mut cmd = Command::new("ffmpeg");
-            cmd.args([
-                "-hide_banner", "-stats", "-v", "error",
-                "-i", &args.infile,
-                "-vf", &filter,
-            ]);
-
-         // Standardized High-Fidelity Encoder Block
-        if use_nvenc {
-            cmd.args([
-                "-c:v", "hevc_nvenc",
-                "-preset", "p7",
+    let (v_codec, v_params) = if hardware_encoding() {
+        println!("+ using hardware acceleration.");
+        (
+            "hevc_nvenc",
+            vec![
                 "-tune", "hq",
+                "-preset", "p7",
                 "-rc", "vbr",
                 "-multipass", "fullres",
                 "-rc-lookahead", "32",
                 "-spatial-aq", "1",
                 "-cq", "20",
                 "-b:v", "0",
-            ]);
-        } else {
-            cmd.args(["-c:v", "libx264", "-crf", "18"]);
-        }
+            ],
+        )
+    } else {
+        println!("+ using software encoding.");
+        (
+            "libx264",
+            vec![
+                "-crf", "18",
+                "-preset", "medium",
+            ],
+        )
+    };
 
+    // 4. Execution Logic
+    if args.preview.is_some() {
+        // PREVIEW MODE (ffplay)
+        let mut cmd = Command::new("ffplay");
         cmd.args([
+            "-hide_banner",
+            "-stats",
+            "-v", "error",
+            "-i", &args.infile,
+            "-vf", &filter,
+        ]);
+        cmd.status().expect("failed to execute ffplay");
+    } else {
+        // RECORD MODE (ffmpeg)
+        let mut cmd = Command::new("ffmpeg");
+        
+        // Construct the unified argument vector
+        let mut ffmpeg_args = vec![
+            "-hide_banner",
+            "-v", "error",
+            "-stats",
+            "-i", &args.infile,
+            "-vf", &filter,
+            "-c:v", v_codec,
+        ];
+
+        // Append encoder-specific parameters
+        ffmpeg_args.extend(v_params);
+
+        // Finalize with audio and output
+        ffmpeg_args.extend(vec![
+            "-c:a", "copy",           // Preserve original audio
             "-pix_fmt", "yuv420p",
-            "-c:a", "copy",        // preserve original audio
             "-movflags", "+faststart",
-            "-y",
-            &out_path,
+            &out_path,                // Non-destructive (no -y)
         ]);
 
-        let status = cmd.status().expect("Failed to execute ffmpeg");
+        let status = cmd.args(ffmpeg_args)
+            .status()
+            .expect("failed to execute ffmpeg");
 
         if !status.success() {
+            eprintln!("! error: ffmpeg failed to process delogo.");
             std::process::exit(1);
         }
     }
