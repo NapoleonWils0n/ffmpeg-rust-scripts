@@ -105,9 +105,14 @@ fn main() {
         (
             "hevc_nvenc",
             vec![
-                "-tune", "hq", "-preset", "p7", "-rc", "vbr",
-                "-multipass", "fullres", "-rc-lookahead", "32",
-                "-spatial-aq", "1", "-cq", "20", "-b:v", "0",
+                "-tune", "hq",
+                "-preset", "p7",
+                "-rc", "vbr",
+                "-multipass", "fullres",
+                "-rc-lookahead", "32",
+                "-spatial-aq", "1",
+                "-cq", "20",
+                "-b:v", "0",
             ],
         )
     } else {
