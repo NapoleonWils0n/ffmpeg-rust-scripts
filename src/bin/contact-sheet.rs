@@ -66,7 +66,7 @@ fn main() {
 
     // [LIB-01] Check if input file exists
     if !Path::new(&args.infile).exists() {
-        eprintln!("Error: Input file '{}' not found.", args.infile);
+        eprintln!("! error: Input file '{}' not found.", args.infile);
         std::process::exit(1);
     }
 
