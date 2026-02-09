@@ -1,13 +1,13 @@
 //==============================================================================
 // trim-remote-clip
 // Description: Trim a remote video clip using yt-dlp and ffmpeg with -to end time
-// References: [LIB-01], [LIB-10]
+// References: [LIB-01], [LIB-10], [LIB-11]
 //==============================================================================
 
 use clap::Parser;
 use std::process::Command;
 // Import the filename formatter from your library
-use ffmpeg_rust_scripts::format_time_for_filename;
+use ffmpeg_rust_scripts::{format_time_for_filename, hardware_encoding};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -45,99 +45,94 @@ struct Args {
     version: Option<bool>,
 }
 
-/// check if the nvenc code is available
-fn has_nvenc() -> bool {
-    let output = Command::new("ffmpeg").args(["-encoders"]).output().expect("ffmpeg check failed");
-    String::from_utf8_lossy(&output.stdout).contains("hevc_nvenc")
-}
-
 fn main() {
     let args = Args::parse();
 
-    // 1. Fetch the remote title using yt-dlp
-    let title_output = Command::new("yt-dlp")
-        .args(["--get-title", "--default-search", "ytsearch", &args.input])
+    // 1. Fetch metadata using yt-dlp
+    let metadata = Command::new("yt-dlp")
+        .args(["--get-title", "--get-filename", "-o", "%(ext)s", "--default-search", "ytsearch", &args.input])
         .output()
-        .expect("Failed to execute yt-dlp to get title");
+        .expect("Failed to execute yt-dlp for metadata");
 
-    let raw_title = String::from_utf8_lossy(&title_output.stdout).trim().to_string();
-    
-    // 2. Generate the cross-platform output path
-    let out_path = args.outfile.unwrap_or_else(|| {
-        // 3. Handle the Timestamps using the library's built-in OS check
-        // This automatically keeps colons on NixOS and uses underscores on Windows
+    let meta_str = String::from_utf8_lossy(&metadata.stdout);
+    let mut lines = meta_str.lines();
+    let raw_title = lines.next().unwrap_or("remote_video").trim();
+    let extension = lines.next().unwrap_or("mp4").trim(); // Detect if remote is webm or mp4
+
+    // 2. Generate Output Path
+    let out_path = args.outfile.clone().unwrap_or_else(|| {
         let start_fs = format_time_for_filename(&args.start);
         let end_fs = format_time_for_filename(&args.end);
-
-        // 4. Handle the Video Title
-        // We still need to replace '/' because it's a directory separator on Linux
-        // and ':' because it's a drive separator on Windows.
         let safe_title = raw_title.replace(['/', ':'], "_");
-
-        format!("{}-[{}–{}].mp4", safe_title, start_fs, end_fs)
+        format!("{}-[{}–{}].{}", safe_title, start_fs, end_fs, extension)
     });
 
-    // 5. Get stream URLs
+    // 3. Get stream URLs
     let url_output = Command::new("yt-dlp")
         .args(["-g", "--default-search", "ytsearch", &args.input])
         .output()
-        .expect("Failed to execute yt-dlp to get stream URLs");
+        .expect("Failed to execute yt-dlp for URLs");
 
-    // FIX: Convert the output to an owned String so the Vec<&str> has a valid reference to borrow from
     let url_string = String::from_utf8_lossy(&url_output.stdout);
-    let stream_urls: Vec<&str> = url_string
-        .trim()
-        .lines()
-        .collect();
+    let stream_urls: Vec<&str> = url_string.trim().lines().collect();
 
     if stream_urls.is_empty() {
         eprintln!("Error: Could not retrieve stream URLs.");
         std::process::exit(1);
     }
 
-    // 6. Construct FFmpeg command (Output Seeking)
-    let mut ffmpeg = Command::new("ffmpeg");
-    ffmpeg.args(["-hide_banner", "-stats", "-v", "error"]);
-
-    // Apply -ss and -to to input(s) for synchronized trimming
-    if stream_urls.len() == 1 {
-        ffmpeg.args(["-ss", &args.start, "-to", &args.end, "-i", stream_urls[0]]);
+    // 4. Run the appropriate runner
+    if extension == "webm" {
+        run_remote_webm(&args, &stream_urls, &out_path);
     } else {
-        // Video Input
-        ffmpeg.args(["-ss", &args.start, "-to", &args.end, "-i", stream_urls[0]]);
-        // Audio Input 
-        ffmpeg.args(["-ss", &args.start, "-to", &args.end, "-i", stream_urls[1]]);
-        // Map streams correctly
-        ffmpeg.args(["-map", "0:v:0", "-map", "1:a:0"]);
+        run_remote_mp4(&args, &stream_urls, &out_path);
     }
+}
 
-    // 7. Video Encoder Settings
-    if has_nvenc() {
-        println!("+ Using High-Fidelity Hardware Encoding (NVENC)");
-        ffmpeg.args([
-               "-c:v", "hevc_nvenc",
-               "-tune", "hq",
-               "-preset", "p7",
-               "-rc", "vbr",
-               "-multipass", "fullres",
-               "-rc-lookahead", "32",
-               "-spatial-aq", "1",
-               "-cq", "20",
-               "-b:v", "0",
-        ]);
+/// Remote MP4 Runner (Standard/NVENC)
+fn run_remote_mp4(args: &Args, urls: &[&str], out_path: &str) {
+    let (v_codec, v_params) = if hardware_encoding() {
+        println!("+ using hardware acceleration.");
+        ("hevc_nvenc", vec!["-tune", "hq", "-preset", "p7", "-rc", "vbr", "-cq", "20", "-b:v", "0"])
     } else {
-        println!("+ NVENC not found. Falling back to libx264 (CRF 18)");
-        ffmpeg.args(["-c:v", "libx264", "-crf", "18", "-preset", "medium"]);
+        println!("+ using software encoding.");
+        ("libx264", vec!["-crf", "18", "-preset", "medium"])
+    };
+
+    let mut cmd = Command::new("ffmpeg");
+    cmd.args(["-hide_banner", "-stats", "-v", "error"]);
+
+    for url in urls {
+        cmd.args(["-ss", &args.start, "-to", &args.end, "-i", url]);
     }
 
-    // 8. Audio and Final Output
-    ffmpeg.args(["-c:a", "aac", "-pix_fmt", "yuv420p", "-movflags", "+faststart", &out_path]);
-
-    let status = ffmpeg.status().expect("Failed to execute FFmpeg");
-
-    if !status.success() {
-        eprintln!("\nFFmpeg failed to process the remote stream.");
-        std::process::exit(1);
+    if urls.len() > 1 {
+        cmd.args(["-map", "0:v:0", "-map", "1:a:0"]);
     }
 
+    cmd.arg("-c:v").arg(v_codec).args(v_params);
+    cmd.args(["-c:a", "aac", "-pix_fmt", "yuv420p", "-movflags", "+faststart", "-y", out_path]);
+
+    let status = cmd.status().expect("FFmpeg failed");
+    if !status.success() { eprintln!("! FFmpeg remote MP4 export failed."); }
+}
+
+/// Remote WebM Runner
+fn run_remote_webm(args: &Args, urls: &[&str], out_path: &str) {
+    println!("+ using WebM software encoding (VP9/Opus).");
+    let mut cmd = Command::new("ffmpeg");
+    cmd.args(["-hide_banner", "-stats", "-v", "error"]);
+
+    for url in urls {
+        cmd.args(["-ss", &args.start, "-to", &args.end, "-i", url]);
+    }
+
+    if urls.len() > 1 {
+        cmd.args(["-map", "0:v:0", "-map", "1:a:0"]);
+    }
+
+    cmd.args(["-c:v", "libvpx-vp9", "-c:a", "libopus", "-y", out_path]);
+
+    let status = cmd.status().expect("FFmpeg failed");
+    if !status.success() { eprintln!("! FFmpeg remote WebM export failed."); }
 }

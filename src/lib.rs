@@ -267,6 +267,7 @@ pub fn format_time_for_filename(time: &str) -> String {
 /// [LIB-11] harwdware encoding check
 // - trim-clip
 // - trim-clip-to
+// - trim-remote-clip
 pub fn hardware_encoding() -> bool {
     #[cfg(target_os = "linux")]
     {
