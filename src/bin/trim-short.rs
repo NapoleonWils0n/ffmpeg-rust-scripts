@@ -1,14 +1,14 @@
 //==============================================================================
 // trim-short
 // Description: Create vertical 9:16 clips for YouTube Shorts or TikTok
-// References: [LIB-01], [LIB-03], [LIB-04], [LIB-09], [LIB-10]
+// References: [LIB-01], [LIB-03], [LIB-04], [LIB-09], [LIB-10], [LIB-11]
 //==============================================================================
 
 use clap::Parser;
 use std::process::Command;
 use std::path::Path;
 use std::env;
-use ffmpeg_rust_scripts::{get_media_info, parse_to_seconds, format_seconds_ms, format_time_for_filename};
+use ffmpeg_rust_scripts::{get_media_info, parse_to_seconds, format_seconds_ms, format_time_for_filename, hardware_encoding};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -49,17 +49,11 @@ struct Args {
     version: Option<bool>,
 }
 
-/// check if the nvenc code is available
-fn has_nvenc() -> bool {
-    let output = Command::new("ffmpeg").args(["-encoders"]).output().expect("ffmpeg check failed");
-    String::from_utf8_lossy(&output.stdout).contains("hevc_nvenc")
-}
-
 fn main() {
     let args = Args::parse();
 
     if !Path::new(&args.infile).exists() {
-        eprintln!("Error: Input file '{}' not found.", args.infile);
+        eprintln!("! error: input file '{}' not found.", args.infile);
         std::process::exit(1);
     }
 
@@ -73,11 +67,11 @@ fn main() {
     // 2. NAMING LOGIC
     let info = get_media_info(&args.infile);
     
-    // 1. Get full timestamps (preserving milliseconds)
+    // Get full timestamps (preserving milliseconds)
     let start_full = format_seconds_ms(start_sec);
     let end_full = format_seconds_ms(end_sec);
     
-    // 2. LIB-10: Use the library's built-in OS check
+    // LIB-10: Use the library's built-in OS check
     let start_fs = format_time_for_filename(&start_full);
     let end_fs = format_time_for_filename(&end_full);
 
@@ -89,7 +83,7 @@ fn main() {
         name_suffix = format!("-x-{}-short-[{}–{}]", args.x_pos, start_fs, end_fs);
     }
 
-    let final_output = args.outfile.unwrap_or_else(|| {
+    let final_output = args.outfile.clone().unwrap_or_else(|| {
         format!("{}.mp4", info.stem + &name_suffix)
     });
 
@@ -105,15 +99,30 @@ fn main() {
 
     let filter_string = format!("crop=ih*9/16:ih:{}:0,scale=1080:1920", x_offset);
 
-    // 4. EXECUTE FFMPEG (Output Seeking: -i before -ss and -to)
+    // 4. VIDEO ENCODER SELECTION
+    let (v_codec, v_params) = if hardware_encoding() {
+        println!("+ using hardware acceleration.");
+        (
+            "hevc_nvenc",
+            vec![
+                "-tune", "hq", "-preset", "p7", "-rc", "vbr",
+                "-multipass", "fullres", "-rc-lookahead", "32",
+                "-spatial-aq", "1", "-cq", "20", "-b:v", "0",
+            ],
+        )
+    } else {
+        println!("+ using software encoding.");
+        (
+            "libx264",
+            vec!["-crf", "18", "-preset", "medium"],
+        )
+    };
+
+    // 5. EXECUTE FFMPEG (Output Seeking: -i before -ss and -to)
     let mut cmd = Command::new("ffmpeg");
     cmd.args([
         "-hide_banner", "-v", "error", "-stats",
         "-i", &args.infile,
-    ]);
-
-    // Position and Duration
-    cmd.args([
         "-ss", &args.start,
         "-to", &format_seconds_ms(end_sec),
     ]);
@@ -121,38 +130,22 @@ fn main() {
     // Video Filter (9:16 Crop and Scale)
     cmd.args(["-vf", &filter_string]);
 
-    // Video Encoder Settings
-    if has_nvenc() {
-        println!("+ Using High-Fidelity Hardware Encoding (NVENC)");
-        cmd.args([
-            "-c:v", "hevc_nvenc",
-            "-tune", "hq",
-            "-preset", "p7",
-            "-rc", "vbr",
-            "-multipass", "fullres",
-            "-rc-lookahead", "32",
-            "-spatial-aq", "1",
-            "-cq", "20",
-            "-b:v", "0",
-        ]);
-    } else {
-        println!("+ NVENC not found. Falling back to libx264 (CRF 18)");
-        cmd.args(["-c:v", "libx264", "-crf", "18", "-preset", "medium"]);
-    }
+    // Apply selected Video Encoder and Params
+    cmd.arg("-c:v").arg(v_codec);
+    cmd.args(v_params);
 
     // Audio and Final Output Arguments
     cmd.args([
         "-c:a", "aac",
         "-pix_fmt", "yuv420p",
         "-movflags", "+faststart",
-        "-y",
         &final_output,
     ]);
 
     let status = cmd.status().expect("Failed to execute FFmpeg");
 
     if !status.success() {
-        eprintln!("FFmpeg failed to create the vertical clip.");
+        eprintln!("! ffmpeg failed to create the vertical clip.");
         std::process::exit(1);
     }
 }
