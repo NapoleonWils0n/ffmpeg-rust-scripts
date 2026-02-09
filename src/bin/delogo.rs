@@ -59,7 +59,7 @@ fn main() {
     let args = Args::parse();
 
     if !Path::new(&args.infile).exists() {
-        eprintln!("! Error: Input file '{}' does not exist.", args.infile);
+        eprintln!("! error: Input file '{}' does not exist.", args.infile);
         std::process::exit(1);
     }
 
@@ -84,8 +84,8 @@ fn main() {
 
         // Validation: delogo requires 1 pixel of space around the box
         if args.x + args.width >= video_w || args.y + args.height >= video_h {
-            eprintln!("! Error: Delogo area is out of bounds or too close to edge.");
-            eprintln!("  Video: {}x{}, Delogo ends at: {}x{}", video_w, video_h, args.x + args.width, args.y + args.height);
+            eprintln!("! error: Delogo area is out of bounds or too close to edge.");
+            eprintln!("+ video: {}x{}, Delogo ends at: {}x{}", video_w, video_h, args.x + args.width, args.y + args.height);
             std::process::exit(1);
         }
     }

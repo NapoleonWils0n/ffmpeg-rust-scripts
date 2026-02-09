@@ -1,13 +1,13 @@
 //==============================================================================
 // fade-in
 // Description: Apply a fade-in effect to both video and audio with timestamped output
-// References: [LIB-01], [LIB-03], [LIB-04], [LIB-09], [LIB-10]
+// References: [LIB-01], [LIB-03], [LIB-04], [LIB-09], [LIB-10], [LIB-11]
 //==============================================================================
 
 use clap::Parser;
 use std::process::Command;
 use std::path::Path;
-use ffmpeg_rust_scripts::{get_media_info, format_seconds_ms, parse_to_seconds, format_time_for_filename};
+use ffmpeg_rust_scripts::{get_media_info, format_seconds_ms, parse_to_seconds, format_time_for_filename, hardware_encoding};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -38,12 +38,6 @@ struct Args {
     /// Print version
     #[arg(short = 'v', long = "version", action = clap::ArgAction::Version)]
     version: Option<bool>,
-}
-
-/// check if the nvenc code is available
-fn has_nvenc() -> bool {
-    let output = Command::new("ffmpeg").args(["-encoders"]).output().expect("ffmpeg check failed");
-    String::from_utf8_lossy(&output.stdout).contains("hevc_nvenc")
 }
 
 fn main() {
@@ -108,7 +102,6 @@ fn main() {
         "-c:a", "aac",
         "-pix_fmt", "yuv420p",
         "-movflags", "+faststart",
-        "-y",
         &final_output,
     ]);
 

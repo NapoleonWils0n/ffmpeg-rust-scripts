@@ -267,6 +267,7 @@ pub fn format_time_for_filename(time: &str) -> String {
 /// [LIB-11] hardware encoding check
 // - blur-fill
 // - delogo
+// - fade-clip
 // - trim-clip
 // - trim-clip-to
 // - trim-remote-clip
