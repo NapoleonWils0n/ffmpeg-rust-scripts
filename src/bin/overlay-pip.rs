@@ -1,13 +1,13 @@
 //==============================================================================
 // overlay-pip
 // Description: Advanced PiP with position, margin, border, and fade options
-// References: [LIB-01], [LIB-03], [LIB-04], [LIB-09], [LIB-10]
+// References: [LIB-01], [LIB-03], [LIB-04], [LIB-09] [LIB-10] [LIB-11]
 //==============================================================================
 
 use clap::Parser;
 use std::process::Command;
 use std::path::Path;
-use ffmpeg_rust_scripts::{get_media_info, parse_to_seconds, format_seconds_ms, format_time_for_filename};
+use ffmpeg_rust_scripts::{get_media_info, parse_to_seconds, format_seconds_ms, format_time_for_filename, hardware_encoding};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -68,12 +68,6 @@ struct Args {
     version: Option<bool>,
 }
 
-/// check if the nvenc code is available
-fn has_nvenc() -> bool {
-    let output = Command::new("ffmpeg").args(["-encoders"]).output().expect("ffmpeg check failed");
-    String::from_utf8_lossy(&output.stdout).contains("hevc_nvenc")
-}
-
 fn main() {
     let args = Args::parse();
 
@@ -94,13 +88,12 @@ fn main() {
     // Offset is half the border to center the pad (e.g., 4 / 2 = 2)
     let offset = border / 2;
 
-    let start_secs = parse_to_seconds(&args.position);
     let info = get_media_info(&args.input);
     let fg_info = get_media_info(&args.overlay);
-
-    let full_ts = format_seconds_ms(start_secs);
+    let start_secs = parse_to_seconds(&args.position);
 
     // Apply LIB-10 OS check
+    let full_ts = format_seconds_ms(start_secs);
     let timestamp = format_time_for_filename(&full_ts);
     
     // 2. FILENAME LOGIC (Updated to use p- instead of pos-)
@@ -138,43 +131,59 @@ fn main() {
     );
 
     // 5. Build FFmpeg Command
+    let (v_codec, v_params) = if hardware_encoding() {
+        println!("+ using hardware acceleration.");
+        (
+            "hevc_nvenc",
+            vec![
+                "-tune", "hq",
+                "-preset", "p7",
+                "-rc", "vbr",
+                "-multipass", "fullres",
+                "-rc-lookahead", "32",
+                "-spatial-aq", "1",
+                "-cq", "20",
+                "-b:v", "0",
+            ],
+        )
+    } else {
+        println!("+ using software encoding.");
+        (
+            "libx264",
+            vec![
+                "-crf", "18",
+                "-preset", "medium",
+            ],
+        )
+    };
+
+    // 6. EXECUTE FFMPEG (Unified Vec)
     let mut cmd = Command::new("ffmpeg");
-    cmd.args([
-        "-hide_banner", "-loglevel", "error", "-stats",
+    
+    let mut ffmpeg_args = vec![
+        "-hide_banner",
+        "-v", "error",
+        "-stats",
         "-i", &args.input,
         "-i", &args.overlay,
         "-filter_complex", &filter,
-    ]);
+        "-c:v", v_codec,
+    ];
 
-    // Video Encoder Settings (NVENC with x264 fallback)
-    if has_nvenc() {
-        println!("+ Using High-Fidelity Hardware Encoding (NVENC)");
-        cmd.args([
-            "-c:v", "hevc_nvenc",
-            "-tune", "hq",
-            "-preset", "p7",
-            "-rc", "vbr",
-            "-multipass", "fullres",
-            "-rc-lookahead", "32",
-            "-spatial-aq", "1",
-            "-cq", "20",
-            "-b:v", "0",
-        ]);
-    } else {
-        println!("+ NVENC not found. Falling back to libx264 (CRF 18)");
-        cmd.args(["-c:v", "libx264", "-crf", "18"]);
-    }
+    ffmpeg_args.extend(v_params);
 
-    cmd.args([
+    ffmpeg_args.extend(vec![
         "-pix_fmt", "yuv420p",
         "-movflags", "+faststart",
-        "-y",
-        &final_output,
+        &final_output, // Removed -y for safety
     ]);
 
-    let status = cmd.status().expect("Failed to execute FFmpeg");
+    let status = cmd.args(ffmpeg_args)
+        .status()
+        .expect("failed to execute ffmpeg");
 
     if !status.success() {
+        eprintln!("! error: ffmpeg failed to process overlay-pip.");
         std::process::exit(1);
     }
 }
