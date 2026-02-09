@@ -92,7 +92,7 @@ fn main() {
 fn run_ffmpeg_video(args: &Args, out_path: &str, aac_encoder: &str, ext: &str) {
     // 1. Determine encoder and parameters upfront
     let (v_codec, v_params) = if hardware_encoding() {
-        println!("+ Using hardware acceleration.");
+        println!("+ using hardware acceleration.");
         (
             "hevc_nvenc",
             vec![
@@ -107,7 +107,7 @@ fn run_ffmpeg_video(args: &Args, out_path: &str, aac_encoder: &str, ext: &str) {
             ],
         )
     } else {
-        println!("+ Using software encoding.");
+        println!("+ using software encoding.");
         (
             "libx264",
             vec!["-crf", "18", "-preset", "medium"],
