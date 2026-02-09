@@ -1,24 +1,20 @@
 //==============================================================================
 // img2video
 // Description: Convert a static image (png, jpg, jpeg) to a video file
-// References: [LIB-01] Path validation, [LIB-03] get_media_info, 
-//             [LIB-04] parse_to_seconds, [LIB-09] format_seconds_ms
-//             [LIB-10]
+// References: [LIB-01], [LIB-03] [LIB-04], [LIB-09] [LIB-10] [LIB-11]
 //==============================================================================
 
 use clap::Parser;
-use std::process::{Command, Stdio};
+use std::process::Command; // Cleaned up unused Stdio
 use std::path::Path;
-use ffmpeg_rust_scripts::{get_media_info, format_seconds_ms, parse_to_seconds, format_time_for_filename};
+use ffmpeg_rust_scripts::{get_media_info, format_seconds_ms, parse_to_seconds, format_time_for_filename, hardware_encoding};
 
 #[derive(Parser, Debug)]
 #[command(
     author,
     version,
     about = "Convert a static image to a video file with a specified duration",
-    after_help = "Example:\n  img2video -i input.png -d 00:00:10 -o output.mp4\n\n  \
-                  Dependencies:\n  \
-                  ffmpeg: https://www.ffmpeg.org/",
+    after_help = "Example:\n  img2video -i input.png -d 00:00:10 -o output.mp4",
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
 struct Args {
@@ -26,7 +22,7 @@ struct Args {
     #[arg(short = 'i', required = true)]
     infile: String,
 
-    /// Duration (e.g., 10 or 00:00:10)
+    /// Duration (e.g., 10 or 00:00:10.500)
     #[arg(short = 'd', required = true)]
     duration: String,
 
@@ -43,88 +39,84 @@ struct Args {
     version: Option<bool>,
 }
 
-
-/// check if the nvenc code is available
-fn has_nvenc() -> bool {
-    let output = Command::new("ffmpeg").args(["-encoders"]).output().expect("ffmpeg check failed");
-    String::from_utf8_lossy(&output.stdout).contains("hevc_nvenc")
-}
-
-
 fn main() {
     let args = Args::parse();
 
-    // 1. Validate input exists [LIB-01]
+    // 1. Validate input exists
     if !Path::new(&args.infile).exists() {
-        eprintln!("Error: Input image '{}' not found.", args.infile);
+        eprintln!("! error: input file '{}' not found.", args.infile);
         std::process::exit(1);
     }
 
-    // 2. Parse duration and determine output filename
-    let duration_secs = parse_to_seconds(&args.duration); // [LIB-04]
-    if duration_secs <= 0.0 {
-        eprintln!("Error: Invalid duration '{}'.", args.duration);
-        std::process::exit(1);
-    }
-
-    let info = get_media_info(&args.infile); // [LIB-03]
+    // 2. Determine duration and naming
+    let info = get_media_info(&args.infile);
+    let duration_secs = parse_to_seconds(&args.duration);
     
-    // Format duration to HH:MM:SS for the filename [LIB-09]
+    // Convert duration to a string once so it lives long enough for the Command
+    let dur_str = duration_secs.to_string(); 
+    
     let full_ts = format_seconds_ms(duration_secs);
-
-    // Apply LIB-10 OS check
     let timestamp = format_time_for_filename(&full_ts);
     
-    let final_output = args.outfile.unwrap_or_else(|| {
+    let out_path = args.outfile.unwrap_or_else(|| {
         format!("{}-[{}].mp4", info.stem, timestamp)
     });
 
-    // 3. Run FFmpeg to convert image to video
+    // 3. Encoder Selection Logic
+    let (v_codec, v_params) = if hardware_encoding() {
+        println!("+ using hardware acceleration.");
+        (
+            "hevc_nvenc",
+            vec![
+                "-tune", "hq",
+                "-preset", "p7",
+                "-rc", "vbr",
+                "-multipass", "fullres",
+                "-rc-lookahead", "32",
+                "-spatial-aq", "1",
+                "-cq", "20",
+                "-b:v", "0",
+            ],
+        )
+    } else {
+        println!("+ using software encoding.");
+        (
+            "libx264",
+            vec![
+                "-crf", "18",
+                "-preset", "medium",
+            ],
+        )
+    };
+
+    // 4. EXECUTE FFMPEG (Unified Vec)
     let mut cmd = Command::new("ffmpeg");
     
-    // Common Input Arguments
-    cmd.args([
-        "-loglevel", "error",
+    let mut ffmpeg_args = vec![
+        "-hide_banner",
+        "-v", "error",
+        "-stats",
         "-loop", "1",
         "-i", &args.infile,
-    ]);
+        "-c:v", v_codec,
+    ];
 
-    // Video Encoder Settings (NVENC with x264 fallback)
-    if has_nvenc() {
-        println!("+ Using High-Fidelity Hardware Encoding (NVENC)");
-        cmd.args([
-            "-c:v", "hevc_nvenc",
-            "-tune", "hq",
-            "-preset", "p7",
-            "-rc", "vbr",
-            "-multipass", "fullres",
-            "-cq", "20",
-            "-b:v", "0",
-        ]);
-    } else {
-        println!("+ NVENC not found. Falling back to libx264 (CRF 18)");
-        cmd.args(["-c:v", "libx264", "-crf", "18"]);
-    }
+    ffmpeg_args.extend(v_params);
 
-    // Common Output Arguments
-    cmd.args([
-        "-t", &duration_secs.to_string(),
+    ffmpeg_args.extend(vec![
+        "-t", &dur_str,           // Now referencing a variable that lives until end of main
         "-r", "30",
         "-pix_fmt", "yuv420p",
         "-movflags", "+faststart",
-        "-y",
-        &final_output,
+        &out_path,
     ]);
 
-    // Execute with suppressed output and status check
-    let status = cmd
-        .stdout(Stdio::null())
-        .stderr(Stdio::null())
+    let status = cmd.args(ffmpeg_args)
         .status()
-        .expect("Failed to execute FFmpeg");
+        .expect("failed to execute ffmpeg");
 
     if !status.success() {
-        eprintln!("Error: FFmpeg failed to convert image to video.");
+        eprintln!("! error: ffmpeg failed to process img2video.");
         std::process::exit(1);
     }
 }

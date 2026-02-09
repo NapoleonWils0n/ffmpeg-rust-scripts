@@ -49,7 +49,7 @@ fn main() {
     let args = Args::parse();
 
     if !Path::new(&args.infile).exists() {
-        eprintln!("! Error: Input file '{}' does not exist.", args.infile);
+        eprintln!("! error: Input file '{}' does not exist.", args.infile);
         std::process::exit(1);
     }
 
@@ -59,7 +59,7 @@ fn main() {
     });
 
     // PASS 1: Analysis
-    println!("+ Pass 1: Analyzing file for {} LUFS target...", args.lufs);
+    println!("+ pass 1: Analyzing file for {} LUFS target...", args.lufs);
     
     let analysis_output = Command::new("ffmpeg")
         .args([
@@ -90,12 +90,12 @@ fn main() {
     let offset = get_val("target_offset");
 
     if measured_i.is_empty() {
-        eprintln!("! Error: Could not analyze audio. Verify ffmpeg installation.");
+        eprintln!("! error: Could not analyze audio. Verify ffmpeg installation.");
         std::process::exit(1);
     }
 
     // PASS 2: Application
-    println!("+ Pass 2: Applying normalization (Source: {} LUFS)", measured_i);
+    println!("+ pass 2: Applying normalization (Source: {} LUFS)", measured_i);
 
     let status = Command::new("ffmpeg")
         .args([
