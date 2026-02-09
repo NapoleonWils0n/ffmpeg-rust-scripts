@@ -8,7 +8,7 @@ use clap::Parser;
 use std::process::Command;
 use std::path::Path; 
 // Removed unused imports to fix compiler warnings
-use ffmpeg_rust_scripts::{get_media_info, has_encoder, format_time_for_filename, is_nvenc_available};
+use ffmpeg_rust_scripts::{get_media_info, has_encoder, format_time_for_filename, hardware_encoding};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -91,8 +91,8 @@ fn main() {
 /// Video Runner (Output Seeking: -i before -ss/-to)
 fn run_ffmpeg_video(args: &Args, out_path: &str, aac_encoder: &str, ext: &str) {
     // 1. Determine encoder and parameters upfront
-    let (v_codec, v_params) = if is_nvenc_available() {
-        println!("+ Hardware acceleration detected. Using NVENC...");
+    let (v_codec, v_params) = if hardware_encoding() {
+        println!("+ Using hardware acceleration.");
         (
             "hevc_nvenc",
             vec![
@@ -107,7 +107,7 @@ fn run_ffmpeg_video(args: &Args, out_path: &str, aac_encoder: &str, ext: &str) {
             ],
         )
     } else {
-        println!("+ NVENC not found. Using libx264 software encoding...");
+        println!("+ Using software encoding.");
         (
             "libx264",
             vec!["-crf", "18", "-preset", "medium"],

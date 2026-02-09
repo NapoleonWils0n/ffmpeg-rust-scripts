@@ -264,9 +264,9 @@ pub fn format_time_for_filename(time: &str) -> String {
     }
 }
 
-/// [LIB-11] nvidia check
+/// [LIB-11] harwdware encoding check
 // - trim-clip-to
-pub fn is_nvenc_available() -> bool {
+pub fn hardware_encoding() -> bool {
     #[cfg(target_os = "linux")]
     {
         // Instant check: If this file exists, NVIDIA drivers are active.
