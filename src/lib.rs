@@ -268,6 +268,7 @@ pub fn format_time_for_filename(time: &str) -> String {
 // - blur-fill
 // - delogo
 // - fade-clip
+// - hstack
 // - trim-clip
 // - trim-clip-to
 // - trim-remote-clip

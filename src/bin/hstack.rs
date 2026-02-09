@@ -1,13 +1,13 @@
 //==============================================================================
 // hstack
 // Description: stack two videos side-by-side with auto-scaling and nvenc fallback
-// References: [LIB-01] [LIB-03] 
+// References: [LIB-01] [LIB-03], [LIB-11]
 //==============================================================================
 
 use clap::Parser;
 use std::process::Command;
 use std::path::Path;
-use ffmpeg_rust_scripts::{get_media_info};
+use ffmpeg_rust_scripts::{get_media_info, hardware_encoding};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -52,78 +52,91 @@ fn get_dims(path: &str) -> (u32, u32) {
     if parts.len() == 2 { (parts[0], parts[1]) } else { (0, 0) }
 }
 
-/// check if the nvenc code is available
-fn has_nvenc() -> bool {
-    let output = Command::new("ffmpeg").args(["-encoders"]).output().expect("ffmpeg check failed");
-    String::from_utf8_lossy(&output.stdout).contains("hevc_nvenc")
-}
-
 fn main() {
     let args = Args::parse();
 
+    // 1. Validate inputs
     if !Path::new(&args.left).exists() || !Path::new(&args.right).exists() {
         eprintln!("! Error: One or both input files do not exist.");
         std::process::exit(1);
     }
 
+    // 2. Determine Logic and Naming
     let (_w1, h1) = get_dims(&args.left);
     let (_w2, h2) = get_dims(&args.right);
 
     let mut target_h = h1.max(h2);
     if target_h > 1080 { target_h = 1080; }
 
-    // Updated Filter: Added shortest=1 directly into hstack
+    // Filter: Scale both to target_h while maintaining aspect ratio, then stack
     let filter = format!(
         "[0:v]scale=-1:{}:flags=lanczos[l]; [1:v]scale=-1:{}:flags=lanczos[r]; [l][r]hstack=inputs=2:shortest=1[v]",
         target_h, target_h
     );
 
-    let audio_map = if args.audio.to_lowercase() == "r" { "1:a" } else { "0:a" };
-    
+    // 3. Naming and Audio Mapping
     let info = get_media_info(&args.left);
     let out_path = args.outfile.unwrap_or_else(|| format!("{}-hstack.mp4", info.stem));
+    let audio_map = if args.audio.to_lowercase() == "r" { "1:a" } else { "0:a" };
 
-    let mut cmd = Command::new("ffmpeg");
-    cmd.args(["-hide_banner", "-stats", "-v", "error"]);
-    cmd.args(["-i", &args.left]);
-    cmd.args(["-i", &args.right]);
-    cmd.args(["-filter_complex", &filter]);
-    cmd.args(["-map", "[v]", "-map", audio_map]);
-
-    // 1. High-Quality Video Encoder Settings (matching blur-fill)
-    if has_nvenc() {
-        println!("+ Using High-Fidelity Hardware Encoding (NVENC)");
-        cmd.args([
-            "-c:v", "hevc_nvenc",
-            "-tune", "hq",
-            "-preset", "p7",
-            "-rc", "vbr",
-            "-multipass", "fullres",
-            "-rc-lookahead", "32",
-            "-spatial-aq", "1",
-            "-cq", "20",
-            "-b:v", "0",
-        ]);
+// 4. Encoder Selection Logic
+    let (v_codec, v_params) = if hardware_encoding() {
+        println!("+ using hardware acceleration.");
+        (
+            "hevc_nvenc",
+            vec![
+                "-tune", "hq",
+                "-preset", "p7",
+                "-rc", "vbr",
+                "-multipass", "fullres",
+                "-rc-lookahead", "32",
+                "-spatial-aq", "1",
+                "-cq", "20",
+                "-b:v", "0",
+            ],
+        )
     } else {
-        println!("+ NVENC not found. Falling back to Software Encoding (libx264)");
-        cmd.args(["-c:v", "libx264", "-crf", "16", "-preset", "medium"]);
-    }
+        println!("+ using software encoding.");
+        (
+            "libx264",
+            vec![
+                "-crf", "16",
+                "-preset", "medium",
+            ],
+        )
+    };
 
-    // 2. Force Audio Transcoding to ensure duration sync
-    println!("+ Encoding audio to AAC to ensure proper duration sync");
-    cmd.args(["-c:a", "aac"]);
+    // 5. EXECUTE FFMPEG (Unified Vec)
+    let mut cmd = Command::new("ffmpeg");
+    
+    let mut ffmpeg_args = vec![
+        "-hide_banner",
+        "-v", "error",
+        "-stats",
+        "-i", &args.left,
+        "-i", &args.right,
+        "-filter_complex", &filter,
+        "-map", "[v]",
+        "-map", audio_map,
+        "-c:v", v_codec,
+    ];
 
-    // 3. Final Global Options
-    cmd.arg("-shortest");
+    ffmpeg_args.extend(v_params);
 
-    // Final output arguments
-    cmd.args([
-        "-pix_fmt", "yuv420p", 
-        "-movflags", "+faststart", 
-        &out_path
+    ffmpeg_args.extend(vec![
+        "-c:a", "aac",
+        "-pix_fmt", "yuv420p",
+        "-shortest",
+        "-movflags", "+faststart",
+        &out_path,
     ]);
 
-    let status = cmd.status().expect("ffmpeg failed");
+    let status = cmd.args(ffmpeg_args)
+        .status()
+        .expect("failed to execute ffmpeg");
 
-    if !status.success() { std::process::exit(1); }
+    if !status.success() {
+        eprintln!("! error: ffmpeg failed to process hstack.");
+        std::process::exit(1);
+    }
 }
