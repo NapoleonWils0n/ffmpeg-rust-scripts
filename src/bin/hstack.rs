@@ -79,7 +79,7 @@ fn main() {
     let out_path = args.outfile.unwrap_or_else(|| format!("{}-hstack.mp4", info.stem));
     let audio_map = if args.audio.to_lowercase() == "r" { "1:a" } else { "0:a" };
 
-// 4. Encoder Selection Logic
+    // 4. Encoder Selection Logic
     let (v_codec, v_params) = if hardware_encoding() {
         println!("+ using hardware acceleration.");
         (
