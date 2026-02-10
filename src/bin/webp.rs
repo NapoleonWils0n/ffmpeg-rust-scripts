@@ -49,7 +49,7 @@ fn main() {
     let args = Args::parse();
 
     if !Path::new(&args.infile).exists() {
-        eprintln!("Error: Input file '{}' not found.", args.infile);
+        eprintln!("! error: Input file '{}' not found.", args.infile);
         std::process::exit(1);
     }
 
@@ -73,7 +73,6 @@ fn main() {
             "-vf", &filter,
             // loop 0 = infinite loop
             "-loop", "0",
-            "-y",
             &out_path,
         ])
         .status()

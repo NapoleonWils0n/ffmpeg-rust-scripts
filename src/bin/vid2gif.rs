@@ -49,7 +49,7 @@ fn main() {
     let args = Args::parse();
 
     if !Path::new(&args.infile).exists() {
-        eprintln!("Error: Input file '{}' not found.", args.infile);
+        eprintln!("! error: Input file '{}' not found.", args.infile);
         std::process::exit(1);
     }
 
@@ -75,7 +75,6 @@ fn main() {
             "-stats",
             "-i", &args.infile,
             "-vf", &filter,
-            "-y", // Overwrite output without asking
             &out,
         ])
         .status()
