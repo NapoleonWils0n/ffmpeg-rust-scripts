@@ -1,13 +1,13 @@
 //==============================================================================
 // zoompan
 // Description: Ken Burns style zoom in/out with real-time progress
-// References: [LIB-01], [LIB-03], [LIB-04], [LIB-09], [LIB-10]
+// References: [LIB-01], [LIB-03], [LIB-04], [LIB-09], [LIB-10] [LIB-11]
 //==============================================================================
 
 use clap::Parser;
 use std::process::Command;
 use std::path::Path;
-use ffmpeg_rust_scripts::{get_media_info, format_seconds_ms, parse_to_seconds, format_time_for_filename};
+use ffmpeg_rust_scripts::{get_media_info, format_seconds_ms, parse_to_seconds, format_time_for_filename, hardware_encoding};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -55,12 +55,6 @@ fn get_image_height(path: &str) -> u32 {
     String::from_utf8_lossy(&output.stdout).trim().parse().unwrap_or(720)
 }
 
-/// check if the nvenc code is available
-fn has_nvenc() -> bool {
-    let output = Command::new("ffmpeg").args(["-encoders"]).output().expect("ffmpeg check failed");
-    String::from_utf8_lossy(&output.stdout).contains("hevc_nvenc")
-}
-
 fn main() {
     let args = Args::parse();
 
@@ -70,6 +64,7 @@ fn main() {
     }
 
     let dur = parse_to_seconds(&args.duration);
+    let dur_str = dur.to_string();
     let img_h = get_image_height(&args.infile);
     let total_frames = (dur * 30.0) as u32;
 
@@ -101,7 +96,7 @@ fn main() {
     // 3. LIB-10: Convert colons to dashes for Windows compatibility
     let timestamp_fs = format_time_for_filename(&full_ts);
 
-    let final_output = args.outfile.unwrap_or_else(|| {
+    let out_path = args.outfile.unwrap_or_else(|| {
         format!("{}-zoom-{}-{}-[{}].mp4", info.stem, args.zoom, args.position, timestamp_fs)
     });
 
@@ -112,47 +107,60 @@ fn main() {
     );
 
     // 4. Build FFmpeg Command
+let (v_codec, v_params) = if hardware_encoding() {
+        println!("+ using hardware acceleration.");
+        (
+            "hevc_nvenc",
+            vec![
+                "-tune", "hq",
+                "-preset", "p7",
+                "-rc", "vbr",
+                "-multipass", "fullres",
+                "-rc-lookahead", "32",
+                "-spatial-aq", "1",
+                "-cq", "20",
+                "-b:v", "0",
+            ],
+        )
+    } else {
+        println!("+ using software encoding.");
+        (
+            "libx264",
+            vec![
+                "-crf", "18",
+                "-preset", "medium",
+            ],
+        )
+    };
+
+    // 4. EXECUTE FFMPEG (Unified Vec)
     let mut cmd = Command::new("ffmpeg");
-    cmd.args([
+    
+    let mut ffmpeg_args = vec![
         "-hide_banner",
-        "-loglevel", "error",
+        "-v", "error",
         "-stats",
         "-loop", "1",
         "-i", &args.infile,
         "-vf", &filter,
-        "-t", &dur.to_string(),
-    ]);
+        "-t", &dur_str,
+        "-c:v", v_codec,
+    ];
 
-    // Video Encoder Settings (NVENC with x264 fallback)
-    if has_nvenc() {
-        println!("+ Using High-Fidelity Hardware Encoding (NVENC)");
-        cmd.args([
-            "-c:v", "hevc_nvenc",
-            "-tune", "hq",
-            "-preset", "p7",
-            "-rc", "vbr",
-            "-multipass", "fullres",
-            "-rc-lookahead", "32",
-            "-spatial-aq", "1",
-            "-cq", "20",
-            "-b:v", "0",
-        ]);
-    } else {
-        println!("+ NVENC not found. Falling back to libx264 (CRF 18)");
-        cmd.args(["-c:v", "libx264", "-crf", "18"]);
-    }
+    ffmpeg_args.extend(v_params);
 
-    cmd.args([
+    ffmpeg_args.extend(vec![
         "-pix_fmt", "yuv420p",
         "-movflags", "+faststart",
-        "-y",
-        &final_output,
+        &out_path,
     ]);
 
-    let status = cmd.status().expect("Failed to execute FFmpeg");
+    let status = cmd.args(ffmpeg_args)
+        .status()
+        .expect("failed to execute ffmpeg");
 
     if !status.success() {
-        eprintln!("Error: FFmpeg failed to create zoompan animation.");
+        eprintln!("! error: ffmpeg failed to process zoompan.");
         std::process::exit(1);
     }
 }

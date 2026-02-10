@@ -277,6 +277,8 @@ pub fn format_time_for_filename(time: &str) -> String {
 // - trim-clip-to
 // - trim-remote-clip
 // - trim-short
+// - xfade
+// - zoompan
 pub fn hardware_encoding() -> bool {
     #[cfg(target_os = "linux")]
     {
