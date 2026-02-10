@@ -272,6 +272,7 @@ pub fn format_time_for_filename(time: &str) -> String {
 // - img2video
 // - overlay-clip
 // - overlay-pip
+// - pan-scan
 // - trim-clip
 // - trim-clip-to
 // - trim-remote-clip

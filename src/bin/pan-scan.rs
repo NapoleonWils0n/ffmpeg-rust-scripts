@@ -1,15 +1,13 @@
 //==============================================================================
 // pan-scan
 // Description: Create a pan animation using scale and crop math from shell script
-// References: [LIB-01] Path validation, [LIB-03] get_media_info, 
-//             [LIB-04] parse_to_seconds, [LIB-09] format_seconds_ms
-//             [LIB-10]
+// References: [LIB-01], [LIB-03], [LIB-04], [LIB-09] [LIB-10] [LIB-11]
 //==============================================================================
 
 use clap::Parser;
 use std::process::Command;
 use std::path::Path;
-use ffmpeg_rust_scripts::{get_media_info, format_seconds_ms, parse_to_seconds, format_time_for_filename};
+use ffmpeg_rust_scripts::{get_media_info, format_seconds_ms, parse_to_seconds, format_time_for_filename, hardware_encoding};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -63,26 +61,21 @@ fn get_image_dimensions(path: &str) -> (u32, u32) {
     if dims.len() == 2 { (dims[0], dims[1]) } else { (1920, 1080) }
 }
 
-/// check if the nvenc code is available
-fn has_nvenc() -> bool {
-    let output = Command::new("ffmpeg").args(["-encoders"]).output().expect("ffmpeg check failed");
-    String::from_utf8_lossy(&output.stdout).contains("hevc_nvenc")
-}
-
 fn main() {
     let args = Args::parse();
 
     if !Path::new(&args.infile).exists() {
-        eprintln!("Error: Input image '{}' not found.", args.infile);
+        eprintln!("! error: input image '{}' not found.", args.infile);
         std::process::exit(1);
     }
 
     let (iw, ih) = get_image_dimensions(&args.infile);
     let dur = parse_to_seconds(&args.duration);
+    let dur_str = dur.to_string(); // Variable to hold lifetime for the command
     let info = get_media_info(&args.infile);
+    
+    // 1. Enable Milliseconds in filename
     let full_ts = format_seconds_ms(dur);
-
-    // Apply LIB-10 OS check
     let timestamp = format_time_for_filename(&full_ts);
     
     let pos_full = match args.position.as_str() {
@@ -90,61 +83,77 @@ fn main() {
         _ => &args.position,
     };
 
-    let final_output = args.outfile.unwrap_or_else(|| {
+    let out_path = args.outfile.unwrap_or_else(|| {
         format!("{}-pan-{}-[{}].mp4", info.stem, pos_full, timestamp)
     });
 
+    // 2. Filter logic (original math preserved)
     let filter = match args.position.as_str() {
         "l" => format!("scale=w=-2:h=3*{},crop=w=3*{}/1.05:h=3*{}/1.05:x=t*(in_w-out_w)/{}:y=(in_h-out_h)/2,scale=w={}:h={},setsar=1", ih, iw, ih, dur, iw, ih),
         "r" => format!("scale=w=-2:h=3*{},crop=w=3*{}/1.05:h=3*{}/1.05:x=(in_w-out_w)-t*(in_w-out_w)/{}:y=(in_h-out_h)/2,scale=w={}:h={},setsar=1", ih, iw, ih, dur, iw, ih),
         "u" => format!("scale=w=-2:h=3*{},crop=w=3*{}/1.2:h=3*{}/1.2:x=(in_w-out_w)/2:y=t*(in_h-out_h)/{},scale=w={}:h={},setsar=1", ih, iw, ih, dur, iw, ih),
         "d" => format!("scale=w=-2:h=3*{},crop=w=3*{}/1.2:h=3*{}/1.2:x=(in_w-out_w)/2:y=(in_h-out_h)-t*(in_h-out_h)/{},scale=w={}:h={},setsar=1", ih, iw, ih, dur, iw, ih),
         _ => {
-            eprintln!("Error: Use l, r, u, or d for position.");
+            eprintln!("! error: use l, r, u, or d for position.");
             std::process::exit(1);
         }
     };
 
-    // 3. Build FFmpeg Command
+    // 3. Encoder Selection Logic
+    let (v_codec, v_params) = if hardware_encoding() {
+        println!("+ using hardware acceleration.");
+        (
+            "hevc_nvenc",
+            vec![
+                "-tune", "hq",
+                "-preset", "p7",
+                "-rc", "vbr",
+                "-multipass", "fullres",
+                "-rc-lookahead", "32",
+                "-spatial-aq", "1",
+                "-cq", "20",
+                "-b:v", "0",
+            ],
+        )
+    } else {
+        println!("+ using software encoding.");
+        (
+            "libx264",
+            vec![
+                "-crf", "18",
+                "-preset", "medium",
+            ],
+        )
+    };
+
+    // 4. EXECUTE FFMPEG (Unified Vec)
     let mut cmd = Command::new("ffmpeg");
-    cmd.args([
-        "-hide_banner", "-loglevel", "error", "-stats",
+    
+    let mut ffmpeg_args = vec![
+        "-hide_banner",
+        "-v", "error",
+        "-stats",
         "-loop", "1",
         "-i", &args.infile,
         "-vf", &filter,
-        "-t", &dur.to_string(),
-    ]);
+        "-t", &dur_str,
+        "-c:v", v_codec,
+    ];
 
-    // Video Encoder Settings (NVENC with x264 fallback)
-    if has_nvenc() {
-        println!("+ Using High-Fidelity Hardware Encoding (NVENC)");
-        cmd.args([
-            "-c:v", "hevc_nvenc",
-            "-tune", "hq",
-            "-preset", "p7",
-            "-rc", "vbr",
-            "-multipass", "fullres",
-            "-rc-lookahead", "32",
-            "-spatial-aq", "1",
-            "-cq", "20",
-            "-b:v", "0",
-        ]);
-    } else {
-        println!("+ NVENC not found. Falling back to libx264 (CRF 18)");
-        cmd.args(["-c:v", "libx264", "-crf", "18"]);
-    }
+    ffmpeg_args.extend(v_params);
 
-    cmd.args([
+    ffmpeg_args.extend(vec![
         "-pix_fmt", "yuv420p",
         "-movflags", "+faststart",
-        "-y",
-        &final_output,
+        &out_path, // Removed -y for safety
     ]);
 
-    let status = cmd.status().expect("Failed to execute FFmpeg");
+    let status = cmd.args(ffmpeg_args)
+        .status()
+        .expect("failed to execute ffmpeg");
 
     if !status.success() {
-        eprintln!("Error: FFmpeg failed to create pan-scan animation.");
+        eprintln!("! error: ffmpeg failed to create pan-scan animation.");
         std::process::exit(1);
     }
 }
