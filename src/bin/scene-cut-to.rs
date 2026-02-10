@@ -1,7 +1,7 @@
 //==============================================================================
 // scene-cut-to
 // Description: Split video into clips using start time and duration (End-point seeking)
-// References: [LIB-01], [LIB-03], [LIB-06], [LIB-10]
+// References: [LIB-01], [LIB-03], [LIB-06], [LIB-10], [LIB-11]
 //==============================================================================
 
 use clap::Parser;
@@ -9,23 +9,24 @@ use std::process::Command;
 use std::path::Path;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
-use ffmpeg_rust_scripts::{get_media_info, parse_to_seconds, format_seconds_ms, format_time_for_filename};
+// Integrated hardware_encoding for cross-platform support
+use ffmpeg_rust_scripts::{get_media_info, parse_to_seconds, format_seconds_ms, format_time_for_filename, hardware_encoding};
 
 #[derive(Parser, Debug)]
 #[command(
     author,
     version,
-    about = "split video into clips using a start,duration cutlist by calculating end-point",
+    about = "Split video into clips using a start,duration cutlist by calculating end-point",
     after_help = "Example:\n  scene-cut-to -i input.mp4 -c cutlist.txt\n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/",
     override_usage = "scene-cut-to -i <INPUT> -c <CUTLIST> [OPTIONS]"
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
 struct Args {
-    /// input video file
+    /// Input video file
     #[arg(short = 'i', required = true, value_name = "INPUT")]
     input: String,
 
-    /// cutlist file comma-separated start,duration
+    /// Cutlist file comma-separated start,duration
     #[arg(short = 'c', required = true, value_name = "CUTLIST")]
     cutlist: String,
 
@@ -38,12 +39,6 @@ struct Args {
     version: Option<bool>,
 }
 
-/// check if the nvenc code is available
-fn has_nvenc() -> bool {
-    let output = Command::new("ffmpeg").args(["-encoders"]).output().expect("ffmpeg check failed");
-    String::from_utf8_lossy(&output.stdout).contains("hevc_nvenc")
-}
-
 fn main() {
     let args = Args::parse();
 
@@ -52,79 +47,80 @@ fn main() {
         std::process::exit(1);
     }
 
+    // 1. Get Media Info
     let info = get_media_info(&args.input);
-    let file = File::open(&args.cutlist).expect("Failed to open cutlist");
+
+    // 2. Open Cutlist
+    let file = File::open(&args.cutlist).expect("Could not open cutlist file");
     let reader = BufReader::new(file);
 
-    // 1. Determine Encoder once at the start
-    let use_nvenc = has_nvenc();
-    if use_nvenc {
-        println!("+ Using High-Fidelity Hardware Encoding (NVENC)");
-    } else {
-        println!("+ NVENC not found. Falling back to libx264 (CRF 18)");
-    }
-
-    // 2. PROCESS CUTLIST
-    for (index, line) in reader.lines().enumerate() {
-        let line = line.expect("Failed to read line");
-        let parts: Vec<&str> = line.split(',').collect();
-
-            if parts.len() != 2 { continue; }
-            let start_raw = parts[0].trim();
-            let duration_raw = parts[1].trim();
-
-            // 3. Prepare raw timestamps for calculation
-            let start_sec = parse_to_seconds(start_raw);
-            let duration_sec = parse_to_seconds(duration_raw);
-            let end_sec = start_sec + duration_sec;
-
-            // 4. LIB-09: Get full HH:MM:SS.mmm (Preserving milliseconds)
-            let start_filename_raw = format_seconds_ms(start_sec);
-            let end_filename_raw = format_seconds_ms(end_sec);
-
-            // 5. Apply LIB-10 OS check for the filename
-            let start_ts = format_time_for_filename(&start_filename_raw);
-            let end_ts = format_time_for_filename(&end_filename_raw);
-
-            // Filename with original colons preserved
-            let output_name = format!(
-                "{}-scene-{:03}-[{}-{}].mp4",
-                info.stem,
-                index + 1,
-                start_ts,
-                end_ts
-            );
-
-            println!("Processing Scene {}: {} -> {}", index + 1, start_raw, format_seconds_ms(end_sec));
-
-        let mut cmd = Command::new("ffmpeg");
-        cmd.args([
-            "-hide_banner",
-            "-v", "error",
-            "-stats",
-            "-i", &args.input,     // Input Seeking (Frame Accurate)
-            "-ss", start_raw,
-            "-to", &end_filename_raw,    // Use the calculated ms timestamp
-        ]);
-
-        // 6. High-Fidelity Encoder Logic
-        if use_nvenc {
-            cmd.args([
-                "-c:v", "hevc_nvenc",
-                "-preset", "p7",
+    // 3. Encoder Setup (Cross-Platform Logic)
+    let (v_codec, v_params) = if hardware_encoding() {
+        println!("+ hardware acceleration detected: using NVENC.");
+        (
+            "hevc_nvenc",
+            vec![
                 "-tune", "hq",
+                "-preset", "p7",
                 "-rc", "vbr",
                 "-multipass", "fullres",
                 "-rc-lookahead", "32",
                 "-spatial-aq", "1",
                 "-cq", "20",
                 "-b:v", "0",
-            ]);
-        } else {
-            cmd.args(["-c:v", "libx264", "-crf", "18"]);
-        }
+            ],
+        )
+    } else {
+        println!("+ no hardware acceleration detected: falling back to libx264.");
+        (
+            "libx264",
+            vec!["-crf", "18", "-preset", "medium"],
+        )
+    };
 
-        cmd.args([
+    // 4. Process Each Scene
+    for (index, line) in reader.lines().enumerate() {
+        let line = line.expect("Could not read line from cutlist");
+        if line.trim().is_empty() { continue; }
+
+        let parts: Vec<&str> = line.split(',').collect();
+        if parts.len() < 2 { continue; }
+
+        let start_raw = parts[0].trim();
+        let duration_raw = parts[1].trim();
+
+        // Calculate end time for seeking
+        let start_sec = parse_to_seconds(start_raw);
+        let dur_sec = parse_to_seconds(duration_raw);
+        let end_sec = start_sec + dur_sec;
+
+        let end_filename_raw = format_seconds_ms(end_sec);
+
+        // Format timestamps for filename (Handles OS-specific character safety)
+        let start_ts = format_time_for_filename(&format_seconds_ms(start_sec));
+        let end_ts = format_time_for_filename(&end_filename_raw);
+
+        let output_name = format!(
+            "{}-scene-{:03}-[{}-{}].mp4",
+            info.stem, index + 1, start_ts, end_ts
+        );
+
+        println!("+ processing scene {:03}: {} -> {}", index + 1, start_raw, end_filename_raw);
+
+        // 5. Build and Execute FFmpeg Command
+        let mut ffmpeg_args = vec![
+            "-hide_banner",
+            "-v", "error",
+            "-stats",
+            "-i", &args.input,
+            "-ss", start_raw,
+            "-to", &end_filename_raw,
+            "-c:v", v_codec,
+        ];
+
+        ffmpeg_args.extend(v_params.iter().cloned());
+
+        ffmpeg_args.extend(vec![
             "-pix_fmt", "yuv420p",
             "-c:a", "aac",
             "-movflags", "+faststart",
@@ -132,10 +128,15 @@ fn main() {
             &output_name,
         ]);
 
-        let status = cmd.status().expect("Failed to execute FFmpeg");
+        let status = Command::new("ffmpeg")
+            .args(&ffmpeg_args)
+            .status()
+            .expect("Failed to execute FFmpeg");
 
         if !status.success() {
-            eprintln!("Error processing scene {}", index + 1);
+            eprintln!("Error: FFmpeg failed on scene {}.", index + 1);
         }
     }
+
+    println!("+ processing complete.");
 }
