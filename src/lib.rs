@@ -274,6 +274,7 @@ pub fn format_time_for_filename(time: &str) -> String {
 // - overlay-pip
 // - pan-scan
 // - scene-cut
+// - scene-detect-auto
 // - trim-clip
 // - trim-clip-to
 // - trim-remote-clip
