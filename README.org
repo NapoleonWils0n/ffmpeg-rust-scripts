@@ -627,7 +627,7 @@ extract-frame -v
 :CUSTOM_ID: mac-install
 :END:
 
-🎥 [[https://youtu.be/EODZ_QeX4zo][Mac FFmpeg Rust Scripts install]]
+🎥 [[https://youtu.be/aUB5gYBu7cA][Mac FFmpeg Rust Scripts install]]
 
 Note: Binaries for MacOS are now available.
 
