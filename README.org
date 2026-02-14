@@ -885,9 +885,9 @@ mkdir -p ~/bin
 
 ***** sh shell
 
-#+begin_example
-~/.profile
-#+end_example
+#+begin_src sh
+vi ~/.profile
+#+end_src
 
 For the default shell (sh or tcsh) shell on Freebsd,
 edit your shell ~/.profile
@@ -938,9 +938,9 @@ Reload your ~/.profile
 
 ***** zsh shell
 
-#+begin_example
-~/.zshenv
-#+end_example
+#+begin_src sh
+vi ~/.zshenv
+#+end_src
 
 If you are using zsh add the following code to your ~/.zshenv file
 
@@ -977,9 +977,9 @@ source ~/.zshenv
 
 ***** bash shell
 
-#+begin_example
-~/.bashrc
-#+end_example
+#+begin_src sh
+vi ~/.bashrc
+#+end_src
 
 If you are using bash add the following code to your ~/.bashrc
 
