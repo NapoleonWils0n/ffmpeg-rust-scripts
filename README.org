@@ -862,7 +862,7 @@ sudo pkg install rust
 Install dependencies with pkg.
 
 #+BEGIN_SRC sh
-sudo pkg install ffmpeg yt-dlp deno fd-find
+sudo pkg install ffmpeg yt-dlp deno fd-find git
 #+END_SRC
 
 You can also install ffmpeg from ports,
