@@ -662,6 +662,14 @@ Run the following command in the terminal to install homebrew.
 Note: When the installer finishes, look for the "Next steps" section in your terminal.
 You must run the commands provided there to add Homebrew to your system PATH.
 
+- Run these commands in your terminal to add Homebrew to your PATH:
+
+#+begin_src sh
+echo >> /Users/${USER}/.zprofile
+echo 'eval "$(/usr/local/bin/brew shellenv zsh)"' >> /Users/${USER}/.zprofile
+eval "$(/usr/local/bin/brew shellenv zsh)"
+#+end_src
+
 **** Install Dependencies
 
 Install dependencies with homebrew,
