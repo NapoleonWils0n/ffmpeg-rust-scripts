@@ -759,6 +759,19 @@ Move the extracted binaries into your local ~/bin directory.
 mv mac-ffmpeg-rust-scripts-v2/* ~/bin/
 #+end_src
 
+If you have issues running the scripts
+
+Because these binaries are not signed with an Apple Developer ID, macOS may place them in "Quarantine" upon download.
+
+This results in an error stating the developer cannot be verified.
+
+To authorize the entire fleet of scripts at once,
+run the following command to remove the quarantine flag from your bin directory:
+
+#+begin_src sh
+xattr -rd com.apple.quarantine ~/bin/
+#+end_src
+
 **** Xcode install
 
 Note: you only need to install xcode and rust if you want to build the scripts.
