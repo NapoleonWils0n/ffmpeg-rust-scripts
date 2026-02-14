@@ -1023,7 +1023,7 @@ and then follow these steps to install the binaries.
 Open your terminal and run the following command:
 
 #+begin_src sh
-shasum -c freebsd-ffmpeg-rust-scripts-v2.tar.gz.sha256
+sha256sum -c freebsd-ffmpeg-rust-scripts-v2.tar.gz.sha256
 #+end_src
 
 #+begin_example
