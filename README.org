@@ -777,14 +777,11 @@ cargo build --release
 When you run cargo build --release,
 Rust places the binaries in target/release/
 
-Copy the scripts to the bin directory in your home.
+Use fd to copy the scripts to the bin directory in your home.
 
 #+begin_src sh
-cp target/release/* ~/bin/
+fd . target/release --max-depth 1 --type executable --exec cp {} ~/bin/
 #+end_src
-
-Note: You may see some non-executable files in the bin folder after this command (like .d files).
-This is normal, but you only need the files that match the script names.
 
 *** Freebsd install
 :PROPERTIES:
