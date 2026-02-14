@@ -850,7 +850,7 @@ rm -i ~/bin/ffmpeg_rust_scripts
 :CUSTOM_ID: freebsd-install
 :END:
 
-🎥 [[https://youtu.be/q2wvflAWLgc][Freebsd FFmpeg Rust Scripts install]]
+🎥 [[https://youtu.be/XzXIkNb9H8I][Freebsd FFmpeg Rust Scripts install]]
 
 Note: Binaries for Freebsd are now available.
 
