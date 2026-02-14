@@ -649,7 +649,13 @@ You must run the commands provided there to add Homebrew to your system PATH.
 
 #+begin_src sh
 echo >> /Users/${USER}/.zprofile
+#+end_src
+
+#+begin_src sh
 echo 'eval "$(/usr/local/bin/brew shellenv zsh)"' >> /Users/${USER}/.zprofile
+#+end_src
+
+#+begin_src sh
 eval "$(/usr/local/bin/brew shellenv zsh)"
 #+end_src
 
