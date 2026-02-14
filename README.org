@@ -47,11 +47,9 @@ This project is designed to be cross-platform and work on:
 
 *** Binary Availability & Compilation
 
-Statically Compiled Binaries: Provided for NixOS, Linux, Windows and MacOS
+Statically Compiled Binaries: Provided for NixOS, Linux, Windows, MacOS and Freebsd
 
 These are standalone executables that do not require a Rust runtime to be installed on your system.
-
-Manual Compilation: For FreeBSD, you will need to install the Rust toolchain and compile the scripts from source to ensure compatibility with your specific system architecture.
 
 ** Installation instructions
 
@@ -854,21 +852,14 @@ rm -i ~/bin/ffmpeg_rust_scripts
 
 🎥 [[https://youtu.be/q2wvflAWLgc][Freebsd FFmpeg Rust Scripts install]]
 
-**** Rust install
-
-Install the required tools and the Rust toolchain using the pkg manager.
-Run the following command in the terminal to install Rust.
-
-#+begin_src sh
-sudo pkg install rust
-#+end_src
+Note: Binaries for Freebsd are now available.
 
 **** Install Dependencies
 
 Install dependencies with pkg.
 
 #+BEGIN_SRC sh
-sudo pkg install ffmpeg yt-dlp deno fd-find git
+sudo pkg install ffmpeg yt-dlp deno fd-find
 #+END_SRC
 
 You can also install ffmpeg from ports,
@@ -1019,6 +1010,53 @@ Source your ~/.bashrc if you are using the bash shell
 #+BEGIN_SRC sh
 source ~/.bashrc
 #+END_SRC
+
+**** Release download
+
+Download the latest Freebsd release archive and sha256sum check sum
+and then follow these steps to install the binaries.
+
+[[https://github.com/NapoleonWils0n/ffmpeg-rust-scripts/releases]]
+
+***** check the sha256sum check sum
+
+Open your terminal and run the following command:
+
+#+begin_src sh
+shasum -a 256 -c freebsd-ffmpeg-rust-scripts-v2.tar.gz.sha256
+#+end_src
+
+#+begin_example
+Expected Output: freebsd-ffmpeg-rust-scripts-v2.tar.gz: OK
+#+end_example
+
+***** Extract the archive
+
+Note: Replace v2 with the actual version number you downloaded.
+
+#+begin_src sh
+tar -xf freebsd-ffmpeg-rust-scripts-v2.tar.gz
+#+end_src
+
+***** Deploy the scripts
+
+Move the extracted binaries into your local ~/bin directory.
+
+#+begin_src sh
+mv freebsd-ffmpeg-rust-scripts-v2/* ~/bin/
+#+end_src
+
+**** Rust install
+
+If you want to compile the scripts on Freebsd instead of downloading the binaries,
+follow these steps to build the binaries and move them to your bin folder.
+
+Install the required tools and the Rust toolchain using the pkg manager.
+Run the following command in the terminal to install Rust.
+
+#+begin_src sh
+sudo pkg install rust git
+#+end_src
 
 **** Compile and Install
 
