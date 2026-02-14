@@ -690,9 +690,11 @@ mkdir -p ~/bin
 
 ***** zsh shell
 
-#+begin_example
-~/.zshenv
-#+end_example
+edit your ~/.zshenv file
+
+#+begin_src sh
+vi ~/.zshenv
+#+end_src
 
 Add the following code to your ~/.zshenv file.
 This is the default shell for macOS.
