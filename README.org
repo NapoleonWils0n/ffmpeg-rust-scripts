@@ -47,11 +47,11 @@ This project is designed to be cross-platform and work on:
 
 *** Binary Availability & Compilation
 
-Statically Compiled Binaries: Provided for NixOS, Linux, and Windows.
+Statically Compiled Binaries: Provided for NixOS, Linux, Windows and MacOS
 
 These are standalone executables that do not require a Rust runtime to be installed on your system.
 
-Manual Compilation: For macOS and FreeBSD, you will need to install the Rust toolchain and compile the scripts from source to ensure compatibility with your specific system architecture.
+Manual Compilation: For FreeBSD, you will need to install the Rust toolchain and compile the scripts from source to ensure compatibility with your specific system architecture.
 
 ** Installation instructions
 
@@ -239,19 +239,19 @@ and then follow these steps to install the binaries.
 Open your terminal and run the following command:
 
 #+begin_src sh
-sha256sum -c nixos-ffmpeg-rust-scripts-v1.tar.gz.sha256
+sha256sum -c nixos-ffmpeg-rust-scripts-v2.tar.gz.sha256
 #+end_src
 
 #+begin_example
-Expected Output: nixos-ffmpeg-rust-scripts-v1.tar.gz: OK
+Expected Output: nixos-ffmpeg-rust-scripts-v2.tar.gz: OK
 #+end_example
 
 ***** Extract the archive
 
-Note: Replace version-1.0 with the actual version number you downloaded.
+Note: Replace v2 with the actual version number you downloaded.
 
 #+begin_src sh
-tar -xf nixos-ffmpeg-rust-scripts-v1.tar.gz
+tar -xf nixos-ffmpeg-rust-scripts-v2.tar.gz
 #+end_src
 
 ***** Deploy the scripts
@@ -259,7 +259,7 @@ tar -xf nixos-ffmpeg-rust-scripts-v1.tar.gz
 Move the extracted binaries into your local ~/bin directory.
 
 #+begin_src sh
-mv nixos-ffmpeg-rust-scripts-v1/* ~/bin/
+mv nixos-ffmpeg-rust-scripts-v2/* ~/bin/
 #+end_src
 
 *** Linux install
@@ -423,19 +423,19 @@ and then follow these steps to install the binaries.
 Open your terminal and run the following command:
 
 #+begin_src sh
-sha256sum -c linux-ffmpeg-rust-scripts-v1.tar.gz.sha256
+sha256sum -c linux-ffmpeg-rust-scripts-v2.tar.gz.sha256
 #+end_src
 
 #+begin_example
-Expected Output: linux-ffmpeg-rust-scripts-v1.tar.gz: OK
+Expected Output: linux-ffmpeg-rust-scripts-v2.tar.gz: OK
 #+end_example
 
 ***** Extract the archive
 
-Note: Replace version-1.0 with the actual version number you downloaded.
+Note: Replace v2 with the actual version number you downloaded.
 
 #+begin_src sh
-tar -xf linux-ffmpeg-rust-scripts-v1.tar.gz
+tar -xf linux-ffmpeg-rust-scripts-v2.tar.gz
 #+end_src
 
 ***** Deploy the scripts
@@ -443,7 +443,7 @@ tar -xf linux-ffmpeg-rust-scripts-v1.tar.gz
 Move the extracted binaries into your local ~/bin directory.
 
 #+begin_src sh
-mv linux-ffmpeg-rust-scripts-v1/* ~/bin/
+mv linux-ffmpeg-rust-scripts-v2/* ~/bin/
 #+end_src
 
 *** Windows install
@@ -575,13 +575,13 @@ Open PowerShell and run the following commands to compare the hash:
 1. View the expected hash
 
 #+begin_src sh
-cat .\windows-ffmpeg-rust-scripts-v1.zip.sha256
+cat .\windows-ffmpeg-rust-scripts-v2.zip.sha256
 #+end_src
 
 2. Calculate the actual hash
 
 #+begin_src sh
-Get-FileHash .\windows-ffmpeg-rust-scripts-v1.zip -Algorithm SHA256
+Get-FileHash .\windows-ffmpeg-rust-scripts-v2.zip -Algorithm SHA256
 #+end_src
 
 Note: Ensure the strings match.
@@ -589,7 +589,7 @@ Note: Ensure the strings match.
 Alternatively, if you have Git Bash installed on Windows, you can use the
 
 #+begin_src sh
-sha256sum -c windows-ffmpeg-rust-scripts-v1.zip.sha256
+sha256sum -c windows-ffmpeg-rust-scripts-v2.zip.sha256
 #+end_src
 
 ***** Unblock the Zip File
@@ -598,9 +598,9 @@ Before extracting the scripts, you must unblock the downloaded file.
 
 Windows often restricts files downloaded from the internet, which can cause the scripts to fail or be deleted immediately upon extraction.
 
-Note: In the steps below, replace "v1" with the specific version number of the release you downloaded (e.g., v1.1.0).
+Note: In the steps below, replace "v2" with the specific version number of the release you downloaded (e.g., v0.2.0).
 
-1) Right-click the downloaded windows-ffmpeg-rust-scripts-v1.zip.
+1) Right-click the downloaded windows-ffmpeg-rust-scripts-v2.zip.
 2) Select Properties.
 3) At the bottom of the General tab, look for the Security section.
 4) Check the box labeled Unblock.
@@ -610,7 +610,7 @@ Note: In the steps below, replace "v1" with the specific version number of the r
 
 Use the Windows File Manager (Explorer) to extract the zip file to ensure all permissions are handled correctly.
 
-1) Right-click the windows-ffmpeg-rust-scripts-v1.zip file and select Extract All.
+1) Right-click the windows-ffmpeg-rust-scripts-v2.zip file and select Extract All.
 2) Follow the prompts to finish the extraction.
 3) Move all the .exe files from the extracted folder into the bin directory you created in the previous step.
 
@@ -629,24 +629,7 @@ extract-frame -v
 
 🎥 [[https://youtu.be/EODZ_QeX4zo][Mac FFmpeg Rust Scripts install]]
 
-**** Xcode install
-
-On macOS, you will need to install the development tools and the Rust compiler to build the scripts from source.
-
-Install the Xcode Command Line Tools to provide the necessary compilers,
-by running the following command in the terminal.
-
-#+begin_src sh
-xcode-select --install
-#+end_src
-
-**** Rust install
-
-Install the Rust toolchain using rustup.
-
-#+begin_src sh
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-#+end_src
+Note: Binaries for MacOS now available
 
 **** homebrew install
 
@@ -735,9 +718,65 @@ Source your ~/.bashrc if you are using the bash shell
 source ~/.bashrc
 #+END_SRC
 
+**** Release download
+
+Download the latest Mac release archive and sha256sum check sum
+and then follow these steps to install the binaries.
+
+[[https://github.com/NapoleonWils0n/ffmpeg-rust-scripts/releases]]
+
+***** check the sha256sum check sum
+
+Open your terminal and run the following command:
+
+#+begin_src sh
+shasum -a 256 -c mac-ffmpeg-rust-scripts-v2.zip.sha256
+#+end_src
+
+#+begin_example
+Expected Output: mac-ffmpeg-rust-scripts-v2.zip: OK
+#+end_example
+
+***** Extract the archive
+
+Note: Replace v2 with the actual version number you downloaded.
+
+#+begin_src sh
+unzip mac-ffmpeg-rust-scripts-v2.zip
+#+end_src
+
+***** Deploy the scripts
+
+Move the extracted binaries into your local ~/bin directory.
+
+#+begin_src sh
+mv mac-ffmpeg-rust-scripts-v2/* ~/bin/
+#+end_src
+
+**** Xcode install
+
+Note: you only need to install xcode and rust if you want to build the scripts.
+
+You can now just download the release.
+
+Install the Xcode Command Line Tools to provide the necessary compilers,
+by running the following command in the terminal.
+
+#+begin_src sh
+xcode-select --install
+#+end_src
+
+**** Rust install
+
+Install the Rust toolchain using rustup.
+
+#+begin_src sh
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+#+end_src
+
 **** Compile and Install
 
-Since macOS requires manual compilation,
+If you want to compile the scripts on MacOS instead of downloading the binaries,
 follow these steps to build the binaries and move them to your bin folder.
 
 ***** Clone the git repository
