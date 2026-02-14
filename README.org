@@ -629,7 +629,7 @@ extract-frame -v
 
 🎥 [[https://youtu.be/EODZ_QeX4zo][Mac FFmpeg Rust Scripts install]]
 
-Note: Binaries for MacOS now available
+Note: Binaries for MacOS are now available.
 
 **** homebrew install
 
