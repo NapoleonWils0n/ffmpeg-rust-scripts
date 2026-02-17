@@ -51,12 +51,15 @@ struct Args {
     #[arg(short = 'j', default_value = "jpg")]
     format: String,
 
+    /// Output file (optional, defaults to input-contact.ext)
     #[arg(short = 'o')]
     outfile: Option<String>,
 
+    /// Print help
     #[arg(short = 'h', long = "help", action = clap::ArgAction::Help)]
     help: Option<bool>,
 
+    /// Print version
     #[arg(short = 'v', long = "version", action = clap::ArgAction::Version)]
     version: Option<bool>,
 }

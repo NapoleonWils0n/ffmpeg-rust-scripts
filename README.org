@@ -1572,7 +1572,6 @@ Input format:
   00:00:10
   (Pairs represent start and end of a clip)
 
-
 Dependencies:
   ffmpeg: https://www.ffmpeg.org/
 #+end_example
@@ -1625,13 +1624,13 @@ scene-cut-to -h
 Help output.
 
 #+begin_example
-split video into clips using a start,duration cutlist by calculating end-point
+Split video into clips using a start,duration cutlist by calculating end-point
 
 Usage: scene-cut-to -i <INPUT> -c <CUTLIST> [OPTIONS]
 
 Options:
-  -i <INPUT>     input video file
-  -c <CUTLIST>   cutlist file comma-separated start,duration
+  -i <INPUT>     Input video file
+  -c <CUTLIST>   Cutlist file comma-separated start,duration
   -h, --help     Print help
   -v, --version  Print version
 
@@ -1729,7 +1728,7 @@ Options:
   -h, --help     Print help
 
 Dependencies:
-ffmpeg, ffprobe: https://www.ffmpeg.org/
+  ffmpeg, ffprobe: https://www.ffmpeg.org/
 #+end_example
 
 *** Visualization and Analysis
@@ -1799,7 +1798,8 @@ Options:
 Example:
   waveform -i input.mp4 -c orange -j jpg
 
-Colors: https://ffmpeg.org/ffmpeg-utils.html#Color
+Colors:
+  https://ffmpeg.org/ffmpeg-utils.html#Color
 
 Dependencies:
   ffmpeg: https://www.ffmpeg.org/
@@ -2010,9 +2010,9 @@ Options:
   -b <BOXCOLOR>    [default: black]
   -x <TIMESTAMPS>  [default: off]
   -j <FORMAT>      image format (jpg or png) [default: jpg]
-  -o <OUTFILE>
-  -h, --help
-  -v, --version
+  -o <OUTFILE>     Output file (optional, defaults to input-contact.ext)
+  -h, --help       Print help
+  -v, --version    Print version
 
 Example:
   contact-sheet -i input.mp4 -s 00:00:00.000 -w 160 -t 4x3 -j png
@@ -2104,7 +2104,7 @@ Options:
 Example:
   chapter-csv -i chapters.csv -o chapters-metadata.txt
 
-  Dependencies:
+Dependencies:
   ffmpeg: https://www.ffmpeg.org/
 #+end_example
 
@@ -2188,7 +2188,7 @@ Options:
 Example:
   chapter-add -i input.mp4 -m metadata.txt -o output.mp4
 
-  Dependencies:
+Dependencies:
   ffmpeg: https://www.ffmpeg.org/
 #+end_example
 
@@ -2358,7 +2358,7 @@ Options:
 Example:
   subtitle-add -i input.mp4 -s input.srt -l eng -o output.mp4
 
-  Dependencies:
+Dependencies:
   ffmpeg: https://www.ffmpeg.org/
 #+end_example
 
@@ -2631,13 +2631,13 @@ Options:
   -v, --version    Print version
 
 TRANSITIONS:
-circleclose, circlecrop, circleopen, diagbl, diagbr, diagtl, diagtr,
-dissolve, distancefade, fade, fadeblack, fadegrays, fadewhite, hblur,
-hlslice, horzclose, horzopen, hrslice, pixelize, radial, rectcrop,
-slidedown, slideleft, slideright, slideup, smoothdown, smoothleft,
-smoothright, smoothup, squeezeh, squeezev, vdslice, vertclose,
-vertopen, vuslice, wipebl, wipebr, wipedown, wipeleft, wiperight,
-wipetl, wipetr, wipeup
+  circleclose, circlecrop, circleopen, diagbl, diagbr, diagtl, diagtr,
+  dissolve, distance, fade, fadeblack, fadegrays, fadewhite, hblur,
+  hlslice, horzclose, horzopen, hrslice, pixelize, radial, rectcrop,
+  slidedown, slideleft, slideright, slideup, smoothdown, smoothleft,
+  smoothright, smoothup, squeezeh, squeezev, vdslice, vertclose,
+  vertopen, vuslice, wipebl, wipebr, wipedown, wipeleft, wiperight,
+  wipetl, wipetr, wipeup
 
 Dependencies:
   ffmpeg: https://www.ffmpeg.org/
