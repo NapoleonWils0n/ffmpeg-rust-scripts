@@ -2653,6 +2653,8 @@ Dependencies:
 The xfade script creates smooth transitions between multiple clips.
 It applies the xfade filter for video and the acrossfade filter for audio simultaneously, ensuring a professional audio-visual blend.
 
+[[https://trac.ffmpeg.org/wiki/Xfade][xfade ffmpeg wiki]]
+
 ***** 1) Run the script
 
 #+begin_src sh
