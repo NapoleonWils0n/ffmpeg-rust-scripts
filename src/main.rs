@@ -32,12 +32,14 @@ fn main() {
     println!("  - overlay-pip         : Create Picture-in-Picture effects");
     println!("  - fade-clip           : Add fade-in/out transitions");
     println!("  - xfade               : Apply crossfade transitions between clips");
+    println!("  - xfade-clips         : Add transition effects between multiple clips");
     println!("  - pan-scan            : Create pan and scan movements");
     println!("  - zoompan             : Apply zoom and pan effects");
 
     println!("\n--- Conversion & Extras ---");
     println!("  - audio-silence       : Detect or strip silence from audio");
     println!("  - blur-fill           : replace black bars with a blur fill effect");
+    println!("  - concat              : Fast concatenation of clips (no re-encoding)");
     println!("  - delogo              : Remove a logo from video footage");
     println!("  - extract-frame       : Extract a single high-quality frame");
     println!("  - hstack              : Stack two videos side-by-side (auto-scale)");
