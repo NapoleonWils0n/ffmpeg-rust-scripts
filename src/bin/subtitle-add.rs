@@ -14,9 +14,9 @@ use ffmpeg_rust_scripts::get_media_info;
     author,
     version,
     about = "Add SRT/VTT subtitles to a video as a track you can toggle on and off",
-    after_help = "Example:\n  subtitle-add -i input.mp4 -s input.srt -l eng -o output.mp4\n\n  \
-                  Dependencies:\n  \
-                  ffmpeg: https://www.ffmpeg.org/",
+    after_help = "Example:\n  subtitle-add -i input.mp4 -s input.srt -l eng -o output.mp4\n\n\
+    Dependencies:\n  \
+    ffmpeg: https://www.ffmpeg.org/",
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
 struct Args {
