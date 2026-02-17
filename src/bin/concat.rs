@@ -17,8 +17,9 @@ use ffmpeg_rust_scripts::{get_media_info};
     author, 
     version, 
     about = "Concatenate videos using the concat demuxer",
-    after_help = "Example:\n  concat -i input-1.mp4 input-2.mp4 input-3.mp4 -o output.mp4\n\n  \
-                  Note: The input files must be exactly the same type (codec, resolution, and frame rate).\n\n\
+    after_help = "Example:\n  concat -i input-1.mp4 input-2.mp4 input-3.mp4 -o output.mp4\n\n\
+                  Note:\n  \
+                  The input files must be exactly the same type (codec, resolution, and frame rate).\n\n\
                   Dependencies:\n  \
                   ffmpeg, ffplay: https://www.ffmpeg.org"
 )]
