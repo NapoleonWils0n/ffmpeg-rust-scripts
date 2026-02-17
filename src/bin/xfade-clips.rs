@@ -15,7 +15,8 @@ use ffmpeg_rust_scripts::{get_video_duration, parse_to_seconds, hardware_encodin
     author, 
     version, 
     about = "FFmpeg xfade transitions",
-    after_help = "TRANSITIONS:\n\
+    after_help = "Note: The input files must be exactly the same type (codec, resolution, and frame rate).\n\n\
+                  TRANSITIONS:\n\
                   circleclose, circlecrop, circleopen, diagbl, diagbr, diagtl, diagtr, \n\
                   dissolve, distance, fade, fadeblack, fadegrays, fadewhite, hblur, \n\
                   hlslice, horzclose, horzopen, hrslice, pixelize, radial, rectcrop, \n\
@@ -23,6 +24,13 @@ use ffmpeg_rust_scripts::{get_video_duration, parse_to_seconds, hardware_encodin
                   smoothright, smoothup, squeezeh, squeezev, vdslice, vertclose, \n\
                   vertopen, vuslice, wipebl, wipebr, wipedown, wipeleft, wiperight, \n\
                   wipetl, wipetr, wipeup\n\n\
+                  Examples:\n\
+                  1) one transition\n\
+                  xfade-clips -i input-1.mp4 input-2.mp4 input-3.mp4 input-4.mp4 -d 2 -t circlecrop -o output.mp4\n\n\
+                  2) multiple transition\n\
+                  xfade-clips -i input-1.mp4 input-2.mp4 input-3.mp4 input-4.mp4 -d 2 -t circlecrop fade fadeblack -o output.mp4\n\n\
+                  3) multiple transition and durations\n\
+                  xfade-clips -i input-1.mp4 input-2.mp4 input-3.mp4 input-4.mp4 -d 0.5 1 2 -t circlecrop fade fadeblack -o output.mp4\n\n\
                   Dependencies:\n  ffmpeg: https://www.ffmpeg.org/"
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
