@@ -16,7 +16,7 @@ use ffmpeg_rust_scripts::{get_media_info, get_video_duration, format_seconds_ms,
     about = "FFmpeg xfade transitions",
     after_help = "TRANSITIONS:\n\
                   circleclose, circlecrop, circleopen, diagbl, diagbr, diagtl, diagtr, \n\
-                  dissolve, distancefade, fade, fadeblack, fadegrays, fadewhite, hblur, \n\
+                  dissolve, distance, fade, fadeblack, fadegrays, fadewhite, hblur, \n\
                   hlslice, horzclose, horzopen, hrslice, pixelize, radial, rectcrop, \n\
                   slidedown, slideleft, slideright, slideup, smoothdown, smoothleft, \n\
                   smoothright, smoothup, squeezeh, squeezev, vdslice, vertclose, \n\

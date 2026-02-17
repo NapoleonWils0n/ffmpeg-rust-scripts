@@ -143,6 +143,10 @@ name = "xfade"
 path = "src/bin/xfade.rs"
 
 [[bin]]
+name = "xfade-clips"
+path = "src/bin/xfade-clips.rs"
+
+[[bin]]
 name = "zoompan"
 path = "src/bin/zoompan.rs"
 
