@@ -138,11 +138,6 @@ fn main() {
     ffmpeg_args.append(&mut v_params);
     ffmpeg_args.extend(vec!["-c:a", "aac", "-pix_fmt", "yuv420p", "-movflags", "+faststart", &args.output]);
 
-// DEBUG: Print the command
-    println!("--- DEBUG: RUNNING COMMAND ---");
-    println!("ffmpeg {}", ffmpeg_args.join(" "));
-    println!("------------------------------");
-
     let status = Command::new("ffmpeg").args(ffmpeg_args).status().expect("failed to execute ffmpeg");
     if !status.success() { std::process::exit(1); }
 }
