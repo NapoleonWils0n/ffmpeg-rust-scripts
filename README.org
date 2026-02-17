@@ -2881,7 +2881,7 @@ Options:
 Example:
   audio-silence -i input.mp4 -c stereo -r 48000 -o output.mp4
 
-  Dependencies:
+Dependencies:
   ffmpeg: https://www.ffmpeg.org/
 #+end_example
 
@@ -2942,19 +2942,17 @@ Fill pillarboxes with a blurred version of the input video
 Usage: blur-fill [OPTIONS] -i <INFILE>
 
 Options:
-  -i <INFILE>    input file
-  -b <BLUR>      blur strength [default: 10]
-  -o <OUTFILE>   optional output file
+  -i <INFILE>    Input file
+  -b <BLUR>      Blur strength (default: 10) [default: 10]
+  -o <OUTFILE>   Optional output file
   -h, --help     Print help
   -v, --version  Print version
 
 Example:
   blur-fill -i input.mp4 -b 10 -o output.mp4
 
-Notes:
- - Targets 1920x1080 (16:9).
- - Uses High-Quality NVENC VBR or libx264 CRF 18.
- - Smart Audio: Copies AAC, transcodes others to AAC.
+Dependencies:
+  ffmpeg: https://www.ffmpeg.org/
 #+end_example
 
 **** delogo
@@ -3053,10 +3051,11 @@ Options:
 Example:
   delogo -i input.mp4 -x 590 -y 670 -w 120 -h 49 -p 1
 
-Dependencies: ffmpeg, ffplay
+Dependencies:
+  ffmpeg, ffplay: https://www.ffmpeg.org/
 
 Notes:
- The -p 1 option previews with a green box. -p 0 previews without the box. Omit -p to record.
+  The -p 1 option previews with a green box. -p 0 previews without the box. Omit -p to record.
 #+end_example
 
 **** extract-frame
@@ -3203,10 +3202,13 @@ Options:
 Example:
   hstack -l left.mp4 -r right.mp4 -a r -o comparison.mp4
 
+Dependencies:
+  ffmpeg, ffprobe: https://www.ffmpeg.org/
+
 Notes:
- - Auto-scales to match heights (max 1080p).
- - Uses High-Quality NVENC VBR or libx264 CRF 16.
- - Audio: Transcoded to AAC to ensure duration sync with shortest video.
+  - Auto-scales to match heights (max 1080p).
+  - Uses High-Quality NVENC VBR or libx264 CRF 16.
+  - Audio: Transcoded to AAC to ensure duration sync with shortest video.
 #+end_example
 
 **** img2video
@@ -3281,7 +3283,7 @@ Usage: img2video [OPTIONS] -i <INFILE> -d <DURATION>
 
 Options:
   -i <INFILE>    Input image file (png, jpg, jpeg)
-  -d <DURATION>  Duration (e.g., 10 or 00:00:10)
+  -d <DURATION>  Duration (e.g., 10 or 00:00:10.500)
   -o <OUTFILE>   Output file (optional)
   -h, --help     Print help
   -v, --version  Print version
@@ -3289,7 +3291,7 @@ Options:
 Example:
   img2video -i input.png -d 00:00:10 -o output.mp4
 
-  Dependencies:
+Dependencies:
   ffmpeg: https://www.ffmpeg.org/
 #+end_example
 
@@ -3370,7 +3372,8 @@ Options:
 Example:
   normalize -i input.mp4 -t -3.0 -l -16
 
-Dependencies: ffmpeg
+Dependencies:
+  ffmpeg: https://www.ffmpeg.org/
 #+end_example
 
 **** sexagesimal-time
@@ -3429,7 +3432,7 @@ Options:
 Example:
   sexagesimal-time -s 00:01:00 -e 00:01:45.500
 
-  Output:
+Output:
   00:00:45.500
 
 Dependencies:
