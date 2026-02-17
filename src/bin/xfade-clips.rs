@@ -41,7 +41,7 @@ struct Args {
 
     /// Output file
     #[arg(short = 'o', required = true)]
-    output: String,
+    output: Option<String>,
 
     /// Print help
     #[arg(short = 'h', long = "help", action = clap::ArgAction::Help)]
@@ -62,6 +62,14 @@ fn main() {
         }
     }
 
+    // Generate output name if not provided
+    let output_file = match &args.output {
+        Some(o) => o.clone(),
+        None => {
+            let info = get_media_info(&args.inputs[0]);
+            format!("{}-xfade-clips.{}", info.stem, info.extension)
+        }
+    };
 
     let mut filter_complex = String::new();
     let mut total_output_duration = 0.0;
@@ -136,7 +144,12 @@ fn main() {
     ]);
     
     ffmpeg_args.append(&mut v_params);
-    ffmpeg_args.extend(vec!["-c:a", "aac", "-pix_fmt", "yuv420p", "-movflags", "+faststart", &args.output]);
+    ffmpeg_args.extend(vec![
+        "-c:a", "aac",
+        "-pix_fmt", "yuv420p",
+        "-movflags", "+faststart",
+        &output_file
+    ]);
 
     let status = Command::new("ffmpeg").args(ffmpeg_args).status().expect("failed to execute ffmpeg");
     if !status.success() { std::process::exit(1); }
