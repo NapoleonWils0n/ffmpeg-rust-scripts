@@ -14,7 +14,9 @@ use ffmpeg_rust_scripts::{get_media_info, hardware_encoding};
     author,
     version,
     about = "remove a logo from video footage",
-    after_help = "Example:\n  delogo -i input.mp4 -x 590 -y 670 -w 120 -h 49 -p 1\n\nDependencies: ffmpeg, ffplay\n\nNotes:\n The -p 1 option previews with a green box. -p 0 previews without the box. Omit -p to record.",
+    after_help = "Example:\n  delogo -i input.mp4 -x 590 -y 670 -w 120 -h 49 -p 1\n\nDependencies:\n  \
+    ffmpeg, ffplay: https://www.ffmpeg.org/\n\n\
+    Notes:\n  The -p 1 option previews with a green box. -p 0 previews without the box. Omit -p to record.",
     override_usage = "delogo [OPTIONS] -i <INFILE> -x <X> -y <Y> -w <W> -h <H>"
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]

@@ -15,8 +15,8 @@ use ffmpeg_rust_scripts::{parse_to_seconds, format_seconds_ms};
     author,
     version,
     about = "convert a list of timestamps into an ffmpeg cutlist",
-    after_help = "Example:\n  clip-time -i timestamps.txt -o cutlist.txt\n\nInput format:\n  00:00:00\n  00:00:10\n  (Pairs represent start and end of a clip)
-    \n\nDependencies:\n  ffmpeg: https://www.ffmpeg.org/",
+    after_help = "Example:\n  clip-time -i timestamps.txt -o cutlist.txt\n\nInput format:\n  00:00:00\n  00:00:10\n  (Pairs represent start and end of a clip)\n\n\
+    Dependencies:\n  ffmpeg: https://www.ffmpeg.org/",
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
 struct Args {

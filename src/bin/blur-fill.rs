@@ -14,7 +14,9 @@ use ffmpeg_rust_scripts::{get_media_info, hardware_encoding};
     author, 
     version,
     about = "Fill pillarboxes with a blurred version of the input video",
-    after_help = "Example:\n  blur-fill -i input.mp4 -b 10 -o output.mp4",
+    after_help = "Example:\n  blur-fill -i input.mp4 -b 10 -o output.mp4\n\n\
+    Dependencies:\n  \
+    ffmpeg: https://www.ffmpeg.org/",
     override_usage = "blur-fill [OPTIONS] -i <INFILE>"
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
