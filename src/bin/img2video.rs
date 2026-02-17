@@ -14,7 +14,9 @@ use ffmpeg_rust_scripts::{get_media_info, format_seconds_ms, parse_to_seconds, f
     author,
     version,
     about = "Convert a static image to a video file with a specified duration",
-    after_help = "Example:\n  img2video -i input.png -d 00:00:10 -o output.mp4",
+    after_help = "Example:\n  img2video -i input.png -d 00:00:10 -o output.mp4\n\n\
+    Dependencies:\n  \
+    ffmpeg: https://www.ffmpeg.org/",
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
 struct Args {
