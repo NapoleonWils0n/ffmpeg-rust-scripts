@@ -35,6 +35,10 @@ name = "combine-clips"
 path = "src/bin/combine-clips.rs"
 
 [[bin]]
+name = "concat"
+path = "src/bin/concat.rs"
+
+[[bin]]
 name = "contact-sheet"
 path = "src/bin/contact-sheet.rs"
 
