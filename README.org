@@ -3710,9 +3710,6 @@ Example:
 
 Dependencies:
   ffmpeg, ffprobe: https://www.ffmpeg.org/
-
-Notes:
-  Creates detection.txt and cutlist.txt automatically.
 #+end_example
 
 Notes: Creates detection.txt and cutlist.txt automatically.
