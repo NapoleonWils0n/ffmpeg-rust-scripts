@@ -1,7 +1,7 @@
 //==================================================================================
 // xfade-clips
 // Description: Add a transition effect between multiple clips using filter_complex
-// References: [LIB-01], [LIB-03], [LIB-04], [LIB-08], [LIB-09], [LIB-10] [LIB-11]
+// References: [LIB-01], [LIB-03], [LIB-04], [LIB-08], [LIB-11]
 //==================================================================================
 
 use clap::Parser;
@@ -40,7 +40,7 @@ struct Args {
     transitions: Vec<String>,
 
     /// Output file
-    #[arg(short = 'o', required = true)]
+    #[arg(short = 'o')]
     output: Option<String>,
 
     /// Print help
@@ -122,8 +122,10 @@ fn main() {
 
     // FFmpeg Command Building
     let (v_codec, mut v_params) = if hardware_encoding() {
+        println!("+ using hardware acceleration.");
         ("hevc_nvenc", vec!["-preset", "p7", "-cq", "20"])
     } else {
+        println!("+ using software encoding.");
         ("libx264", vec!["-preset", "medium", "-crf", "18"])
     };
 

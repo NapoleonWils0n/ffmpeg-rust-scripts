@@ -40,6 +40,7 @@ use std::process::Command; // Needed for [LIB-06]
 // - webp
 // - vid2gif
 // - xfade
+// - xfade-clips
 // - zoompan
 use std::path::Path;
 
@@ -83,6 +84,7 @@ pub struct MediaInfo {
 // - webp
 // - vid2gif
 // - xfade
+// - xfade-clips
 // - zoompan
 pub fn get_media_info(path_str: &str) -> MediaInfo {
     let path = Path::new(path_str);
@@ -117,6 +119,7 @@ pub fn get_media_info(path_str: &str) -> MediaInfo {
 // - trim-clip
 // - trim-short
 // - xfade
+// - xfade-clips
 // - zoompan
 pub fn parse_to_seconds(timestamp: &str) -> f64 {
     let parts: Vec<&str> = timestamp.split(':').collect();
@@ -189,6 +192,7 @@ pub fn calculate_duration(start: &str, end: &str) -> f64 {
 // - contact-sheet
 // - scene-detect
 // - xfade
+// - xfade-clips
 pub fn get_video_duration(path: &str) -> f64 {
     let output = Command::new("ffprobe")
         .args([
@@ -281,6 +285,7 @@ pub fn format_time_for_filename(time: &str) -> String {
 // - trim-remote-clip
 // - trim-short
 // - xfade
+// - xfade-clips
 // - zoompan
 pub fn hardware_encoding() -> bool {
     #[cfg(target_os = "linux")]
