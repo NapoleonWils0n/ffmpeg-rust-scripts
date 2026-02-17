@@ -93,6 +93,7 @@ including dependency management and environment path configuration.
 + [[#overlay-pip][overlay-pip]]
 + [[#fade-clip][fade-clip]]
 + [[#xfade][xfade]]
++ [[#xfade-clips][xfade-clips]]
 + [[#pan-scan][pan-scan]]
 + [[#zoompan][zoompan]]
 
@@ -2639,6 +2640,88 @@ TRANSITIONS:
   smoothright, smoothup, squeezeh, squeezev, vdslice, vertclose,
   vertopen, vuslice, wipebl, wipebr, wipedown, wipeleft, wiperight,
   wipetl, wipetr, wipeup
+
+Dependencies:
+  ffmpeg: https://www.ffmpeg.org/
+#+end_example
+
+**** xfade-clips
+:PROPERTIES:
+:CUSTOM_ID: xfade-clips
+:END:
+
+The xfade script creates smooth transitions between multiple clips.
+It applies the xfade filter for video and the acrossfade filter for audio simultaneously, ensuring a professional audio-visual blend.
+
+***** 1) Run the script
+
+#+begin_src sh
+xfade-clips -i input-1.mp4 input-2.mp4 input-3.mp4 input-4.mp4 -d 2 -t circlecrop -o output.mp4
+#+end_src
+
+If you omit the -o option, the script generates a descriptive name: input-xfade-clips.mp4.
+
+***** Script usage and help.
+
+1) one transition
+
+#+begin_src sh
+xfade-clips -i input-1.mp4 input-2.mp4 input-3.mp4 input-4.mp4 -d 2 -t circlecrop -o output.mp4
+#+end_src
+
+2) multiple transition
+
+#+begin_src sh
+xfade-clips -i input-1.mp4 input-2.mp4 input-3.mp4 input-4.mp4 -d 2 -t circlecrop fade fadeblack -o output.mp4
+#+end_src
+
+3) multiple transition and durations
+
+#+begin_src sh
+xfade-clips -i input-1.mp4 input-2.mp4 input-3.mp4 input-4.mp4 -d 0.5 1 2 -t circlecrop fade fadeblack -o output.mp4
+#+end_src
+
+Run the script with the -h option to show the help.
+
+#+begin_src sh
+xfade-clips -h
+#+end_src
+
+Help output.
+
+#+begin_example
+FFmpeg xfade transitions
+
+Usage: xfade-clips [OPTIONS] -i <INPUTS> <INPUTS>... -d <DURATIONS>...
+
+Options:
+  -i <INPUTS> <INPUTS>...  Input clips in order
+  -d <DURATIONS>...        Transition duration(s). Provide one for all, or one per gap
+  -t <TRANSITIONS>...      Transition type(s). Provide one for all, or one per gap [default: fade]
+  -o <OUTPUT>              Output file
+  -h, --help               Print help
+  -v, --version            Print version
+
+Note: The input files must be exactly the same type (codec, resolution, and frame rate).
+
+TRANSITIONS:
+  circleclose, circlecrop, circleopen, diagbl, diagbr, diagtl, diagtr,
+  dissolve, distance, fade, fadeblack, fadegrays, fadewhite, hblur,
+  hlslice, horzclose, horzopen, hrslice, pixelize, radial, rectcrop,
+  slidedown, slideleft, slideright, slideup, smoothdown, smoothleft,
+  smoothright, smoothup, squeezeh, squeezev, vdslice, vertclose,
+  vertopen, vuslice, wipebl, wipebr, wipedown, wipeleft, wiperight,
+  wipetl, wipetr, wipeup
+
+Examples:
+  1) one transition
+  xfade-clips -i input-1.mp4 input-2.mp4 input-3.mp4 input-4.mp4 -d 2 -t circlecrop -o output.mp4
+
+  2) multiple transition
+  xfade-clips -i input-1.mp4 input-2.mp4 input-3.mp4 input-4.mp4 -d 2 -t circlecrop fade fadeblack -o output.mp4
+
+  3) multiple transition and durations
+  xfade-clips -i input-1.mp4 input-2.mp4 input-3.mp4 input-4.mp4 -d 0.5 1 2 -t circlecrop fade fadeblack -o output.mp4
 
 Dependencies:
   ffmpeg: https://www.ffmpeg.org/
