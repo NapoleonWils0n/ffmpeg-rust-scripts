@@ -14,7 +14,9 @@ use ffmpeg_rust_scripts::{get_media_info};
     author,
     version,
     about = "2-Pass audio normalization (loudnorm)",
-    after_help = "Example:\n  normalize -i input.mp4 -t -3.0 -l -16\n\nDependencies: ffmpeg",
+    after_help = "Example:\n  normalize -i input.mp4 -t -3.0 -l -16\n\n\
+    Dependencies:\n  \
+    ffmpeg: https://www.ffmpeg.org/",
     override_usage = "normalize [OPTIONS] -i <INFILE>"
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
