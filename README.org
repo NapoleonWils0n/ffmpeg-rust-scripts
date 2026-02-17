@@ -100,6 +100,7 @@ including dependency management and environment path configuration.
 
 + [[#audio-silence][audio-silence]]
 + [[#blur-fill][blur-fill]]
++ [[#concat][concat]]
 + [[#delogo][delogo]]
 + [[#extract-frame][extract-frame]]
 + [[#hstack][hstack]]
@@ -2953,6 +2954,77 @@ Example:
 
 Dependencies:
   ffmpeg: https://www.ffmpeg.org/
+#+end_example
+
+**** concat
+:PROPERTIES:
+:CUSTOM_ID: concat
+:END:
+
+The concat script utilizes the FFmpeg concat demuxer to join multiple media files together without re-encoding.
+
+Because it performs a stream copy rather than a transcode, the process is nearly instantaneous and results in zero quality loss.
+
+However, for this method to work successfully, all input files must be exactly the same type, sharing identical codecs, resolution, bit depth, and frame rates.
+
+***** 1) Run the script
+
+Concatenate video files with a ffplay preview with the -p option
+
+#+begin_src sh
+concat -i input-1.mp4 input-2.mp4 input-3.mp4 -p
+#+end_src
+
+Concatenate video files without the -p option to record
+
+#+begin_src sh
+concat -i input-1.mp4 input-2.mp4 input-3.mp4 -p
+#+end_src
+
+If the -o option is omitted, the script generates a default name: input-concat.mp4
+
+***** Script usage and help.
+
+Concatenate video files
+
+#+begin_src sh
+concat -i input-1.mp4 input-2.mp4 input-3.mp4 -o output.mp4
+#+end_src
+
+Concatenate audio files
+
+#+begin_src sh
+concat -i input-1.m4a input-2.m4a input-3.m4a -o output.mp4
+#+end_src
+
+Run the script with the -h option to show the help.
+
+#+begin_src sh
+concat -h
+#+end_src
+
+Help output.
+
+#+begin_example
+Concatenate videos using the concat demuxer
+
+Usage: concat [OPTIONS] -i <INPUTS> <INPUTS>...
+
+Options:
+  -i <INPUTS> <INPUTS>...  Input clips to concatenate
+  -o <OUTPUT>              Output file (defaults to first_input-concat.ext)
+  -p                       Preview concatenation with ffplay without saving
+  -h, --help               Print help information
+  -v, --version            Print version information
+
+Example:
+  concat -i input-1.mp4 input-2.mp4 input-3.mp4 -o output.mp4
+
+Note:
+  The input files must be exactly the same type (codec, resolution, and frame rate).
+
+Dependencies:
+  ffmpeg, ffplay: https://www.ffmpeg.org
 #+end_example
 
 **** delogo
