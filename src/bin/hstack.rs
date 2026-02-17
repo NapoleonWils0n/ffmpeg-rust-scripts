@@ -13,7 +13,13 @@ use ffmpeg_rust_scripts::{get_media_info, hardware_encoding};
 #[command(
     author, version,
     about = "Stack two videos side-by-side (hstack)",
-    after_help = "Example:\n  hstack -l left.mp4 -r right.mp4 -a r -o comparison.mp4\n\nNotes:\n - Auto-scales to match heights (max 1080p).\n - Uses High-Quality NVENC VBR or libx264 CRF 16.\n - Audio: Transcoded to AAC to ensure duration sync with shortest video.",
+    after_help = "Example:\n  hstack -l left.mp4 -r right.mp4 -a r -o comparison.mp4\n\n\
+    Dependencies:\n  \
+    ffmpeg, ffprobe: https://www.ffmpeg.org/\n\n\
+    Notes:\n  \
+    - Auto-scales to match heights (max 1080p).\n  \
+    - Uses High-Quality NVENC VBR or libx264 CRF 16.\n  \
+    - Audio: Transcoded to AAC to ensure duration sync with shortest video.",
     override_usage = "hstack [OPTIONS] -l <LEFT> -r <RIGHT>"
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
