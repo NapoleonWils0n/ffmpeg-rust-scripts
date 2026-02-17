@@ -8,7 +8,7 @@ use clap::Parser;
 use std::process::Command;
 use std::path::Path;
 // Removed get_media_info to fix the warning
-use ffmpeg_rust_scripts::{get_video_duration, parse_to_seconds, hardware_encoding};
+use ffmpeg_rust_scripts::{get_video_duration, parse_to_seconds, hardware_encoding, get_media_info};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -28,19 +28,19 @@ use ffmpeg_rust_scripts::{get_video_duration, parse_to_seconds, hardware_encodin
 #[clap(disable_version_flag = true, disable_help_flag = true)]
 struct Args {
     /// Input clips in order
-    #[arg(short = 'i', long, required = true, num_args = 2..)]
+    #[arg(short = 'i', required = true, num_args = 2..)]
     inputs: Vec<String>,
 
     /// Transition duration(s). Provide one for all, or one per gap.
-    #[arg(short = 'd', long, required = true, num_args = 1..)]
+    #[arg(short = 'd', required = true, num_args = 1..)]
     durations: Vec<String>,
 
     /// Transition type(s). Provide one for all, or one per gap.
-    #[arg(short = 't', long, default_value = "fade", num_args = 1..)]
+    #[arg(short = 't', default_value = "fade", num_args = 1..)]
     transitions: Vec<String>,
 
     /// Output file
-    #[arg(short = 'o', long, required = true)]
+    #[arg(short = 'o', required = true)]
     output: String,
 
     /// Print help
