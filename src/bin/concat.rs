@@ -17,7 +17,9 @@ use ffmpeg_rust_scripts::{get_media_info};
     author, 
     version, 
     about = "Concatenate videos using the concat demuxer",
-    after_help = "Dependencies:\n  ffmpeg, ffplay: https://www.ffmpeg.org"
+    after_help = "Example:\n  concat -i input-1.mp4 input-2.mp4 input-3.mp4 -o output.mp4\n\n \
+                  Dependencies:\n \
+                  ffmpeg, ffplay: https://www.ffmpeg.org"
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
 struct Args {
