@@ -7,6 +7,8 @@ FFmpeg Rust Scripts is a collection of high-performance utilities designed to au
 
 The scripts automatically detect and utilize NVENC hardware acceleration for high-speed encoding on Linux and Windows, with a fallback to libx264 software encoding.
 
+[[https://github.com/NapoleonWils0n/ffmpeg-rust-scripts/releases][https://img.shields.io/github/downloads/NapoleonWils0n/ffmpeg-rust-scripts/total.svg?style=flat-square&color=blue]]
+[[https://github.com/NapoleonWils0n/ffmpeg-rust-scripts/stargazers][https://img.shields.io/github/stars/NapoleonWils0n/ffmpeg-rust-scripts.svg?style=flat-square&color=blue]]
 [[https://github.com/NapoleonWils0n/ffmpeg-rust-scripts/blob/master/LICENSE][https://img.shields.io/github/license/NapoleonWils0n/ffmpeg-rust-scripts.svg?style=flat-square&color=blue]]
   
 🎥 [[https://youtu.be/ALFk6GL9mOk][FFmpeg Rust Scripts for Linux, Windows, Mac, NixOS and Freebsd]]
