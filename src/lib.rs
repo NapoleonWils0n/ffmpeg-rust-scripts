@@ -40,7 +40,6 @@ use std::process::Command; // Needed for [LIB-06]
 // - waveform
 // - webp
 // - vid2gif
-// - xfade
 // - xfade-clips
 // - zoompan
 use std::path::Path;
@@ -85,7 +84,6 @@ pub struct MediaInfo {
 // - waveform
 // - webp
 // - vid2gif
-// - xfade
 // - xfade-clips
 // - zoompan
 pub fn get_media_info(path_str: &str) -> MediaInfo {
@@ -120,7 +118,6 @@ pub fn get_media_info(path_str: &str) -> MediaInfo {
 // - sexagesimal-time
 // - trim-clip
 // - trim-short
-// - xfade
 // - xfade-clips
 // - zoompan
 pub fn parse_to_seconds(timestamp: &str) -> f64 {
@@ -193,7 +190,6 @@ pub fn calculate_duration(start: &str, end: &str) -> f64 {
 // - combine-clips
 // - contact-sheet
 // - scene-detect
-// - xfade
 // - xfade-clips
 pub fn get_video_duration(path: &str) -> f64 {
     let output = Command::new("ffprobe")
@@ -227,7 +223,6 @@ pub fn get_video_duration(path: &str) -> f64 {
 // - scene-time
 // - scene-images
 // - trim-short
-// - xfade
 // - zoompan
 pub fn format_seconds_ms(total_sec: f64) -> String {
     let h = (total_sec / 3600.0) as u32;
@@ -257,7 +252,6 @@ pub fn format_seconds_ms(total_sec: f64) -> String {
 // - trim-clip-to
 // - trim-remote-clip
 // - trim-short
-// - xfade
 // - zoompan
 /// Automatically keeps colons for Linux/Unix and uses dashes for Windows.
 pub fn format_time_for_filename(time: &str) -> String {
@@ -286,7 +280,6 @@ pub fn format_time_for_filename(time: &str) -> String {
 // - trim-clip-to
 // - trim-remote-clip
 // - trim-short
-// - xfade
 // - xfade-clips
 // - zoompan
 pub fn hardware_encoding() -> bool {

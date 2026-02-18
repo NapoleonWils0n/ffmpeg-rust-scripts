@@ -31,7 +31,6 @@ fn main() {
     println!("  - overlay-clip        : Overlay one clip onto another");
     println!("  - overlay-pip         : Create Picture-in-Picture effects");
     println!("  - fade-clip           : Add fade-in/out transitions");
-    println!("  - xfade               : Apply crossfade transitions between clips");
     println!("  - xfade-clips         : Add transition effects between multiple clips");
     println!("  - pan-scan            : Create pan and scan movements");
     println!("  - zoompan             : Apply zoom and pan effects");
