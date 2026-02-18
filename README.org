@@ -2577,6 +2577,8 @@ Dependencies:
 :CUSTOM_ID: xfade-clips
 :END:
 
+🎥 [[https://youtu.be/SLuPfg3eREU][xfade-clips]]
+
 The xfade script creates smooth transitions between multiple clips.
 It applies the xfade filter for video and the acrossfade filter for audio simultaneously, ensuring a professional audio-visual blend.
 
