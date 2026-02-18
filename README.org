@@ -2990,7 +2990,7 @@ concat -i input-1.mp4 input-2.mp4 input-3.mp4 -p
 Concatenate video files without the -p option to record
 
 #+begin_src sh
-concat -i input-1.mp4 input-2.mp4 input-3.mp4 -p
+concat -i input-1.mp4 input-2.mp4 input-3.mp4
 #+end_src
 
 If the -o option is omitted, the script generates a default name: input-concat.mp4
