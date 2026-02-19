@@ -37,6 +37,7 @@ fn main() {
 
     println!("\n--- Colour Grading ---");
     println!("  - lut-create          : Generate a Hald CLUT and reference frame for grading");
+    println!("  - lut-apply           : Apply a color-graded Hald CLUT to a video file");
 
     println!("\n--- Conversion & Extras ---");
     println!("  - audio-silence       : Detect or strip silence from audio");
