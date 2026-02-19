@@ -43,10 +43,45 @@ struct Args {
     version: Option<bool>,
 }
 
+/// Helper to get image width using ffprobe
+fn get_image_width(path: &str) -> u32 {
+    let output = Command::new("ffprobe")
+        .args([
+            "-v", "error",
+            "-select_streams", "v:0",
+            "-show_entries", "stream=width",
+            "-of", "csv=p=0",
+            path,
+        ])
+        .output()
+        .expect("Failed to execute ffprobe");
+
+    String::from_utf8_lossy(&output.stdout)
+        .trim()
+        .parse::<u32>()
+        .unwrap_or(0)
+}
+
+/// Helper to get audio codec using ffprobe (as seen in blur-fill)
+fn get_audio_codec(path: &str) -> String {
+    let output = Command::new("ffprobe")
+        .args([
+            "-v", "error",
+            "-select_streams", "a:0",
+            "-show_entries", "stream=codec_name",
+            "-of", "csv=p=0",
+            path,
+        ])
+        .output()
+        .expect("Failed to execute ffprobe");
+
+    String::from_utf8_lossy(&output.stdout).trim().to_string()
+}
+
 fn main() {
     let args = Args::parse();
 
-    // 1. Verify files exist [cite: 146, 204]
+    // 1. Verify files exist
     if !Path::new(&args.infile).exists() {
         eprintln!("! error: File '{}' not found.", args.infile);
         std::process::exit(1);
@@ -58,20 +93,28 @@ fn main() {
 
     let info = get_media_info(&args.infile);
 
-    // 2. Determine output name [cite: 140, 148]
+    // 2. Determine output name
     let output_file = match &args.outfile {
         Some(o) => o.clone(),
         None => format!("{}-lut-applied.mp4", info.stem),
     };
 
-    // 3. ffplay Preview Logic 
+    // 3. Check LUT width for conditional filtering
+    let lut_width = get_image_width(&args.lutfile);
+
+    // 4. ffplay Preview Logic
     if args.preview {
         println!("+ previewing color grade with ffplay...");
         
-        // Dynamic filter based on image width to handle composite frames
-        let filter = format!("movie='{}',crop=iw/2:ih:0:0[lut];[in][lut]haldclut", args.lutfile);
+        let filter = if lut_width > 512 {
+            // Composite image: crop left half
+            format!("movie='{}',crop=iw/2:ih:0:0,[in]haldclut", args.lutfile)
+        } else {
+            // Standalone LUT: use directly
+            format!("movie='{}', [in] haldclut", args.lutfile)
+        };
 
-        let mut ffplay_args = vec![
+        let ffplay_args = vec![
             "-hide_banner", "-v", "error", "-stats",
             "-i", &args.infile,
             "-vf", &filter,
@@ -88,7 +131,7 @@ fn main() {
         return;
     }
 
-    // 4. Hardware/Software Encoding Logic [cite: 183, 186]
+    // 5. Hardware/Software Encoding Logic
     let (v_codec, v_params) = if hardware_encoding() {
         println!("+ using hardware acceleration.");
         (
@@ -104,8 +147,22 @@ fn main() {
         ("libx264", vec!["-crf", "18", "-preset", "slow"])
     };
 
-    // 5. Final FFmpeg Command [cite: 233, 234]
-    let filter_complex = format!("movie='{}',crop=iw/2:ih:0:0[lut];[0:v][lut]haldclut", args.lutfile);
+    // 6. Audio Logic (check if AAC)
+    let audio_codec = get_audio_codec(&args.infile);
+    let a_params = if audio_codec == "aac" {
+        println!("+ audio is aac: using stream copy.");
+        "copy"
+    } else {
+        println!("+ audio is {}: transcoding to aac.", audio_codec);
+        "aac"
+    };
+
+    // 7. Final FFmpeg Command
+    let filter_complex = if lut_width > 512 {
+        format!("movie='{}',crop=iw/2:ih:0:0[lut];[0:v][lut]haldclut", args.lutfile)
+    } else {
+        format!("movie='{}'[lut];[0:v][lut]haldclut", args.lutfile)
+    };
 
     let mut ffmpeg_args = vec![
         "-hide_banner", "-v", "error", "-stats",
@@ -116,10 +173,8 @@ fn main() {
     
     ffmpeg_args.extend(v_params);
 
-    // Audio stream copy if already AAC, otherwise encode [cite: 234]
-    // Note: For simplicity in this logic, we use copy as requested in common workflows
     ffmpeg_args.extend_from_slice(&[
-        "-c:a", "copy",
+        "-c:a", a_params,
         "-pix_fmt", "yuv420p",
         "-movflags", "+faststart",
         &output_file,
