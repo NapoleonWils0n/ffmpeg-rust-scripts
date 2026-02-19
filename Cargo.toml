@@ -67,6 +67,10 @@ name = "img2video"
 path = "src/bin/img2video.rs"
 
 [[bin]]
+name = "lut-apply"
+path = "src/bin/lut-apply.rs"
+
+[[bin]]
 name = "lut-create"
 path = "src/bin/lut-create.rs"
 
