@@ -1,7 +1,7 @@
 //==================================================================================
 // lut-apply
 // Description: Apply a color-graded Hald CLUT to a video file
-// References: [LIB-01], [LIB-03], [LIB-08], [LIB-11]
+// References: [LIB-01], [LIB-03], [LIB-06], [LIB-11]
 //==================================================================================
 
 use clap::Parser;

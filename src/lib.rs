@@ -22,6 +22,7 @@ use std::process::Command; // Needed for [LIB-06]
 // - fade-clip
 // - hstack
 // - img2video
+// - lut-apply
 // - lut-create
 // - normalize
 // - overlay-clip
@@ -69,6 +70,7 @@ pub struct MediaInfo {
 // - fade-clip
 // - hstack
 // - img2video
+// - lut-apply
 // - lut-create
 // - pan-scan
 // - normalize
@@ -160,6 +162,7 @@ pub fn format_seconds(total_sec: f64) -> String {
 
 /// [LIB-06] Checks if a specific encoder is available in the current FFmpeg installation.
 // used by: 
+// - lut-apply
 // - trim-clip
 // - trim-clip-to
 // - scene-cut-to
@@ -273,6 +276,7 @@ pub fn format_time_for_filename(time: &str) -> String {
 // - fade-clip
 // - hstack
 // - img2video
+// - lut-apply
 // - overlay-clip
 // - overlay-pip
 // - pan-scan
