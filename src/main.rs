@@ -35,6 +35,9 @@ fn main() {
     println!("  - pan-scan            : Create pan and scan movements");
     println!("  - zoompan             : Apply zoom and pan effects");
 
+    println!("\n--- Colour Grading ---");
+    println!("  - lut-create          : Generate a Hald CLUT and reference frame for grading");
+
     println!("\n--- Conversion & Extras ---");
     println!("  - audio-silence       : Detect or strip silence from audio");
     println!("  - blur-fill           : replace black bars with a blur fill effect");

@@ -22,6 +22,7 @@ use std::process::Command; // Needed for [LIB-06]
 // - fade-clip
 // - hstack
 // - img2video
+// - lut-create
 // - normalize
 // - overlay-clip
 // - overlay-pip
@@ -68,6 +69,7 @@ pub struct MediaInfo {
 // - fade-clip
 // - hstack
 // - img2video
+// - lut-create
 // - pan-scan
 // - normalize
 // - overlay-clip
@@ -240,6 +242,7 @@ pub fn format_seconds_ms(total_sec: f64) -> String {
 // - extract-frame
 // - fade-clip
 // - img2video
+// - lut-create
 // - overlay-clip
 // - overlay-pip
 // - pan-scan
