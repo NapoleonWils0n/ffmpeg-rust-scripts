@@ -240,19 +240,19 @@ and then follow these steps to install the binaries.
 Open your terminal and run the following command:
 
 #+begin_src sh
-sha256sum -c nixos-ffmpeg-rust-scripts-v3.tar.gz.sha256
+sha256sum -c nixos-ffmpeg-rust-scripts-v4.tar.gz.sha256
 #+end_src
 
 #+begin_example
-Expected Output: nixos-ffmpeg-rust-scripts-v3.tar.gz: OK
+Expected Output: nixos-ffmpeg-rust-scripts-v4.tar.gz: OK
 #+end_example
 
 ***** Extract the archive
 
-Note: Replace v3 with the actual version number you downloaded.
+Note: Replace v4 with the actual version number you downloaded.
 
 #+begin_src sh
-tar -xf nixos-ffmpeg-rust-scripts-v3.tar.gz
+tar -xf nixos-ffmpeg-rust-scripts-v4.tar.gz
 #+end_src
 
 ***** Deploy the scripts
@@ -260,7 +260,7 @@ tar -xf nixos-ffmpeg-rust-scripts-v3.tar.gz
 Move the extracted binaries into your local ~/bin directory.
 
 #+begin_src sh
-mv nixos-ffmpeg-rust-scripts-v3/* ~/bin/
+mv nixos-ffmpeg-rust-scripts-v4/* ~/bin/
 #+end_src
 
 *** Linux install
@@ -424,19 +424,19 @@ and then follow these steps to install the binaries.
 Open your terminal and run the following command:
 
 #+begin_src sh
-sha256sum -c linux-ffmpeg-rust-scripts-v3.tar.gz.sha256
+sha256sum -c linux-ffmpeg-rust-scripts-v4.tar.gz.sha256
 #+end_src
 
 #+begin_example
-Expected Output: linux-ffmpeg-rust-scripts-v3.tar.gz: OK
+Expected Output: linux-ffmpeg-rust-scripts-v4.tar.gz: OK
 #+end_example
 
 ***** Extract the archive
 
-Note: Replace v3 with the actual version number you downloaded.
+Note: Replace v4 with the actual version number you downloaded.
 
 #+begin_src sh
-tar -xf linux-ffmpeg-rust-scripts-v3.tar.gz
+tar -xf linux-ffmpeg-rust-scripts-v4.tar.gz
 #+end_src
 
 ***** Deploy the scripts
@@ -444,7 +444,7 @@ tar -xf linux-ffmpeg-rust-scripts-v3.tar.gz
 Move the extracted binaries into your local ~/bin directory.
 
 #+begin_src sh
-mv linux-ffmpeg-rust-scripts-v3/* ~/bin/
+mv linux-ffmpeg-rust-scripts-v4/* ~/bin/
 #+end_src
 
 *** Windows install
@@ -576,13 +576,13 @@ Open PowerShell and run the following commands to compare the hash:
 1. View the expected hash
 
 #+begin_src sh
-cat .\windows-ffmpeg-rust-scripts-v3.zip.sha256
+cat .\windows-ffmpeg-rust-scripts-v4.zip.sha256
 #+end_src
 
 2. Calculate the actual hash
 
 #+begin_src sh
-Get-FileHash .\windows-ffmpeg-rust-scripts-v3.zip -Algorithm SHA256
+Get-FileHash .\windows-ffmpeg-rust-scripts-v4.zip -Algorithm SHA256
 #+end_src
 
 Note: Ensure the strings match.
@@ -590,7 +590,7 @@ Note: Ensure the strings match.
 Alternatively, if you have Git Bash installed on Windows, you can use the
 
 #+begin_src sh
-sha256sum -c windows-ffmpeg-rust-scripts-v3.zip.sha256
+sha256sum -c windows-ffmpeg-rust-scripts-v4.zip.sha256
 #+end_src
 
 ***** Unblock the Zip File
@@ -599,9 +599,9 @@ Before extracting the scripts, you must unblock the downloaded file.
 
 Windows often restricts files downloaded from the internet, which can cause the scripts to fail or be deleted immediately upon extraction.
 
-Note: In the steps below, replace "v3" with the specific version number of the release you downloaded (e.g., v0.3.0).
+Note: In the steps below, replace "v4" with the specific version number of the release you downloaded (e.g., v0.3.0).
 
-1) Right-click the downloaded windows-ffmpeg-rust-scripts-v3.zip.
+1) Right-click the downloaded windows-ffmpeg-rust-scripts-v4.zip.
 2) Select Properties.
 3) At the bottom of the General tab, look for the Security section.
 4) Check the box labeled Unblock.
@@ -611,7 +611,7 @@ Note: In the steps below, replace "v3" with the specific version number of the r
 
 Use the Windows File Manager (Explorer) to extract the zip file to ensure all permissions are handled correctly.
 
-1) Right-click the windows-ffmpeg-rust-scripts-v3.zip file and select Extract All.
+1) Right-click the windows-ffmpeg-rust-scripts-v4.zip file and select Extract All.
 2) Follow the prompts to finish the extraction.
 3) Move all the .exe files from the extracted folder into the bin directory you created in the previous step.
 
@@ -737,19 +737,19 @@ and then follow these steps to install the binaries.
 Open your terminal and run the following command:
 
 #+begin_src sh
-shasum -a 256 -c mac-ffmpeg-rust-scripts-v3.zip.sha256
+shasum -a 256 -c mac-ffmpeg-rust-scripts-v4.zip.sha256
 #+end_src
 
 #+begin_example
-Expected Output: mac-ffmpeg-rust-scripts-v3.zip: OK
+Expected Output: mac-ffmpeg-rust-scripts-v4.zip: OK
 #+end_example
 
 ***** Extract the archive
 
-Note: Replace v3 with the actual version number you downloaded.
+Note: Replace v4 with the actual version number you downloaded.
 
 #+begin_src sh
-unzip mac-ffmpeg-rust-scripts-v3.zip
+unzip mac-ffmpeg-rust-scripts-v4.zip
 #+end_src
 
 ***** Deploy the scripts
@@ -757,7 +757,7 @@ unzip mac-ffmpeg-rust-scripts-v3.zip
 Move the extracted binaries into your local ~/bin directory.
 
 #+begin_src sh
-mv mac-ffmpeg-rust-scripts-v3/* ~/bin/
+mv mac-ffmpeg-rust-scripts-v4/* ~/bin/
 #+end_src
 
 If you have issues running the scripts
@@ -1026,19 +1026,19 @@ and then follow these steps to install the binaries.
 Open your terminal and run the following command:
 
 #+begin_src sh
-sha256sum -c freebsd-ffmpeg-rust-scripts-v3.tar.gz.sha256
+sha256sum -c freebsd-ffmpeg-rust-scripts-v4.tar.gz.sha256
 #+end_src
 
 #+begin_example
-Expected Output: freebsd-ffmpeg-rust-scripts-v3.tar.gz: OK
+Expected Output: freebsd-ffmpeg-rust-scripts-v4.tar.gz: OK
 #+end_example
 
 ***** Extract the archive
 
-Note: Replace v3 with the actual version number you downloaded.
+Note: Replace v4 with the actual version number you downloaded.
 
 #+begin_src sh
-tar -xf freebsd-ffmpeg-rust-scripts-v3.tar.gz
+tar -xf freebsd-ffmpeg-rust-scripts-v4.tar.gz
 #+end_src
 
 ***** Deploy the scripts
@@ -1046,7 +1046,7 @@ tar -xf freebsd-ffmpeg-rust-scripts-v3.tar.gz
 Move the extracted binaries into your local ~/bin directory.
 
 #+begin_src sh
-mv freebsd-ffmpeg-rust-scripts-v3/* ~/bin/
+mv freebsd-ffmpeg-rust-scripts-v4/* ~/bin/
 #+end_src
 
 **** Rust install
@@ -4540,16 +4540,16 @@ cargo clean
 cd ~/Desktop
 #+end_src
 
-Note: replace v3 with the release number in the examples below.
+Note: replace v4 with the release number in the examples below.
 
 #+begin_src sh
-mv build ffmpeg-rust-scripts-build-v3
+mv build ffmpeg-rust-scripts-build-v4
 #+end_src
 
-Change into the ffmpeg-rust-scripts-build-v3 directory
+Change into the ffmpeg-rust-scripts-build-v4 directory
 
 #+begin_src sh
-cd ffmpeg-rust-scripts-build-v3
+cd ffmpeg-rust-scripts-build-v4
 #+end_src
 
 **** rename the build directories for nixos, linux and windows
@@ -4557,19 +4557,19 @@ cd ffmpeg-rust-scripts-build-v3
 linux
 
 #+begin_src sh
-mv linux linux-ffmpeg-rust-scripts-v3
+mv linux linux-ffmpeg-rust-scripts-v4
 #+end_src
 
 nixos
 
 #+begin_src sh
-mv nixos nixos-ffmpeg-rust-scripts-v3
+mv nixos nixos-ffmpeg-rust-scripts-v4
 #+end_src
 
 windows
 
 #+begin_src sh
-mv windows windows-ffmpeg-rust-scripts-v3
+mv windows windows-ffmpeg-rust-scripts-v4
 #+end_src
 
 **** remove the ffmpeg_rust_scripts file
@@ -4582,50 +4582,50 @@ Remove the ffmpeg_rust_scripts file from the Linux, NixOS and Windows build dire
 Linux
 
 #+begin_src sh
-rm -i linux-ffmpeg-rust-scripts-v3/ffmpeg_rust_scripts
+rm -i linux-ffmpeg-rust-scripts-v4/ffmpeg_rust_scripts
 #+end_src
 
 NixOS
 
 #+begin_src sh
-rm -i nixos-ffmpeg-rust-scripts-v3/ffmpeg_rust_scripts
+rm -i nixos-ffmpeg-rust-scripts-v4/ffmpeg_rust_scripts
 #+end_src
 
 Windows
 
 #+begin_src sh
-rm -i windows-ffmpeg-rust-scripts-v3/ffmpeg_rust_scripts.exe
+rm -i windows-ffmpeg-rust-scripts-v4/ffmpeg_rust_scripts.exe
 #+end_src
 
 **** compress the releases
 ***** linux
 
 #+begin_src sh
-tar -czvf linux-ffmpeg-rust-scripts-v3.tar.gz linux-ffmpeg-rust-scripts-v3
+tar -czvf linux-ffmpeg-rust-scripts-v4.tar.gz linux-ffmpeg-rust-scripts-v4
 #+end_src
 
 ***** nixos
 
 #+begin_src sh
-tar -czvf nixos-ffmpeg-rust-scripts-v3.tar.gz nixos-ffmpeg-rust-scripts-v3
+tar -czvf nixos-ffmpeg-rust-scripts-v4.tar.gz nixos-ffmpeg-rust-scripts-v4
 #+end_src
 
 ***** windows
 
 #+begin_src sh
-zip -r windows-ffmpeg-rust-scripts-v3.zip windows-ffmpeg-rust-scripts-v3
+zip -r windows-ffmpeg-rust-scripts-v4.zip windows-ffmpeg-rust-scripts-v4
 #+end_src
 
 **** create release-files directory
 
 #+begin_src sh
-mkdir -p release-files-v3
+mkdir -p release-files-v4
 #+end_src
 
 move the tar files and zip into the release-files directory
 
 #+begin_src sh
-mv *-ffmpeg-rust-scripts-v[0-9]*{.tar.gz,.zip} release-files-v3/
+mv *-ffmpeg-rust-scripts-v[0-9]*{.tar.gz,.zip} release-files-v4/
 #+end_src
 
 **** create checksums for the archives
@@ -4633,7 +4633,7 @@ mv *-ffmpeg-rust-scripts-v[0-9]*{.tar.gz,.zip} release-files-v3/
 change directory into the release-files-v1 directory
 
 #+begin_src sh
-cd release-files-v3
+cd release-files-v4
 #+end_src
 
 create the checksums
@@ -4641,19 +4641,19 @@ create the checksums
 ***** linux 
 
 #+begin_src sh
-sha256sum linux-ffmpeg-rust-scripts-v3.tar.gz > linux-ffmpeg-rust-scripts-v3.tar.gz.sha256
+sha256sum linux-ffmpeg-rust-scripts-v4.tar.gz > linux-ffmpeg-rust-scripts-v4.tar.gz.sha256
 #+end_src
 
 ***** nixos
 
 #+begin_src sh
-sha256sum nixos-ffmpeg-rust-scripts-v3.tar.gz > nixos-ffmpeg-rust-scripts-v3.tar.gz.sha256
+sha256sum nixos-ffmpeg-rust-scripts-v4.tar.gz > nixos-ffmpeg-rust-scripts-v4.tar.gz.sha256
 #+end_src
 
 ***** windows
 
 #+begin_src sh
-sha256sum windows-ffmpeg-rust-scripts-v3.zip > windows-ffmpeg-rust-scripts-v3.zip.sha256
+sha256sum windows-ffmpeg-rust-scripts-v4.zip > windows-ffmpeg-rust-scripts-v4.zip.sha256
 #+end_src
 
 *** Remove old scripts before rebuilding.
