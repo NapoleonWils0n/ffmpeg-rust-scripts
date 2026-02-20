@@ -2850,8 +2850,6 @@ Important: Apply your adjustments to the entire 1024 x 512 canvas so the LUT is 
 
 The colour graded image can then be used with the lut-apply script to apply the colour grade to the video.
 
-You can also use ffmpeg compatable luts that are 512 x 512 pixels with the lut-apply script.
-
 #+begin_src sh
 lut-create -i input.mp4 -s 00:00:30 -o output.png
 #+end_src
@@ -2897,6 +2895,58 @@ Notes:
 :PROPERTIES:
 :CUSTOM_ID: lut-apply
 :END:
+***** 1) Run the script
+
+You can also use ffmpeg compatable luts that are 512 x 512 pixels with the lut-apply script.
+
+Preview the lut with ffplay.
+
+#+begin_src sh
+lut-apply -i input.mp4 -l lut.png -p
+#+end_src
+
+Apply the lut to the video with ffmpeg.
+
+#+begin_src sh
+lut-apply -i input.mp4 -l lut.png -o output.mp4
+#+end_src
+
+***** Script usage and help.
+
+#+begin_src sh
+lut-apply -i input.mp4 -l lut.png -o output.mp4
+#+end_src
+
+Run the script with the -h option to show the help.
+
+#+begin_src sh
+lut-apply -h
+#+end_src
+
+Help output.
+
+#+begin_example
+Apply a color-graded Hald CLUT to a video file
+
+Usage: lut-apply [OPTIONS] -i <INFILE> -l <LUTFILE>
+
+Options:
+  -i <INFILE>    input video file
+  -l <LUTFILE>   corrected haldclut image
+  -o <OUTFILE>   optional output file
+  -p             preview with ffplay
+  -h, --help     Print help
+  -v, --version  Print version
+
+Preview lut:
+  lut-apply -i input.mp4 -l lut.png -p
+
+Apply lut:
+  lut-apply -i input.mp4 -l lut.png -o output.mp4
+
+Dependencies:
+  ffmpeg, ffplay: https://www.ffmpeg.org
+#+end_example
 
 *** Conversion and Extras
 **** audio-silence
