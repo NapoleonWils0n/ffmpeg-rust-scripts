@@ -14,7 +14,9 @@ use ffmpeg_rust_scripts::{get_media_info, hardware_encoding};
     author,
     version,
     about = "Apply a color-graded Hald CLUT to a video file",
-    after_help = "Example:\n  lut-apply -i input.mp4 -l lut.png -o output.mp4\n\nDependencies:\n  ffmpeg, ffplay: https://www.ffmpeg.org"
+    after_help = "Preview lut:\n  lut-apply -i input.mp4 -l lut.png -p\n\n\
+    Apply lut:\n  lut-apply -i input.mp4 -l lut.png -o output.mp4\n\n\
+    Dependencies:\n  ffmpeg, ffplay: https://www.ffmpeg.org"
 )]
 #[clap(disable_version_flag = true, disable_help_flag = true)]
 struct Args {
