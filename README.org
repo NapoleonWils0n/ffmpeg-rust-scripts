@@ -2901,9 +2901,10 @@ Notes:
 :CUSTOM_ID: lut-apply
 :END:
 
-The lut-apply script lets you apply a lut created with the lut-create to a video to colour grade the footage.
+The lut-apply script lets you apply a lut created with the lut-create script to a video to colour grade the footage,
+or use a ffmpeg compatable lut that is 512 x 512 pixels.
 
-You can also use ffmpeg compatable luts that are 512 x 512 pixels with the lut-apply script.
+You can also preview the lut with ffplay before you apply the colour grade to the video.
 
 [[https://ffmpeg.org/ffmpeg-filters.html#haldclut-1]]
 
