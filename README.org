@@ -19,17 +19,19 @@ The scripts automatically detect and utilize NVENC hardware acceleration for hig
 
 The tools are organized into functional categories.
 
-Scene Detection & Cutting: Automatically identify scene changes and split videos into logical segments.
-
 Trimming & Clipping: Precise tools for extracting clips using timestamps, durations, or remote URLs.
-
-Chapters & Metadata: Extract, create, and manage metadata and chapter markers for media files.
-
-Overlays & Transitions: Add fades, crossfades, Picture-in-Picture (PiP) effects, and Ken Burns animations.
 
 Visualization & Analysis: Generate waveforms, scopes, and measure EBU R128 loudness levels.
 
+Chapters & Metadata: Extract, create, and manage metadata and chapter markers for media files.
+
+Filters & Overlays: Add fades, crossfades, Picture-in-Picture (PiP) effects, and Ken Burns animations.
+
+Colour Grading: Generate Hald CLUT reference frames for external grading and apply finished LUTs to video.
+
 Conversion & Extras: Create high-quality GIFs, WebP images, and handle time format conversions.
+
+Scene Detection & Cutting: Automatically identify scene changes and split videos into logical segments.
 
 *** Supported Operating Systems
 
@@ -2826,6 +2828,9 @@ Dependencies:
   ffmpeg: https://www.ffmpeg.org/
 #+end_example
 
+*** Colour Grading
+**** lut-create
+**** lut-apply
 *** Conversion and Extras
 **** audio-silence
 :PROPERTIES:
