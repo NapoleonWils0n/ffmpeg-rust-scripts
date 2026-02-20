@@ -2838,7 +2838,6 @@ Dependencies:
 :PROPERTIES:
 :CUSTOM_ID: lut-create
 :END:
-***** 1) Run the script
 
 The lut-create script take a video with the -i option and a timestamp with the -s option,
 and then creates a 1024 x 512 png image with a lut on the left and a still from the video on the right.
@@ -2850,9 +2849,15 @@ Important: Apply your adjustments to the entire 1024 x 512 canvas so the LUT is 
 
 The colour graded image can then be used with the lut-apply script to apply the colour grade to the video.
 
+[[https://ffmpeg.org/ffmpeg-filters.html#haldclut-1]]
+
+***** 1) Run the script
+
 #+begin_src sh
 lut-create -i input.mp4 -s 00:00:30 -o output.png
 #+end_src
+
+If the -o option is not provided, defaults to: input-lut-[timestamp].png
 
 ***** Script usage and help.
 
@@ -2895,9 +2900,14 @@ Notes:
 :PROPERTIES:
 :CUSTOM_ID: lut-apply
 :END:
-***** 1) Run the script
+
+The lut-apply script lets you apply a lut created with the lut-create to a video to colour grade the footage.
 
 You can also use ffmpeg compatable luts that are 512 x 512 pixels with the lut-apply script.
+
+[[https://ffmpeg.org/ffmpeg-filters.html#haldclut-1]]
+
+***** 1) Run the script
 
 Preview the lut with ffplay.
 
@@ -2910,6 +2920,8 @@ Apply the lut to the video with ffmpeg.
 #+begin_src sh
 lut-apply -i input.mp4 -l lut.png -o output.mp4
 #+end_src
+
+If the output file -o is not specified, it defaults to input-lut-applied.mp4.
 
 ***** Script usage and help.
 
