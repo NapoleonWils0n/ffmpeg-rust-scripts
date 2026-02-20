@@ -2914,6 +2914,20 @@ Convert a lut.cube file to a png with ffmpeg
 ffmpeg -f lavfi -i haldclutsrc=8 -vf "lut3d='lut.cube'" -frames:v 1 lut.png
 #+end_src
 
+batch convert .cube files to .pngs with fd
+
+#+begin_src sh
+fd -e cube -x ffmpeg -f lavfi -i haldclutsrc=8 -vf "lut3d='{}'" -frames:v 1 "{.}.png"
+#+end_src
+
+or using a for loop
+
+#+begin_src sh
+for f in *.cube; do 
+  ffmpeg -f lavfi -i haldclutsrc=8 -vf "lut3d='$f'" -frames:v 1 "${f%.cube}.png"; 
+done
+#+end_src
+
 ***** 1) Run the script
 
 Preview the lut with ffplay.
