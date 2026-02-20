@@ -98,6 +98,11 @@ including dependency management and environment path configuration.
 + [[#pan-scan][pan-scan]]
 + [[#zoompan][zoompan]]
 
+*** Colour Grading
+
++ [[#lut-create][lut-create]]
++ [[#lut-apply][lut-apply]]
+
 *** Conversion and Extras
 
 + [[#audio-silence][audio-silence]]
@@ -2830,7 +2835,15 @@ Dependencies:
 
 *** Colour Grading
 **** lut-create
+:PROPERTIES:
+:CUSTOM_ID: lut-create
+:END:
+
 **** lut-apply
+:PROPERTIES:
+:CUSTOM_ID: lut-apply
+:END:
+
 *** Conversion and Extras
 **** audio-silence
 :PROPERTIES:
