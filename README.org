@@ -2839,6 +2839,8 @@ Dependencies:
 :CUSTOM_ID: lut-create
 :END:
 
+🎥 [[https://youtu.be/5BeKu2oNzkQ][lut-create]]
+
 The lut-create script take a video with the -i option and a timestamp with the -s option,
 and then creates a 1024 x 512 png image with a lut on the left and a still from the video on the right.
 
@@ -2900,6 +2902,8 @@ Notes:
 :PROPERTIES:
 :CUSTOM_ID: lut-apply
 :END:
+
+🎥 [[https://youtu.be/5BeKu2oNzkQ][lut-apply]]
 
 The lut-apply script lets you apply a lut created with the lut-create script to a video to colour grade the footage,
 or use a ffmpeg compatable lut that is 512 x 512 pixels.
