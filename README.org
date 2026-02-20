@@ -2838,6 +2838,60 @@ Dependencies:
 :PROPERTIES:
 :CUSTOM_ID: lut-create
 :END:
+***** 1) Run the script
+
+The lut-create script take a video with the -i option and a timestamp with the -s option,
+and then creates a 1024 x 512 png image with a lut on the left and a still from the video on the right.
+
+You can then import the png into Gimp or Photoshop and use the levels or curves tools,
+to adjust the shadow, midtones and highlights as well as the red, green and blue channels to colour grade the image.
+
+Important: Apply your adjustments to the entire 1024 x 512 canvas so the LUT is modified identically to the video frame.
+
+The colour graded image can then be used with the lut-apply script to apply the colour grade to the video.
+
+You can also use ffmpeg compatable luts that are 512 x 512 pixels with the lut-apply script.
+
+#+begin_src sh
+lut-create -i input.mp4 -s 00:00:30 -o output.png
+#+end_src
+
+***** Script usage and help.
+
+#+begin_src sh
+lut-create -i input.mp4 -s 00:00:30 -o output.png
+#+end_src
+
+Run the script with the -h option to show the help.
+
+#+begin_src sh
+lut-create -h
+#+end_src
+
+Help output.
+
+#+begin_example
+Generate a Hald CLUT and a reference video frame for color grading
+
+Usage: lut-create [OPTIONS] -i <INFILE> -s <START>
+
+Options:
+  -i <INFILE>    input video file
+  -s <START>     timestamp to extract frame
+  -o <OUTFILE>   optional output file
+  -h, --help     Print help
+  -v, --version  Print version
+
+Example:
+  lut-create -i input.mp4 -s 00:00:30 -o output.png
+
+Dependencies:
+  ffmpeg: https://www.ffmpeg.org/
+
+Notes:
+  Defaults to PNG format.
+  If -o is not provided, defaults to: input-lut-[timestamp].png
+#+end_example
 
 **** lut-apply
 :PROPERTIES:
