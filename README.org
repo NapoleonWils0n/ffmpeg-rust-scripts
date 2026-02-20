@@ -2861,6 +2861,12 @@ lut-create -i input.mp4 -s 00:00:30 -o output.png
 
 If the -o option is not provided, defaults to: input-lut-[timestamp].png
 
+You can crop the lut from the created png file with imagemagick
+
+#+begin_src sh
+magick input.png -crop 512x512+0+0 output.png
+#+end_src
+
 ***** Script usage and help.
 
 #+begin_src sh
