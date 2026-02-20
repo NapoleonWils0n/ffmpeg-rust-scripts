@@ -2908,6 +2908,12 @@ You can also preview the lut with ffplay before you apply the colour grade to th
 
 [[https://ffmpeg.org/ffmpeg-filters.html#haldclut-1]]
 
+Convert a lut.cube file to a png with ffmpeg
+
+#+begin_src sh
+ffmpeg -f lavfi -i haldclutsrc=8 -i lut.cube -filter_complex "[0][1] haldclut" lut.png
+#+end_src
+
 ***** 1) Run the script
 
 Preview the lut with ffplay.
