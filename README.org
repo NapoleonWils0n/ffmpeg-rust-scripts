@@ -2599,7 +2599,7 @@ xfade-clips -i input-1.mp4 input-2.mp4 input-3.mp4 input-4.mp4 -d 2 -t circlecro
 
 If you omit the -o option, the script generates a descriptive name: input-xfade-clips.mp4.
 
-***** 2) using ls or catting a text file for input
+***** 2) using ls or cating a text file for input
 
 Instead of manually typing out a list of files to pass with the -i option
 
@@ -2630,7 +2630,7 @@ like this, which can take a while
 xfade-clips -i IMG_3497.MOV IMG_3498.MOV IMG_3499.MOV IMG_3500.MOV IMG_3502.MOV IMG_3503.MOV IMG_3504.MOV IMG_3506.MOV IMG_3507.MOV IMG_3508.MOV -d 2 -t circlecrop -o output.mp4
 #+end_src
 
-You can use the ls command or a text file instead.
+You can use the ls command or cat a text file instead.
 
 ****** using ls in a subshell
 
@@ -2641,28 +2641,28 @@ To match all the .MOV files in the current directory
 We first run the script with echo as a prefix and ls in a subshell with asterix period and the file extension
 
 #+begin_src sh
-echo xfade-clips -i $(ls *.MOV) -d 0.2 -t wipeleft
+echo xfade-clips -i $(ls *.MOV) -d 0.2 -t wipeleft -o output.mp4
 #+end_src
 
 This will print out the command in the terminal so we can check the order of the video files that will be processed
 
 #+begin_src sh
-xfade-clips -i IMG_3497.MOV IMG_3498.MOV IMG_3499.MOV IMG_3500.MOV IMG_3502.MOV IMG_3503.MOV IMG_3504.MOV IMG_3506.MOV IMG_3507.MOV IMG_3508.MOV -d 0.2 -t wipeleft
+xfade-clips -i IMG_3497.MOV IMG_3498.MOV IMG_3499.MOV IMG_3500.MOV IMG_3502.MOV IMG_3503.MOV IMG_3504.MOV IMG_3506.MOV IMG_3507.MOV IMG_3508.MOV -d 0.2 -t wipeleft -o output.mp4
 #+end_src
 
 After we have checked the command we can run it without the echo command
 
 #+begin_src sh
-xfade-clips -i $(ls *.MOV) -d 0.2 -t wipeleft
+xfade-clips -i $(ls *.MOV) -d 0.2 -t wipeleft -o output.mp4
 #+end_src
 
 if you want to match .mp4 files you would use the following command
 
 #+begin_src sh
-xfade-clips -i $(ls *.mp4) -d 0.2 -t wipeleft
+xfade-clips -i $(ls *.mp4) -d 0.2 -t wipeleft -o output.mp4
 #+end_src
 
-****** catting a text file
+****** cating a text file
 
 If you want to process the video files in a specific order
 
@@ -2719,19 +2719,19 @@ IMG_3508.MOV
 We first run the script with echo as a prefix and cat in a subshell and give it the clips.txt file
 
 #+begin_src sh
-echo xfade-clips -i $(cat clips.txt) -d 0.2 -t wipeleft
+echo xfade-clips -i $(cat clips.txt) -d 0.2 -t wipeleft -o output.mp4
 #+end_src
 
 This will print out the command in the terminal so we can check the order of the video files that will be processed
 
 #+begin_src sh
-xfade-clips -i IMG_3500.MOV IMG_3502.MOV IMG_3503.MOV IMG_3504.MOV IMG_3498.MOV IMG_3497.MOV IMG_3499.MOV IMG_3506.MOV IMG_3507.MOV IMG_3508.MOV -d 0.2 -t wipeleft
+xfade-clips -i IMG_3500.MOV IMG_3502.MOV IMG_3503.MOV IMG_3504.MOV IMG_3498.MOV IMG_3497.MOV IMG_3499.MOV IMG_3506.MOV IMG_3507.MOV IMG_3508.MOV -d 0.2 -t wipeleft -o output.mp4
 #+end_src
 
 After we have checked the command we can run it without the echo command
 
 #+begin_src sh
-xfade-clips -i $(cat clips.txt) -d 0.2 -t wipeleft
+xfade-clips -i $(cat clips.txt) -d 0.2 -t wipeleft -o output.mp4
 #+end_src
 
 ***** Script usage and help.
@@ -3298,6 +3298,175 @@ concat -i input-1.mp4 input-2.mp4 input-3.mp4
 #+end_src
 
 If the -o option is omitted, the script generates a default name: input-concat.mp4
+
+***** 2) using ls or cating a text file for input
+
+Instead of manually typing out a list of files to pass with the -i option
+
+You can use ls or a text file as input
+
+A lot of phones create video files with incremental file names
+
+for example:
+
+#+begin_example
+IMG_3497.MOV
+IMG_3498.MOV
+IMG_3499.MOV
+IMG_3500.MOV
+IMG_3502.MOV
+IMG_3503.MOV
+IMG_3504.MOV
+IMG_3506.MOV
+IMG_3507.MOV
+IMG_3508.MOV
+#+end_example
+
+instead of typing out a list of files with -i option 
+
+like this, which can take a while 
+
+#+begin_src sh
+concat -i IMG_3497.MOV IMG_3498.MOV IMG_3499.MOV IMG_3500.MOV IMG_3502.MOV IMG_3503.MOV IMG_3504.MOV IMG_3506.MOV IMG_3507.MOV IMG_3508.MOV -o output.mp4
+#+end_src
+
+You can use the ls command or a text file instead.
+
+****** using ls in a subshell
+
+You can use ls in a sub shell as input if you want to process the video files in order based on their file names.
+
+To match all the .MOV files in the current directory
+
+We first run the script with echo as a prefix and ls in a subshell with asterix period and the file extension
+
+#+begin_src sh
+echo concat -i $(ls *.MOV) -o ouput.mov
+#+end_src
+
+This will print out the command in the terminal so we can check the order of the video files that will be processed
+
+#+begin_src sh
+concat -i IMG_3497.MOV IMG_3498.MOV IMG_3499.MOV IMG_3500.MOV IMG_3502.MOV IMG_3503.MOV IMG_3504.MOV IMG_3506.MOV IMG_3507.MOV IMG_3508.MOV -o output.mov
+#+end_src
+
+After we have checked the command we can run it without the echo command and the -p option to preview using ffplay
+
+#+begin_src sh
+concat -i $(ls *.MOV) -p
+#+end_src
+
+Omit the -p option to Concatenate the files.
+
+#+begin_src sh
+concat -i $(ls *.MOV) -o output.mov
+#+end_src
+
+if you want to match .mp4 files you would use the following command with the -p option to preview using ffplay
+
+#+begin_src sh
+concat -i $(ls *.mp4) -p
+#+end_src
+
+Omit the -p option to Concatenate the files.
+
+#+begin_src sh
+concat -i $(ls *.mp4) -o output.mp4
+#+end_src
+
+****** catting a text file
+
+If you want to process the video files in a specific order
+
+You can use ls and redirect the output to a text file and then cat it as the input to the script
+
+Create a list of the videos in the current directory you want to process
+
+In this example we match all the .MOV files in the current directory and redirect the output into a text file called clips.txt
+
+#+begin_src sh
+ls *.MOV > clips.txt
+#+end_src
+
+Note: the concat script creates a temporary file called concat_list.txt which it deletes after processing
+
+So dont use concat_list.txt as the name of the text file
+
+Note: if you want to match .mp4 files you would change the file extension you pass to ls
+
+#+begin_src sh
+ls *.mp4 > clips.txt
+#+end_src
+
+This will create the clips.txt file like this that matches all the .MOV files in the current directory
+
+clips.txt
+
+#+begin_example
+IMG_3497.MOV
+IMG_3498.MOV
+IMG_3499.MOV
+IMG_3500.MOV
+IMG_3502.MOV
+IMG_3503.MOV
+IMG_3504.MOV
+IMG_3506.MOV
+IMG_3507.MOV
+IMG_3508.MOV
+#+end_example
+
+You can then edit the clips.txt file and change the order of the videos to process and save the file.
+
+Like this
+
+#+begin_example
+IMG_3500.MOV
+IMG_3502.MOV
+IMG_3503.MOV
+IMG_3504.MOV
+IMG_3498.MOV
+IMG_3497.MOV
+IMG_3499.MOV
+IMG_3506.MOV
+IMG_3507.MOV
+IMG_3508.MOV
+#+end_example
+
+We first run the script with echo as a prefix and cat in a subshell and give it the clips.txt file
+
+#+begin_src sh
+echo concat -i $(cat clips.txt) -o output.mov
+#+end_src
+
+This will print out the command in the terminal so we can check the order of the video files that will be processed
+
+#+begin_src sh
+concat -i IMG_3500.MOV IMG_3502.MOV IMG_3503.MOV IMG_3504.MOV IMG_3498.MOV IMG_3497.MOV IMG_3499.MOV IMG_3506.MOV IMG_3507.MOV IMG_3508.MOV -o ouput.mov
+#+end_src
+
+After we have checked the command we can run it without the echo command and the -p option to preview using ffplay
+
+#+begin_src sh
+concat -i $(cat clips.txt) -p
+#+end_src
+
+Omit the -p option to Concatenate the files.
+
+#+begin_src sh
+concat -i $(cat clips.txt) -o output.mov
+#+end_src
+
+if you want to match .mp4 files you would use the following command with the -p option to preview using ffplay
+
+#+begin_src sh
+concat -i $(cat clips.txt) -p
+#+end_src
+
+Omit the -p option to Concatenate the files.
+
+#+begin_src sh
+concat -i $(cat clips.txt) -o output.mp4
+#+end_src
 
 ***** Script usage and help.
 
