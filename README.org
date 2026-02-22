@@ -2599,7 +2599,7 @@ xfade-clips -i input-1.mp4 input-2.mp4 input-3.mp4 input-4.mp4 -d 2 -t circlecro
 
 If you omit the -o option, the script generates a descriptive name: input-xfade-clips.mp4.
 
-***** 2) using ls or cating a text file for input
+***** 2) using ls or cat on a text file for input
 
 Instead of manually typing out a list of files to pass with the -i option
 
@@ -2634,11 +2634,11 @@ You can use the ls command or cat a text file instead.
 
 ****** using ls in a subshell
 
-You can use ls in a sub shell as input if you want to process the video files in order based on their file names.
+You can use ls in a subshell as input if you want to process the video files in order based on their file names.
 
 To match all the .MOV files in the current directory
 
-We first run the script with echo as a prefix and ls in a subshell with asterix period and the file extension
+We first run the script with echo as a prefix and ls in a subshell with the wildcard *.MOV
 
 #+begin_src sh
 echo xfade-clips -i $(ls *.MOV) -d 0.2 -t wipeleft -o output.mp4
@@ -2656,13 +2656,13 @@ After we have checked the command we can run it without the echo command
 xfade-clips -i $(ls *.MOV) -d 0.2 -t wipeleft -o output.mp4
 #+end_src
 
-if you want to match .mp4 files you would use the following command
+Note: if you want to match .mp4 files you would use the following command
 
 #+begin_src sh
 xfade-clips -i $(ls *.mp4) -d 0.2 -t wipeleft -o output.mp4
 #+end_src
 
-****** cating a text file
+****** using cat on a text file in a subshell
 
 If you want to process the video files in a specific order
 
@@ -2733,6 +2733,22 @@ After we have checked the command we can run it without the echo command
 #+begin_src sh
 xfade-clips -i $(cat clips.txt) -d 0.2 -t wipeleft -o output.mp4
 #+end_src
+
+****** Windows (PowerShell)
+
+If you are using Windows PowerShell, the syntax is identical to the Linux examples above:
+
+#+begin_src powershell
+xfade-clips -i $(ls *.MOV) -d 0.2 -t wipeleft -o output.mp4
+#+end_src
+
+#+begin_src powershell
+xfade-clips -i $(cat clips.txt) -d 0.2 -t wipeleft -o output.mp4
+#+end_src
+
+Note: These subshell commands will not work in the classic Windows Command Prompt (~cmd.exe~).
+
+Please use PowerShell or a bash-like terminal (such as Git Bash).
 
 ***** Script usage and help.
 
@@ -3299,7 +3315,7 @@ concat -i input-1.mp4 input-2.mp4 input-3.mp4
 
 If the -o option is omitted, the script generates a default name: input-concat.mp4
 
-***** 2) using ls or cating a text file for input
+***** 2) using ls or use cat on a text file for input
 
 Instead of manually typing out a list of files to pass with the -i option
 
@@ -3334,14 +3350,14 @@ You can use the ls command or a text file instead.
 
 ****** using ls in a subshell
 
-You can use ls in a sub shell as input if you want to process the video files in order based on their file names.
+You can use ls in a subshell as input if you want to process the video files in order based on their file names.
 
 To match all the .MOV files in the current directory
 
-We first run the script with echo as a prefix and ls in a subshell with asterix period and the file extension
+We first run the script with echo as a prefix and ls in a subshell with the wildcard *.MOV
 
 #+begin_src sh
-echo concat -i $(ls *.MOV) -o ouput.mov
+echo concat -i $(ls *.MOV) -o output.mov
 #+end_src
 
 This will print out the command in the terminal so we can check the order of the video files that will be processed
@@ -3356,25 +3372,25 @@ After we have checked the command we can run it without the echo command and the
 concat -i $(ls *.MOV) -p
 #+end_src
 
-Omit the -p option to Concatenate the files.
+Omit the -p option to concatenate the files.
 
 #+begin_src sh
 concat -i $(ls *.MOV) -o output.mov
 #+end_src
 
-if you want to match .mp4 files you would use the following command with the -p option to preview using ffplay
+Note: if you want to match .mp4 files you would use the following command with the -p option to preview using ffplay
 
 #+begin_src sh
 concat -i $(ls *.mp4) -p
 #+end_src
 
-Omit the -p option to Concatenate the files.
+Omit the -p option to concatenate the files.
 
 #+begin_src sh
 concat -i $(ls *.mp4) -o output.mp4
 #+end_src
 
-****** catting a text file
+****** use cat on a text file
 
 If you want to process the video files in a specific order
 
@@ -3441,7 +3457,7 @@ echo concat -i $(cat clips.txt) -o output.mov
 This will print out the command in the terminal so we can check the order of the video files that will be processed
 
 #+begin_src sh
-concat -i IMG_3500.MOV IMG_3502.MOV IMG_3503.MOV IMG_3504.MOV IMG_3498.MOV IMG_3497.MOV IMG_3499.MOV IMG_3506.MOV IMG_3507.MOV IMG_3508.MOV -o ouput.mov
+concat -i IMG_3500.MOV IMG_3502.MOV IMG_3503.MOV IMG_3504.MOV IMG_3498.MOV IMG_3497.MOV IMG_3499.MOV IMG_3506.MOV IMG_3507.MOV IMG_3508.MOV -o output.mov
 #+end_src
 
 After we have checked the command we can run it without the echo command and the -p option to preview using ffplay
@@ -3450,23 +3466,55 @@ After we have checked the command we can run it without the echo command and the
 concat -i $(cat clips.txt) -p
 #+end_src
 
-Omit the -p option to Concatenate the files.
+Omit the -p option to concatenate the files.
 
 #+begin_src sh
 concat -i $(cat clips.txt) -o output.mov
 #+end_src
 
-if you want to match .mp4 files you would use the following command with the -p option to preview using ffplay
+Note: if you want to match .mp4 files you would use the following command with the -p option to preview using ffplay
 
 #+begin_src sh
 concat -i $(cat clips.txt) -p
 #+end_src
 
-Omit the -p option to Concatenate the files.
+Omit the -p option to concatenate the files.
 
 #+begin_src sh
 concat -i $(cat clips.txt) -o output.mp4
 #+end_src
+
+****** Windows (PowerShell)
+
+If you are using Windows PowerShell, the syntax is identical to the Linux examples above:
+
+Preview with ffplay
+
+#+begin_src powershell
+concat -i $(ls *.MOV) -p
+#+end_src
+
+Concatenate with ffmpeg
+
+#+begin_src powershell
+concat -i $(ls *.MOV) -o output.mp4
+#+end_src
+
+Preview with ffplay
+
+#+begin_src powershell
+concat -i $(cat clips.txt) -p
+#+end_src
+
+Concatenate with ffmpeg
+
+#+begin_src powershell
+concat -i $(cat clips.txt) -o output.mp4
+#+end_src
+
+Note: These subshell commands will not work in the classic Windows Command Prompt (~cmd.exe~).
+
+Please use PowerShell or a bash-like terminal (such as Git Bash).
 
 ***** Script usage and help.
 
