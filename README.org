@@ -5128,6 +5128,10 @@ To remove the old scripts before rebuilding
 
 Remove the result symlink which points to the previous Nix store build.
 
+#+begin_src sh
+rm -i result
+#+end_src
+
 **** linux and windows
 
 Run nix develop to enter the development environment with all necessary dependencies
@@ -5140,4 +5144,93 @@ Remove the old compiled binaries and build artifacts (for both Linux and Windows
 
 #+begin_src sh
 cargo clean
+#+end_src
+
+*** Working on new features in a git branch
+
+When working on a new feature, create a separate Git branch to keep the master branch stable.
+
+**** Checking the current Git branch
+
+#+begin_src sh
+git branch
+#+end_src
+
+The output will contain the current branch prefixed with an asterisk (*).
+
+#+begin_example
+master
+#+end_example
+
+**** Create a new Git branch
+
+Use the -b option with checkout to create and switch to a new branch called dev.
+
+#+begin_src sh
+git checkout -b dev
+#+end_src
+
+Verify the branch switch:
+
+#+begin_src sh
+git branch
+#+end_src
+
+The output will contain the current branch prefixed with an asterisk.
+
+#+begin_example
+dev
+master
+#+end_example
+
+**** Add a new feature and commit the changes
+
+After making your changes, stage and commit them.
+
+#+begin_src sh
+git add .
+#+end_src
+
+Commit the changes.
+
+#+begin_src sh
+git commit -m 'new feature'
+#+end_src
+
+**** Merge the changes from the dev branch to master
+
+Switch back to the master git branch
+
+#+begin_src sh
+git checkout master
+#+end_src
+
+To merge the changes from your local dev branch into master:
+
+#+begin_src sh
+git merge dev
+#+end_src
+
+If you need to merge a branch that exists on a remote (e.g.,github) but not locally, ensure you have fetched the latest metadata first, then merge the remote tracking branch:
+
+#+begin_src sh
+git fetch github
+#+end_src
+
+#+begin_src sh
+git merge github/dev
+#+end_src
+
+**** Delete a local branch
+
+Once the feature is merged, you can delete the local dev branch:
+
+#+begin_src sh
+git branch -d dev
+#+end_src
+
+To force delete a branch (e.g., if it contains unmerged changes you wish to discard):
+
+#+begin_src sh
+git branch -D dev
 #+end_src
