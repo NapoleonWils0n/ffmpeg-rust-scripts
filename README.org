@@ -2736,11 +2736,57 @@ xfade-clips -i $(cat clips.txt) -d 0.2 -t wipeleft -o output.mp4
 
 ****** Windows (PowerShell)
 
-If you are using Windows PowerShell, the syntax is identical to the Linux examples above:
+If you are using Windows PowerShell, the syntax is almost identical to the Linux examples above:
+
+Except the ls command needs the -Name option
+
+And echo requires some quoting
+
+******* Using the ls command on the Windows PowerShell
+
+The Windows PowerShell syntax for the ls command needs the -Name option to just list the file names.
+
+#+begin_src sh
+ls -Name
+#+end_src
+
+So to list only the .MOV files with a wildcard you would run this command.
+
+#+begin_src sh
+ls -Name *.MOV
+#+end_src
+
+Note: You can't prefix a command with echo as you can on Linux to show the command that would be run.
+
+To echo the command in the PowerShell terminal before running it you use the following command.
+
+#+begin_src sh
+echo "xfade-clips -i $((ls -Name *.MOV) -join ' ') -d 0.2 -t wipeleft -o output.mp4"
+#+end_src
+
+And you must pass the -Name option to ls in the subshell when you run the script.
 
 #+begin_src powershell
-xfade-clips -i $(ls *.MOV) -d 0.2 -t wipeleft -o output.mp4
+xfade-clips -i $(ls -Name *.MOV) -d 0.2 -t wipeleft -o output.mp4
 #+end_src
+
+******* Using the ls and cat commands with the Windows PowerShell
+
+To create a list of files to pass to a script redirect the output of ls into a text file.
+
+#+begin_src sh
+ls -Name *.MOV > clips.txt
+#+end_src
+
+Edit the clips.txt file and change the order of the files to be passed to the script.
+
+To echo the command in the PowerShell terminal before running it you use the following command.
+
+#+begin_src sh
+echo "xfade-clips -i $((cat clips.txt) -join ' ') -d 0.2 -t wipeleft -o output.mp4"
+#+end_src
+
+To use cat in a subshell and pass the list of files in the clips.txt file to the script you would run the following command.
 
 #+begin_src powershell
 xfade-clips -i $(cat clips.txt) -d 0.2 -t wipeleft -o output.mp4
@@ -3486,21 +3532,77 @@ concat -i $(cat clips.txt) -o output.mp4
 
 ****** Windows (PowerShell)
 
-If you are using Windows PowerShell, the syntax is identical to the Linux examples above:
+If you are using Windows PowerShell, the syntax is almost identical to the Linux examples above:
+
+Except the ls command needs the -Name option
+
+And echo requires some quoting
+
+******* Using the ls command on the Windows PowerShell
+
+The Windows PowerShell syntax for the ls command needs the -Name option to just list the file names.
+
+#+begin_src sh
+ls -Name
+#+end_src
+
+So to list only the .MOV files with a wildcard you would run this command.
+
+#+begin_src sh
+ls -Name *.MOV
+#+end_src
+
+Note: You can't prefix a command with echo as you can on Linux to show the command that would be run.
+
+To echo the command in the PowerShell terminal before running it you use the following command.
 
 Preview with ffplay
 
-#+begin_src powershell
-concat -i $(ls *.MOV) -p
+#+begin_src sh
+echo "concat -i $((ls -Name *.MOV) -join ' ') -p"
 #+end_src
+
+And you must pass the -Name option to ls in the subshell when you run the script.
+
+#+begin_src powershell
+concat -i $(ls -Name *.MOV) -p
+#+end_src
+
+To echo the command in the PowerShell terminal before running it you use the following command.
 
 Concatenate with ffmpeg
 
-#+begin_src powershell
-concat -i $(ls *.MOV) -o output.mp4
+#+begin_src sh
+echo "concat -i $((ls -Name *.MOV) -join ' ') -o output.mov"
 #+end_src
 
+And you must pass the -Name option to ls in the subshell when you run the script.
+
+#+begin_src powershell
+concat -i $(ls -Name *.MOV) -o output.mov
+#+end_src
+
+******* Using the ls and cat commands with the Windows PowerShell
+
+To create a list of files to pass to a script redirect the output of ls into a text file.
+
+#+begin_src sh
+ls -Name *.MOV > clips.txt
+#+end_src
+
+Edit the clips.txt file and change the order of the files to be passed to the script.
+
+Note: You can't prefix a command with echo as you can on Linux to show the command that would be run.
+
 Preview with ffplay
+
+To echo the command in the PowerShell terminal before running it you use the following command.
+
+#+begin_src sh
+echo "concat -i $((cat clips.txt) -join ' ') -p"
+#+end_src
+
+Run the command.
 
 #+begin_src powershell
 concat -i $(cat clips.txt) -p
@@ -3508,8 +3610,16 @@ concat -i $(cat clips.txt) -p
 
 Concatenate with ffmpeg
 
+To echo the command in the PowerShell terminal before running it you use the following command.
+
+#+begin_src sh
+echo "concat -i $((cat clips.txt) -join ' ') -o output.mov"
+#+end_src
+
+Run the command.
+
 #+begin_src powershell
-concat -i $(cat clips.txt) -o output.mp4
+concat -i $(cat clips.txt) -o output.mov
 #+end_src
 
 Note: These subshell commands will not work in the classic Windows Command Prompt (~cmd.exe~).
