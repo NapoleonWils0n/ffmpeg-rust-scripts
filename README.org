@@ -303,7 +303,7 @@ yt-dlp needed for trim-remote-clip
 ***** download yt-dlp
 
 #+begin_src sh
-curl 'https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp' -o ~/bin/yt-dlp 
+curl -L 'https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp' -o ~/bin/yt-dlp 
 #+end_src
 
 ***** make yt-dlp executable
